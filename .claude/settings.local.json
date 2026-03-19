@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Read(//d/Mods/Culinary_Value/**)",
+      "Bash(done)",
+      "Bash(gradlew build:*)",
+      "Bash(gradlew.bat build:*)",
+      "Bash(sed -i 's|\"\"command.healthy_diet.info.header\"\": \"\"§e%s \"\",|\"\"command.healthy_diet.info.header\"\": \"\"[%s] 营养信息：\"\",|g' \"D:/Mods/Culinary_Value/src/main/resources/assets/healthy_diet/lang/zh_cn.json\")",
+      "Bash(sed -i 's|\"\"message.healthy_diet.food_on_cooldown_with_hunger\"\": \"\"你已对该食物厌倦！暂换其他美食试试吧！\\(饱食度降低为：%s 点\\)\"\",|\"\"message.healthy_diet.food_on_cooldown_with_hunger\"\": \"\"你已对该食物厌倦！暂换其他美食试试吧！\\(此食物饱食度已降低为：%s 点\\)\"\",|g' \"D:/Mods/Culinary_Value/src/main/resources/assets/healthy_diet/lang/zh_cn.json\")",
+      "Bash(xargs grep:*)",
+      "Bash(dir \"D:\\\\Mods\\\\Culinary_Value\" /b)"
+    ]
+  }
+}
