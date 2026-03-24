@@ -20,8 +20,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class HDBlockCmdCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HDBlockCmd")
+        dispatcher.register(Commands.literal("hdblockcmd")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 .then(Commands.argument("blockId", ResourceLocationArgument.id())
                         .suggests((ctx, b) -> {
                             ForgeRegistries.BLOCKS.getKeys().stream()
@@ -31,6 +32,12 @@ public class HDBlockCmdCommand {
                         .then(Commands.argument("command", StringArgumentType.greedyString())
                                 .executes(HDBlockCmdCommand::execute)))
         );
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdblockcmd.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdblockcmd.1"), false);
+        return 0;
     }
 
     private static int execute(CommandContext<CommandSourceStack> ctx)

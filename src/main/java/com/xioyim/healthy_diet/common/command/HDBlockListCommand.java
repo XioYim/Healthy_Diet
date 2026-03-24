@@ -26,8 +26,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class HDBlockListCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HDBlockList")
+        dispatcher.register(Commands.literal("hdblocklist")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 .then(Commands.argument("blockId", ResourceLocationArgument.id())
                         .suggests((ctx, b) -> {
                             ConfigManager.getBlockConfigKeys().forEach(b::suggest);
@@ -35,6 +36,12 @@ public class HDBlockListCommand {
                         })
                         .executes(HDBlockListCommand::execute))
         );
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdblocklist.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdblocklist.1"), false);
+        return 0;
     }
 
     private static int execute(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {

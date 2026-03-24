@@ -21,8 +21,9 @@ import java.util.HashMap;
 public class HDEffectCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HDEffect")
+        dispatcher.register(Commands.literal("hdeffect")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 .then(Commands.argument("group", StringArgumentType.word())
                         .suggests((ctx, b) -> { ConfigManager.getGroups().keySet().forEach(b::suggest); return b.buildFuture(); })
                         .then(Commands.argument("min", FloatArgumentType.floatArg(0, 100))
@@ -39,6 +40,13 @@ public class HDEffectCommand {
                                                                 .then(Commands.argument("showParticles", BoolArgumentType.bool())
                                                                         .executes(ctx -> execute(ctx, true)))))))))
         );
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdeffect.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdeffect.1"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdeffect.2"), false);
+        return 0;
     }
 
     private static int execute(CommandContext<CommandSourceStack> ctx, boolean hasParticles) throws CommandSyntaxException {

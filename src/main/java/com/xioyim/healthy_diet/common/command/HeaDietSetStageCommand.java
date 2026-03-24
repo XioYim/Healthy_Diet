@@ -25,8 +25,9 @@ import net.minecraft.network.chat.Component;
 public class HeaDietSetStageCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HeaDietSetStage")
+        dispatcher.register(Commands.literal("headietsetstage")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 .then(Commands.argument("group", StringArgumentType.string())
                         // 自动补全：已配置的营养组 ID
                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
@@ -41,6 +42,13 @@ public class HeaDietSetStageCommand {
                                                         FloatArgumentType.getFloat(ctx, "max"),
                                                         StringArgumentType.getString(ctx, "stageName")
                                                 )))))));
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetstage.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetstage.1"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetstage.2"), false);
+        return 0;
     }
 
     private static int execute(CommandSourceStack src,

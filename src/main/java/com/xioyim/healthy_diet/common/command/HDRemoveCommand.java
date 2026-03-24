@@ -19,14 +19,21 @@ import net.minecraft.network.chat.Component;
 public class HDRemoveCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HDRemove")
+        dispatcher.register(Commands.literal("hdremove")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 .then(Commands.argument("group", StringArgumentType.word())
                         .suggests((ctx, b) -> SharedSuggestionProvider.suggest(
                                 ConfigManager.getGroups().keySet(), b))
                         .then(Commands.argument("index", IntegerArgumentType.integer(0))
                                 .executes(HDRemoveCommand::execute)))
         );
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdremove.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdremove.1"), false);
+        return 0;
     }
 
     private static int execute(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {

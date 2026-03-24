@@ -24,8 +24,9 @@ import java.util.List;
 public class HeaDietStageDescCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HeaDietStageDesc")
+        dispatcher.register(Commands.literal("headietstagedesc")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 .then(Commands.argument("group", StringArgumentType.word())
                         .suggests((ctx, b) -> SharedSuggestionProvider.suggest(
                                 ConfigManager.getGroups().keySet(), b))
@@ -56,6 +57,14 @@ public class HeaDietStageDescCommand {
                                                         IntegerArgumentType.getInteger(ctx, "stageIndex"),
                                                         IntegerArgumentType.getInteger(ctx, "lineIndex")))))
                         )));
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietstagedesc.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietstagedesc.1"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietstagedesc.2"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietstagedesc.3"), false);
+        return 0;
     }
 
     private static int addDesc(CommandSourceStack src,

@@ -30,6 +30,7 @@ public class PlayerNutritionTracker implements INutritionTracker {
     private final Player player;
     private final Map<String, Float> values = new LinkedHashMap<>();
     private final Set<String> paused = new HashSet<>();
+    // decayAccumulators 已弃用（保留字段仅用于 NBT 向后兼容读取，写入时忽略）
     private final Map<String, Float> decayAccumulators = new HashMap<>();
     private final Map<String, FoodCooldownState> foodCooldowns = new HashMap<>();
     private int prevFoodLevel = 20;
@@ -121,7 +122,7 @@ public class PlayerNutritionTracker implements INutritionTracker {
     public void tick() {
         if (player.level().isClientSide()) return;
 
-        // Decay
+        // Decay：每消耗 1 饱食度降低 1/decayRate 的营养值，实时产生小数
         int curFood = player.getFoodData().getFoodLevel();
         int delta = prevFoodLevel - curFood;
         if (delta > 0) {
@@ -129,13 +130,12 @@ public class PlayerNutritionTracker implements INutritionTracker {
                 String gid = e.getKey();
                 GroupDefinition def = e.getValue();
                 if (def.decayRate <= 0 || isPaused(gid)) continue;
-                float acc = decayAccumulators.getOrDefault(gid, 0f) + delta;
-                while (acc >= def.decayRate) {
-                    float cur = values.getOrDefault(gid, 0f);
-                    if (cur > 0) { values.put(gid, Math.max(0f, cur - 1f)); dirty = true; }
-                    acc -= (float) def.decayRate;
+                float cur = values.getOrDefault(gid, 0f);
+                if (cur > 0) {
+                    float decrement = delta / (float) def.decayRate;
+                    values.put(gid, Math.max(0f, cur - decrement));
+                    dirty = true;
                 }
-                decayAccumulators.put(gid, acc);
             }
         }
         prevFoodLevel = curFood;
@@ -153,11 +153,14 @@ public class PlayerNutritionTracker implements INutritionTracker {
         }
         if (cdChanged) dirty = true;
 
+        int bonusInterval = Math.max(1, ConfigManager.getDisplayConfig().bonusUpdateTicks);
+        int effectInterval = Math.max(1, ConfigManager.getDisplayConfig().effectUpdateTicks);
+
         bonusTickCounter++;
-        if (bonusTickCounter >= 20) { bonusTickCounter = 0; evaluateBonuses(); }
+        if (bonusTickCounter >= bonusInterval) { bonusTickCounter = 0; evaluateBonuses(); }
 
         effectTickCounter++;
-        if (effectTickCounter >= 200) { effectTickCounter = 0; applyEffectBonuses(); }
+        if (effectTickCounter >= effectInterval) { effectTickCounter = 0; applyEffectBonuses(); }
 
         if (dirty) { sync(); dirty = false; }
     }

@@ -36,6 +36,8 @@ public class ItemConfig {
         /** Duration in TICKS */
         public int duration = 100;
         public boolean showParticles = false;
+        /** Trigger probability 0-100 (%). Default 100 = always triggers. */
+        public int probability = 100;
     }
 
     public static class FoodCooldownConfig {

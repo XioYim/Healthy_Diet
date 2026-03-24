@@ -24,8 +24,9 @@ import java.util.List;
 public class HeaDietStageCmdCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HeaDietStageCmd")
+        dispatcher.register(Commands.literal("headietstagecmd")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 .then(Commands.argument("group", StringArgumentType.word())
                         .suggests((ctx, b) -> SharedSuggestionProvider.suggest(
                                 ConfigManager.getGroups().keySet(), b))
@@ -56,6 +57,14 @@ public class HeaDietStageCmdCommand {
                                                         IntegerArgumentType.getInteger(ctx, "stageIndex"),
                                                         IntegerArgumentType.getInteger(ctx, "cmdIndex")))))
                         )));
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietstagecmd.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietstagecmd.1"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietstagecmd.2"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietstagecmd.3"), false);
+        return 0;
     }
 
     private static int addCmd(CommandSourceStack src,

@@ -140,6 +140,9 @@ public class NutritionCapabilityEvents {
                     // 效果和命令不依赖 FoodProperties，所有可食用物品均可触发
                     for (ItemConfig.EffectEntry effectEntry : config.effects) {
                         try {
+                            // 概率检查：probability 为 0-100，默认 100（必定触发）
+                            int prob = Math.max(0, Math.min(100, effectEntry.probability));
+                            if (prob < 100 && (int)(Math.random() * 100) >= prob) continue;
                             MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation.tryParse(effectEntry.effect));
                             if (effect != null) {
                                 player.addEffect(new MobEffectInstance(effect, effectEntry.duration,

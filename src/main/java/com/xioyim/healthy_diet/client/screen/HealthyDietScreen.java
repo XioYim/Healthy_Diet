@@ -22,6 +22,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -321,12 +322,16 @@ public class HealthyDietScreen extends Screen {
     //  Tooltip 渲染
     // ──────────────────────────────────────────────────────────────
 
-    /** 显示当前所有满足条件的属性 / 药水加成 Tooltip */
+    /** 显示当前所有满足条件的属性 / 药水加成 Tooltip（合并同类属性，药水效果只显示最高等级） */
     private void renderBonusTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
         List<Component> lines = new ArrayList<>();
         lines.add(Component.translatable("tooltip.healthy_diet.active_bonuses")
                 .withStyle(ChatFormatting.YELLOW));
-        boolean any = false;
+
+        // 合并属性加成：key=属性id，value=累加量
+        Map<String, Double> mergedAttributes = new LinkedHashMap<>();
+        // 药水效果：key=效果id，value=最高等级
+        Map<String, Integer> mergedEffects = new LinkedHashMap<>();
 
         for (Map.Entry<String, GroupBonusConfig> e : ConfigManager.getAllGroupBonuses().entrySet()) {
             GroupBonusConfig cfg = e.getValue();
@@ -339,29 +344,36 @@ public class HealthyDietScreen extends Screen {
                     if (v < cond.getValue().min || v > cond.getValue().max) { met = false; break; }
                 }
                 if (!met) continue;
-                any = true;
                 for (GroupBonusConfig.AttributeBonus ab : bonus.attributeBonuses) {
-                    String name = ab.attribute;
-                    try {
-                        Attribute attr = ForgeRegistries.ATTRIBUTES.getValue(
-                                ResourceLocation.tryParse(ab.attribute));
-                        if (attr != null) name = Component.translatable(attr.getDescriptionId()).getString();
-                    } catch (Exception ignored) {}
-                    lines.add(Component.literal("  +" + ab.value + " " + name)
-                            .withStyle(ChatFormatting.GREEN));
+                    mergedAttributes.merge(ab.attribute, ab.value, Double::sum);
                 }
                 for (GroupBonusConfig.EffectBonus eb : bonus.effectBonuses) {
-                    String name = eb.effect;
-                    try {
-                        MobEffect eff = ForgeRegistries.MOB_EFFECTS.getValue(
-                                ResourceLocation.tryParse(eb.effect));
-                        if (eff != null) name = Component.translatable(eff.getDescriptionId()).getString();
-                    } catch (Exception ignored) {}
-                    lines.add(Component.literal("  " + name + " Lv." + (eb.level + 1))
-                            .withStyle(ChatFormatting.AQUA));
+                    mergedEffects.merge(eb.effect, eb.level, Math::max);
                 }
             }
         }
+
+        boolean any = !mergedAttributes.isEmpty() || !mergedEffects.isEmpty();
+        for (Map.Entry<String, Double> entry : mergedAttributes.entrySet()) {
+            String name = entry.getKey();
+            try {
+                Attribute attr = ForgeRegistries.ATTRIBUTES.getValue(ResourceLocation.tryParse(entry.getKey()));
+                if (attr != null) name = Component.translatable(attr.getDescriptionId()).getString();
+            } catch (Exception ignored) {}
+            double val = entry.getValue();
+            String valStr = (val == Math.floor(val)) ? String.valueOf((long) val) : String.valueOf(val);
+            lines.add(Component.literal("  +" + valStr + " " + name).withStyle(ChatFormatting.GREEN));
+        }
+        for (Map.Entry<String, Integer> entry : mergedEffects.entrySet()) {
+            String name = entry.getKey();
+            try {
+                MobEffect eff = ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation.tryParse(entry.getKey()));
+                if (eff != null) name = Component.translatable(eff.getDescriptionId()).getString();
+            } catch (Exception ignored) {}
+            lines.add(Component.literal("  " + name + " Lv." + (entry.getValue() + 1))
+                    .withStyle(ChatFormatting.AQUA));
+        }
+
         if (!any) {
             lines.add(Component.translatable("tooltip.healthy_diet.no_active_bonuses")
                     .withStyle(ChatFormatting.GRAY));

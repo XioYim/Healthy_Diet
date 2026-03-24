@@ -16,27 +16,37 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class HeaDietSetCmdCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HeaDietSetCommand")
+        dispatcher.register(Commands.literal("headietsetcommand")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 // ── Forms with explicit block ID ─────────────────────────────────
                 .then(Commands.argument("targetId", ResourceLocationArgument.id())
                         .suggests((ctx, b) -> {
                             ForgeRegistries.BLOCKS.getKeys().stream().map(ResourceLocation::toString).forEach(b::suggest);
                             return b.buildFuture();
                         })
-                        .then(Commands.literal("ClearCommand").executes(ctx -> clearCommands(ctx, true)))
+                        .then(Commands.literal("clearcommand").executes(ctx -> clearCommands(ctx, true)))
                         .then(Commands.argument("command", StringArgumentType.greedyString())
                                 .executes(ctx -> addCommand(ctx, true))))
                 // ── hand keyword forms ────────────────────────────────────────────
                 .then(Commands.literal("hand")
-                        .then(Commands.literal("ClearCommand").executes(ctx -> clearCommands(ctx, false)))
+                        .then(Commands.literal("clearcommand").executes(ctx -> clearCommands(ctx, false)))
                         .then(Commands.argument("command", StringArgumentType.greedyString())
                                 .executes(ctx -> addCommand(ctx, false))))
                 // ── Fallback: held item (no keyword) ─────────────────────────────
-                .then(Commands.literal("ClearCommand").executes(ctx -> clearCommands(ctx, false)))
+                .then(Commands.literal("clearcommand").executes(ctx -> clearCommands(ctx, false)))
                 .then(Commands.argument("command", StringArgumentType.greedyString())
                         .executes(ctx -> addCommand(ctx, false)))
         );
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetcommand.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetcommand.1"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetcommand.2"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetcommand.3"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetcommand.4"), false);
+        return 0;
     }
 
     private static int addCommand(CommandContext<CommandSourceStack> ctx, boolean hasExplicitId) throws CommandSyntaxException {

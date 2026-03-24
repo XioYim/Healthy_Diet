@@ -19,8 +19,9 @@ import net.minecraft.resources.ResourceLocation;
 public class HDBlockRemoveCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HDBlockRemove")
+        dispatcher.register(Commands.literal("hdblockremove")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 .then(Commands.argument("blockId", ResourceLocationArgument.id())
                         .suggests((ctx, b) -> {
                             ConfigManager.getBlockConfigKeys().forEach(b::suggest);
@@ -39,6 +40,14 @@ public class HDBlockRemoveCommand {
                                 .then(Commands.argument("index", IntegerArgumentType.integer(0))
                                         .executes(ctx -> removeGroup(ctx)))))
         );
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdblockremove.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdblockremove.1"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdblockremove.2"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdblockremove.3"), false);
+        return 0;
     }
 
     private static BlockConfig getConfig(CommandContext<CommandSourceStack> ctx)

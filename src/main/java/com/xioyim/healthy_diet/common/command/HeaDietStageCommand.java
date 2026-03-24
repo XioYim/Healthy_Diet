@@ -24,8 +24,9 @@ import net.minecraft.network.chat.MutableComponent;
 public class HeaDietStageCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HeaDietStage")
+        dispatcher.register(Commands.literal("headietstage")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 .then(Commands.argument("group", StringArgumentType.word())
                         .suggests((ctx, b) -> SharedSuggestionProvider.suggest(
                                 ConfigManager.getGroups().keySet(), b))
@@ -44,6 +45,13 @@ public class HeaDietStageCommand {
                                                 StringArgumentType.getString(ctx, "group"),
                                                 IntegerArgumentType.getInteger(ctx, "stageIndex")))))
                 ));
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietstage.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietstage.1"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietstage.2"), false);
+        return 0;
     }
 
     // ══════════════════════════════════════════════════════════════

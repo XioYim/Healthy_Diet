@@ -17,8 +17,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class HeaDietSetFoodCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HeaDietSetFood")
+        dispatcher.register(Commands.literal("headietsetfood")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 // /HeaDietSetFood hand <maxUses> <cooldownCount> [cooldownMinutes [restoreHunger]]
                 .then(Commands.literal("hand")
                         .then(Commands.argument("maxUses", IntegerArgumentType.integer(1))
@@ -43,6 +44,14 @@ public class HeaDietSetFoodCommand {
                                                 .then(Commands.argument("restoreHunger", IntegerArgumentType.integer(0, 20))
                                                         .executes(ctx -> execute(ctx, true, true, true)))))))
         );
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetfood.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetfood.1"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetfood.2"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetfood.3"), false);
+        return 0;
     }
 
     private static int execute(CommandContext<CommandSourceStack> ctx, boolean hasExplicitId, boolean hasTime, boolean hasRestore) throws CommandSyntaxException {

@@ -22,8 +22,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class HDBlockEffectCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HDBlockEffect")
+        dispatcher.register(Commands.literal("hdblockeffect")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 .then(Commands.argument("blockId", ResourceLocationArgument.id())
                         .suggests((ctx, b) -> {
                             ForgeRegistries.BLOCKS.getKeys().stream()
@@ -42,6 +43,12 @@ public class HDBlockEffectCommand {
                                                 .then(Commands.argument("showParticles", BoolArgumentType.bool())
                                                         .executes(ctx -> execute(ctx, true)))))))
         );
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdblockeffect.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdblockeffect.1"), false);
+        return 0;
     }
 
     private static int execute(CommandContext<CommandSourceStack> ctx, boolean hasParticles)

@@ -15,8 +15,9 @@ import net.minecraft.network.chat.Component;
 public class HeaDietRemoveCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HeaDietRemove")
+        dispatcher.register(Commands.literal("headietremove")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 .then(Commands.argument("targetId", ResourceLocationArgument.id())
                         .suggests((ctx, b) -> {
                             ConfigManager.getItemConfigKeys().forEach(b::suggest);
@@ -46,6 +47,16 @@ public class HeaDietRemoveCommand {
                                 .then(Commands.argument("index", IntegerArgumentType.integer(0))
                                         .executes(ctx -> removeCondCmd(ctx)))))
         );
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietremove.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietremove.1"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietremove.2"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietremove.3"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietremove.4"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietremove.5"), false);
+        return 0;
     }
 
     private static int removeNutrition(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {

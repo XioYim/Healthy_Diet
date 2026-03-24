@@ -19,8 +19,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class HeaDietSetCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HeaDietSet")
+        dispatcher.register(Commands.literal("headietset")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 // /HeaDietSet hand <group> <value>  (uses held item)
                 .then(Commands.literal("hand")
                         .then(Commands.argument("group", StringArgumentType.word())
@@ -67,6 +68,14 @@ public class HeaDietSetCommand {
         ctx.getSource().sendSuccess(() -> Component.translatable("command.healthy_diet.set_item.result",
                 finalId, displayName, valStr), true);
         return 1;
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietset.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietset.1"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietset.2"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietset.3"), false);
+        return 0;
     }
 
     /** Resolves the config key: explicit ResourceLocation ID or held item's ID. Returns null on error. */

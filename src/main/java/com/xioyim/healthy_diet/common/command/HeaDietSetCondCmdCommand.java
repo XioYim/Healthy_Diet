@@ -33,8 +33,9 @@ import net.minecraft.resources.ResourceLocation;
 public class HeaDietSetCondCmdCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HeaDietSetCondCmd")
+        dispatcher.register(Commands.literal("headietsetcondcmd")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
 
                 // /HeaDietSetCondCmd hand <group> <min> <max> <command>
                 .then(Commands.literal("hand")
@@ -61,6 +62,14 @@ public class HeaDietSetCondCmdCommand {
                                                 .then(Commands.argument("command", StringArgumentType.greedyString())
                                                         .executes(ctx -> execute(ctx, true)))))))
         );
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetcondcmd.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetcondcmd.1"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetcondcmd.2"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headietsetcondcmd.3"), false);
+        return 0;
     }
 
     private static int execute(CommandContext<CommandSourceStack> ctx,

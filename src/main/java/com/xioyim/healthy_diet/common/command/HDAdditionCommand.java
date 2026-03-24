@@ -20,8 +20,9 @@ import java.util.HashMap;
 public class HDAdditionCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HDAddition")
+        dispatcher.register(Commands.literal("hdaddition")
                 .requires(src -> src.hasPermission(4))
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 .then(Commands.argument("group", StringArgumentType.word())
                         .suggests((ctx, b) -> { ConfigManager.getGroups().keySet().forEach(b::suggest); return b.buildFuture(); })
                         .then(Commands.argument("min", FloatArgumentType.floatArg(0, 100))
@@ -34,6 +35,13 @@ public class HDAdditionCommand {
                                                 })
                                                 .then(Commands.argument("amount", DoubleArgumentType.doubleArg())
                                                         .executes(ctx -> execute(ctx))))))));
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdaddition.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdaddition.1"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.hdaddition.2"), false);
+        return 0;
     }
 
     private static int execute(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {

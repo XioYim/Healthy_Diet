@@ -78,6 +78,18 @@ public class DisplayConfig {
     public float shadowOffsetY = 0.3f;
 
     // ══════════════════════════════════════════════════════════════
+    //  营养控制更新间隔 / Nutrition control update interval
+    // ══════════════════════════════════════════════════════════════
+
+    public String _note_bonusUpdateTicks =
+            "属性加成检测间隔（tick），每隔此数量tick重新评估一次属性加成，默认100（5秒）| Attribute bonus evaluation interval in ticks, default 100 (5 seconds)";
+    public int bonusUpdateTicks = 100;
+
+    public String _note_effectUpdateTicks =
+            "药水效果加成刷新间隔（tick），每隔此数量tick重新施加一次药水效果加成，默认200（10秒）| Potion effect bonus refresh interval in ticks, default 200 (10 seconds)";
+    public int effectUpdateTicks = 200;
+
+    // ══════════════════════════════════════════════════════════════
     //  内部工具 / Internal utility
     // ══════════════════════════════════════════════════════════════
 

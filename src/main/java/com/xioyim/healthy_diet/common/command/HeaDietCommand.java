@@ -18,7 +18,8 @@ import net.minecraft.server.level.ServerPlayer;
 public class HeaDietCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("HeaDiet")
+        dispatcher.register(Commands.literal("headiet")
+                .executes(ctx -> sendUsage(ctx.getSource()))
                 .then(Commands.literal("open")
                         .executes(ctx -> openSelf(ctx))
                         .then(Commands.argument("player", EntityArgument.player())
@@ -33,7 +34,7 @@ public class HeaDietCommand {
                         .requires(src -> src.hasPermission(4))
                         .then(Commands.argument("player", EntityArgument.player())
                                 .then(Commands.argument("group", StringArgumentType.word())
-                                        .suggests((ctx, b) -> { ConfigManager.getGroups().keySet().forEach(b::suggest); return b.buildFuture(); })
+                                        .suggests((ctx, b) -> { b.suggest("all"); ConfigManager.getGroups().keySet().forEach(b::suggest); return b.buildFuture(); })
                                         .then(Commands.argument("value", FloatArgumentType.floatArg(0, 100))
                                                 .executes(ctx -> setValue(ctx))))))
                 .then(Commands.literal("add")
@@ -60,13 +61,13 @@ public class HeaDietCommand {
                         .requires(src -> src.hasPermission(4))
                         .then(Commands.argument("player", EntityArgument.player())
                                 .then(Commands.argument("group", StringArgumentType.word())
-                                        .suggests((ctx, b) -> { ConfigManager.getGroups().keySet().forEach(b::suggest); return b.buildFuture(); })
+                                        .suggests((ctx, b) -> { b.suggest("all"); ConfigManager.getGroups().keySet().forEach(b::suggest); return b.buildFuture(); })
                                         .executes(ctx -> pauseGroup(ctx)))))
                 .then(Commands.literal("resume")
                         .requires(src -> src.hasPermission(4))
                         .then(Commands.argument("player", EntityArgument.player())
                                 .then(Commands.argument("group", StringArgumentType.word())
-                                        .suggests((ctx, b) -> { ConfigManager.getGroups().keySet().forEach(b::suggest); return b.buildFuture(); })
+                                        .suggests((ctx, b) -> { b.suggest("all"); ConfigManager.getGroups().keySet().forEach(b::suggest); return b.buildFuture(); })
                                         .executes(ctx -> resumeGroup(ctx)))))
                 .then(Commands.literal("clear")
                         .requires(src -> src.hasPermission(4))
@@ -106,6 +107,15 @@ public class HeaDietCommand {
         ServerPlayer target = EntityArgument.getPlayer(ctx, "player");
         String group = StringArgumentType.getString(ctx, "group");
         float value = FloatArgumentType.getFloat(ctx, "value");
+        if (group.equals("all")) {
+            NutritionCapability.get(target).ifPresent(t -> {
+                ConfigManager.getGroups().keySet().forEach(g -> t.setValue(g, value));
+                t.sync();
+            });
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.healthy_diet.set.result",
+                    target.getName(), "all", (int) value + "%"), true);
+            return 1;
+        }
         if (ConfigManager.getGroup(group) == null) {
             ctx.getSource().sendFailure(Component.translatable("command.healthy_diet.error.group_not_found", group));
             return 0;
@@ -164,6 +174,15 @@ public class HeaDietCommand {
     private static int pauseGroup(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         ServerPlayer target = EntityArgument.getPlayer(ctx, "player");
         String group = StringArgumentType.getString(ctx, "group");
+        if (group.equals("all")) {
+            NutritionCapability.get(target).ifPresent(t -> {
+                ConfigManager.getGroups().keySet().forEach(t::pauseGroup);
+                t.sync();
+            });
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.healthy_diet.pause.result",
+                    target.getName(), "all"), true);
+            return 1;
+        }
         if (ConfigManager.getGroup(group) == null) {
             ctx.getSource().sendFailure(Component.translatable("command.healthy_diet.error.group_not_found", group));
             return 0;
@@ -178,6 +197,15 @@ public class HeaDietCommand {
     private static int resumeGroup(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         ServerPlayer target = EntityArgument.getPlayer(ctx, "player");
         String group = StringArgumentType.getString(ctx, "group");
+        if (group.equals("all")) {
+            NutritionCapability.get(target).ifPresent(t -> {
+                ConfigManager.getGroups().keySet().forEach(t::resumeGroup);
+                t.sync();
+            });
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.healthy_diet.resume.result",
+                    target.getName(), "all"), true);
+            return 1;
+        }
         if (ConfigManager.getGroup(group) == null) {
             ctx.getSource().sendFailure(Component.translatable("command.healthy_diet.error.group_not_found", group));
             return 0;
@@ -195,5 +223,19 @@ public class HeaDietCommand {
         ctx.getSource().sendSuccess(() -> Component.translatable("command.healthy_diet.clear.result",
                 target.getName()), true);
         return 1;
+    }
+
+    private static int sendUsage(CommandSourceStack src) {
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headiet.0"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headiet.1"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headiet.2"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headiet.3"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headiet.4"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headiet.5"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headiet.6"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headiet.7"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headiet.8"), false);
+        src.sendSuccess(() -> Component.translatable("command.healthy_diet.usage.headiet.9"), false);
+        return 0;
     }
 }
