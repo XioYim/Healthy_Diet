@@ -29,41 +29,41 @@
   <main class="wrap" id="main">
     <section class="hero">
       <span class="eyebrow">01 / NUTRITION</span>
-      <h1>营养值，其实就三件事：吃什么、涨多少、什么时候触发。</h1>
-      <p>别急着背数字。先把进度条和阶段看懂，剩下的规则就顺下来了。下面所有界面和数字都是示意，真正生效的永远是你所在服务器的配置。</p>
+      <h1>营养值：数值、阶段与条件规则如何协作。</h1>
+      <p>本页按结算顺序说明营养组、衰减、阶段、加成与条件规则。界面和数字均为示意，实际规则由服务器配置决定。</p>
       <div class="tags">
-        <span class="tag">0–100</span>
-        <span class="tag">可以带小数</span>
+        <span class="tag">范围 0–100</span>
+        <span class="tag">支持小数</span>
         <span class="tag">阶段按整数判定</span>
-        <span class="tag">服务器说了算</span>
+        <span class="tag">服务器可配置</span>
       </div>
     </section>
 
     <div class="notice" role="note">
-      <strong>先打个招呼：</strong>这篇是“看懂机制”，不是“背默认值”。你服务器的营养组、阶段、衰减率、命令和效果可能完全不一样；图里的数字只是用来讲清楚变化过程。
+      <strong>范围说明：</strong>本页解释机制，不提供默认值。营养组、阶段、衰减率、命令和效果均由服务器配置；图中数字仅用于说明计算与交互。
     </div>
 
     <div class="layout">
       <aside class="toc" data-toc aria-label="本页目录">
         <h2>本页目录</h2>
         <ol>
-          <li><a href="#overview">一分钟看懂</a></li>
-          <li><a href="#values">涨与掉</a></li>
+          <li><a href="#overview">机制概览</a></li>
+          <li><a href="#values">增加与衰减</a></li>
           <li><a href="#stages">阶段</a></li>
-          <li><a href="#bonuses">加成和联动</a></li>
+          <li><a href="#bonuses">加成与联动</a></li>
           <li><a href="#conditions">条件规则</a></li>
-          <li><a href="#items">编辑器和变体</a></li>
+          <li><a href="#items">编辑器与变体</a></li>
           <li><a href="#admin">管理与命令</a></li>
-          <li><a href="#demo">动手试试</a></li>
+          <li><a href="#demo">交互演示</a></li>
         </ol>
-        <div class="toc-note">常见默认示例是六组：乳制品、水果、谷物、蛋白质、糖分、蔬菜。服务器可以增删、改名或调整顺序。</div>
+        <div class="toc-note">常见默认配置包含六组：乳制品、水果、谷物、蛋白质、糖分、蔬菜。服务器可增删、改名或调整顺序。</div>
       </aside>
 
       <article>
         <section class="page-section" id="overview" aria-labelledby="overview-title">
-          <h2 id="overview-title"><span class="num">01</span>一分钟看懂</h2>
-          <p class="lead">把每个营养组想成一根独立的水槽：左边是 0，右边是 100。吃一口，就是往某几根水槽里加水；饿肚子，水槽也会慢慢漏水。</p>
-          <p>所以“吃苹果”不是只加一个数，而是可能同时推动水果和糖分两根条。不同食物推动的组不一样，这就是饮食结构的来源。</p>
+          <h2 id="overview-title"><span class="num">01</span>机制概览</h2>
+          <p class="lead">每个营养组是一条独立的 0–100 数值轴。食物可同时影响多个组；饱食度下降时，各组按配置的衰减率减少。</p>
+          <p>同一份食物对不同组的贡献可以不同。例如苹果同时增加水果和糖分；食物之间的差异构成饮食结构。</p>
 
           <div class="figure">
             <div class="food-demo">
@@ -86,11 +86,11 @@
                 </div>
               </div>
             </div>
-            <div class="figure-caption">示例：一份食物可以同时影响多个组。条的长度是吃完后的示意值，不是服务器默认值。</div>
+            <div class="figure-caption">示例：单份食物可影响多个组。进度条为结算后的示意值，不代表服务器默认配置。</div>
           </div>
 
-          <h3>游戏里大概长这样</h3>
-          <p>按 H 打开自己的营养面板后，你会看到一组一行：组名、进度条、百分比。进度条上的浅色分区就是阶段，鼠标移到条上能看到这一段的说明。</p>
+          <h3>营养面板示意</h3>
+          <p>按 H 打开营养面板。每个营养组占一行，显示组名、进度条和百分比；进度条上的分区对应阶段，悬停可查看阶段说明。</p>
 
           <div class="figure">
             <div class="mock-panel" aria-label="营养面板示意">
@@ -152,18 +152,18 @@
                 </div>
               </div>
             </div>
-            <div class="figure-caption">这是用 HTML 模拟的界面示意，不是游戏截图。组名、数量、阶段和数值都由服务器决定；鼠标移到进度条上可以看示例提示。</div>
+            <div class="figure-caption">HTML 模拟界面，并非游戏截图。组名、数量、阶段和数值均由服务器配置；悬停进度条可查看示例提示。</div>
           </div>
 
           <div class="callout good">
-            <b>先记住一句话：</b>饱食度回答“现在饿不饿”，营养值回答“长期吃了什么”。两者不是同一个条。
+            <b>数值体系：</b>饱食度与营养值相互独立；饱食度用于饥饿与进食，营养值用于长期饮食结构。
           </div>
         </section>
 
         <section class="page-section" id="values" aria-labelledby="values-title">
-          <h2 id="values-title"><span class="num">02</span>涨与掉</h2>
-          <p class="lead">吃一口，先算这一口加多少；饿肚子，再按衰减率慢慢掉。</p>
-          <p>进食增加的大致关系是：<b>食物基础值 × 该组获取倍率</b>，有终身厌食时还会再乘一个衰减系数。算完以后，最终值会被夹在 0–100。管理员指令、自然衰减和初始值不走“获取倍率”这个入口。</p>
+          <h2 id="values-title"><span class="num">02</span>增加与衰减</h2>
+          <p class="lead">进食增加与饱食度衰减是两条独立结算路径。</p>
+          <p>进食增加量约为：<b>食物基础值 × 该组获取倍率</b>；存在终身厌食时再乘以衰减系数。结算后按 0–100 夹取。管理员指令、自然衰减和初始值不经过获取倍率。</p>
 
           <div class="calc" aria-label="衰减计算示意">
             <div class="calc-row">
@@ -177,8 +177,8 @@
               <output id="hunger-used-out">20</output>
             </div>
             <div class="calc-result">
-              <span>营养值大约下降 <strong id="decay-loss">5.0</strong> 点</span>
-              <small>公式：饱食度 ÷ 衰减率；只看饱食度，饱和度不算</small>
+              <span>营养值下降 <strong id="decay-loss">5.0</strong> 点</span>
+              <small>公式：饱食度 ÷ 衰减率；仅计算饱食度，不计算饱和度</small>
             </div>
             <div class="mini-bars">
               <div class="mini-bar" style="--c:#a6e3a1">
@@ -188,23 +188,23 @@
               </div>
             </div>
           </div>
-          <div class="figure-caption">拖动滑块看公式怎么变。这里从 100 开始算，只是演示，不代表你进服时的初始值。</div>
+          <div class="figure-caption">滑块用于演示衰减公式；计算从 100 起算，不代表实际初始值。</div>
 
           <ul class="rules">
-            <li><span class="n">1</span><span><b>范围是 0–100。</b>营养值可以带小数，但无论怎么加、怎么减，最后都不会冲出这个范围。</span></li>
-            <li><span class="n">2</span><span><b>阶段判定看整数。</b>系统会把当前值四舍五入后再找阶段，所以 59.6 会按 60 算。</span></li>
-            <li><span class="n">3</span><span><b>死亡不会清空。</b>重生时营养数据会跟着复制，不把死亡当成重新开始。</span></li>
+            <li><span class="n">1</span><span><b>范围固定为 0–100。</b>营养值可保留小数，结算后按上下限夹取。</span></li>
+            <li><span class="n">2</span><span><b>阶段判定使用整数。</b>当前值四舍五入后匹配阶段，例如 59.6 按 60 处理。</span></li>
+            <li><span class="n">3</span><span><b>死亡不会清空营养值。</b>重生时数据随玩家能力复制。</span></li>
           </ul>
 
           <div class="callout warn">
-            <b>别拿示例当默认：</b>衰减率、初始值和获取倍率都能被服务器改。想知道自己世界里的实际值，进游戏看 <code>/headiet</code> 面板或问服主。
+            <b>示例与配置：</b>衰减率、初始值和获取倍率均可由服务器调整。实际数值以 <code>/headiet</code> 面板和服务器配置为准。
           </div>
         </section>
 
         <section class="page-section" id="stages" aria-labelledby="stages-title">
           <h2 id="stages-title"><span class="num">03</span>阶段</h2>
-          <p class="lead">阶段就是给进度条贴标签：这一段叫“缺乏”，那一段叫“均衡”，再往右叫“过量”。标签只是名字，真正有用的是每段能挂什么。</p>
-          <p>阶段边界用整数划分，编辑器会检查相邻阶段，避免出现“小数刚好落在两个阶段中间”的空档。判定时先四舍五入，再找区间。</p>
+          <p class="lead">阶段是营养值区间及其关联行为。每个区间可设置名称、说明、命令和加成。</p>
+          <p>阶段边界使用整数。编辑器会校验相邻区间，避免数值落在阶段之间的空档；判定时先四舍五入，再匹配区间。</p>
 
           <div class="stage-demo" aria-label="阶段判定示意">
             <div class="stage-ladder" aria-hidden="true">
@@ -213,51 +213,51 @@
               <div class="stage-seg high">高 70–100</div>
               <span class="stage-marker" id="stage-marker" style="left:59.6%"></span>
             </div>
-            <label class="slider-label" for="stage-range"><span>拖动试试</span><b id="stage-value">59.6</b></label>
+            <label class="slider-label" for="stage-range"><span>示例数值</span><b id="stage-value">59.6</b></label>
             <input id="stage-range" type="range" min="0" max="100" step="0.1" value="59.6" aria-label="示例营养值">
             <div class="stage-readout">
               <span>按整数判定：<b id="stage-rounded">60</b></span>
               <span>当前示例阶段：<b id="stage-name">中段</b></span>
             </div>
           </div>
-          <div class="figure-caption">阶段名称和 0–29 / 30–69 / 70–100 只是示例；你的服务器可能分更多段，也可能用完全不同的边界。</div>
+          <div class="figure-caption">阶段名称与 0–29 / 30–69 / 70–100 仅为示例；服务器可配置更多阶段或不同边界。</div>
 
-          <h3>每个阶段能配什么</h3>
+          <h3>阶段可配置项</h3>
           <div class="grid-3">
             <div class="mini-card">
-              <b>名称和描述</b>
-              <span>告诉玩家现在处于什么状态，以及这个状态要注意什么。描述会出现在营养面板的悬浮提示里。</span>
+              <b>名称与描述</b>
+              <span>标识阶段并说明当前状态；描述显示在营养面板的悬浮提示中。</span>
             </div>
             <div class="mini-card">
               <b>点击命令</b>
-              <span>玩家在营养界面点击这一阶段时执行。命令以管理员权限运行，输出不刷屏。</span>
+              <span>玩家点击阶段时执行；以管理员权限运行，输出被抑制。</span>
             </div>
             <div class="mini-card">
               <b>自动加成预览</b>
-              <span>把这一阶段配置的属性和效果自动列进提示里；不想重复显示时可以关掉这个预览。</span>
+              <span>将阶段配置的属性与效果自动加入提示；可关闭以避免重复显示。</span>
             </div>
           </div>
 
           <div class="callout">
-            <b>点击有冷却：</b>同一玩家的阶段命令点击间隔是 <b>1.5 秒</b>，服务端也会再校验一次。命令内容由服主决定；陌生服务器上别乱点看不懂的阶段。
+            <b>点击冷却：</b>阶段命令的同一玩家点击间隔为 <b>1.5 秒</b>，服务端会再次校验。命令由服主配置；请勿点击来源不明的阶段命令。
           </div>
         </section>
 
         <section class="page-section" id="bonuses" aria-labelledby="bonuses-title">
-          <h2 id="bonuses-title"><span class="num">04</span>加成和联动</h2>
-          <p class="lead">阶段里可以挂两样东西：属性，或者药水效果。多个组同时满足条件，就是联动加成。</p>
+          <h2 id="bonuses-title"><span class="num">04</span>加成与联动</h2>
+          <p class="lead">阶段可绑定属性修饰器或药水效果；多个组同时满足区间条件时，可触发联动加成。</p>
           <div class="grid-3">
             <div class="mini-card">
               <b>属性加成</b>
-              <span>比如最大生命、移动速度。默认大约每 5 秒评估一次；服务器可以调整。</span>
+              <span>例如最大生命、移动速度；默认约每 5 秒评估一次，服务器可调整。</span>
             </div>
             <div class="mini-card">
               <b>药水效果</b>
-              <span>比如生命恢复、抗性提升。默认大约每 10 秒刷新；效果时长最好长于 10 秒，避免断档。</span>
+              <span>例如生命恢复、抗性提升；默认约每 10 秒刷新。默认节奏下，效果时长应长于 10 秒以避免断档。</span>
             </div>
             <div class="mini-card">
               <b>联动加成</b>
-              <span>把多个组的区间写进同一份条件，全部满足才给；不是“任意一个满足”。</span>
+              <span>多个组的区间条件写入同一配置，全部满足后生效。</span>
             </div>
           </div>
 
@@ -273,18 +273,18 @@
               <div class="flow-arrow" aria-hidden="true">→</div>
               <div class="flow-node accent"><b>全部满足</b>才给额外效果</div>
             </div>
-            <div class="figure-caption">联动条件不是“或”。任何一个组掉出区间，这个组合就不成立。</div>
+            <div class="figure-caption">联动条件为 AND 关系；任一组离开区间即不成立。</div>
           </div>
 
           <div class="callout">
-            <b>离开阶段会怎样：</b>加成不再维持，由刷新周期更新。属性会回收，药水效果则按自己的剩余时长自然结束；所以效果时长要和刷新节奏配合。
+            <b>离开阶段后：</b>加成不再维持，由刷新周期更新。属性修饰器会被回收；药水效果按剩余时长结束，因此时长需与刷新节奏匹配。
           </div>
         </section>
 
         <section class="page-section" id="conditions" aria-labelledby="conditions-title">
           <h2 id="conditions-title"><span class="num">05</span>条件规则</h2>
-          <p class="lead">普通营养值是“吃了就加”；条件规则是“先看条件，再决定这一口怎么算”。</p>
-          <p>它可以同时检查多个营养组，全部满足后，再对任意组做加减、执行命令，或者两件事一起做。条件组和目标组可以不是同一个组。</p>
+          <p class="lead">普通营养结算在进食时直接执行；条件规则在普通结算之后，根据营养区间决定额外变化或命令。</p>
+          <p>条件规则可同时检查多个营养组，全部满足后对任意组执行加减、运行命令，或同时执行两者。条件组与目标组可以不同。</p>
 
           <div class="figure">
             <div class="flow" aria-label="条件规则执行顺序">
@@ -294,9 +294,9 @@
               <div class="flow-arrow" aria-hidden="true">→</div>
               <div class="flow-node accent"><b>执行结果</b>营养变化 / 命令</div>
               <div class="flow-arrow" aria-hidden="true">→</div>
-              <div class="flow-node"><b>夹到 0–100</b>不会冲出范围</div>
+              <div class="flow-node"><b>夹到 0–100</b>按边界夹取</div>
             </div>
-            <div class="figure-caption">条件规则在普通营养结算之后判断，所以同一份食物对同一个组既写普通值、又写条件变化时，两段会先后生效。</div>
+            <div class="figure-caption">条件规则在普通营养结算之后执行；同一食物对同一组同时配置普通值与条件变化时，两段会依次结算。</div>
           </div>
 
           <div class="rule-mock" aria-label="条件规则示意">
@@ -320,27 +320,27 @@
             </div>
           </div>
 
-          <h3>两个常见用法</h3>
+          <h3>两种常见配置</h3>
           <div class="example">
-            <span class="label">把好东西限制在安全线内</span>
+            <span class="label">限制上限</span>
             <p><b>条件：</b>肉类在 <code>0–86</code>。<b>目标：</b>肉类 <code>+20</code>。</p>
-            <p>你现在 80，吃下去最多到 86 就停；你已经 90，条件不成立，这一口不增加。</p>
+            <p>当前 80 时进食，最多到 86；当前 90 时条件不成立，不增加。</p>
           </div>
           <div class="example">
-            <span class="label">把危险值拉回来</span>
+            <span class="label">回落修正</span>
             <p><b>条件：</b>肉类在 <code>86–100</code>。<b>目标：</b>肉类 <code>-30</code>。</p>
-            <p>你现在 95，吃下去会降到 86 附近就停，不会一口气降到缺乏区。</p>
+            <p>当前 95 时进食，降至 86 附近即停止，不会继续落入低值区。</p>
           </div>
 
           <div class="callout warn">
-            <b>一个组别重复叠加：</b>如果同一份食物对同一个组既配了普通营养值，又配了针对该组的条件变化，两段会先后生效。通常只选其中一种表达方式，别让它们互相打架。
+            <b>同一组的重复结算：</b>若同一食物对同一组同时配置普通营养值与条件变化，两段会依次执行。通常只保留一种表达方式，避免重复结算。
           </div>
         </section>
 
         <section class="page-section" id="items" aria-labelledby="items-title">
-          <h2 id="items-title"><span class="num">06</span>编辑器和变体</h2>
-          <p class="lead">在游戏里手持物品输入 <code>/hdui</code>，就能打开这只食物的配置入口。</p>
-          <p>编辑器把营养、厌倦、口渴、饱食度、堆叠、品质、保质期、效果、指令、条件和清除效果放在同一个界面里。下面只是布局示意，不是实际截图。</p>
+          <h2 id="items-title"><span class="num">06</span>编辑器与变体</h2>
+          <p class="lead">手持物品输入 <code>/hdui</code>，打开该物品的配置入口。</p>
+          <p>编辑器集成营养、厌倦、口渴、饱食度、堆叠、品质、保质期、效果、指令、条件与清除效果。下图为布局示意，并非实际截图。</p>
 
           <div class="editor-mock" aria-label="物品编辑器示意">
             <div class="editor-head"><b>物品编辑器 · 示意</b><span>手持物品 /hdui</span></div>
@@ -361,12 +361,12 @@
               <div class="editor-field"><span>水果</span><span class="editor-input">+26</span></div>
               <div class="editor-field"><span>糖分</span><span class="editor-input">+12</span></div>
               <div class="editor-field"><span>条件规则</span><span class="editor-input">1 条 · 点击编辑</span></div>
-              <div class="editor-note">示例字段。实际页签、输入框和保存行为以当前游戏界面为准。</div>
+              <div class="editor-note">示例字段；实际页签与保存行为以游戏内界面为准。</div>
             </div>
           </div>
 
-          <h3>NBT 变体：同名物品，两套配置</h3>
-          <p>同一个物品可以按 NBT 分成多个变体。每个变体保存自己的一份配置；玩家吃下时命中哪个变体，就用哪一份。比如同一瓶药水，可以给不同 NBT 配不同的营养。</p>
+          <h3>NBT 变体：同名物品的独立配置</h3>
+          <p>同一物品可按 NBT 划分为多个变体，每个变体保存独立配置；进食时使用命中变体的配置。例如同一药水的不同 NBT 可配置不同营养。</p>
 
           <div class="variant-grid">
             <div class="variant-card">
@@ -398,10 +398,10 @@
               </div>
             </div>
           </div>
-          <div class="figure-caption">变体数值只是示意。每个变体是独立配置，不是自动继承通用条。</div>
+          <div class="figure-caption">变体数值为示意。每个变体保存独立配置，不自动继承通用条。</div>
 
           <div class="callout">
-            <b>堆叠上限是物品级的：</b>同一物品的不同变体不能各设一个堆叠数。口渴值等按物品计算的配置也按同样思路处理。
+            <b>堆叠上限为物品级属性：</b>同一物品的不同变体不能设置不同堆叠数。口渴值等物品级配置同理。
           </div>
 
           <h3>常用入口</h3>
@@ -412,12 +412,12 @@
             <li><code>/hdui registry</code>：物品注册管理。</li>
             <li><code>/hdui tooltip</code>：手持物品的 Tooltip 编辑入口。</li>
           </ul>
-          <p>营养组定义现在由数据包承载；在编辑器里创建或修改会写入配置覆盖层。旧的 <code>/hdgroups</code> 已经删除。</p>
+          <p>营养组定义由数据包承载；编辑器中的创建或修改会写入配置覆盖层。旧 <code>/hdgroups</code> 已删除。</p>
         </section>
 
         <section class="page-section" id="admin" aria-labelledby="admin-title">
           <h2 id="admin-title"><span class="num">07</span>管理与命令</h2>
-          <p class="lead">普通玩家看自己的面板就够了；改别人的数值、暂停组，需要相应权限。</p>
+          <p class="lead">普通玩家可查看自身面板；修改其他玩家数值或暂停营养组需要相应权限。</p>
           <div class="table-wrap">
             <table>
               <thead><tr><th>命令</th><th>用途</th></tr></thead>
@@ -431,24 +431,24 @@
             </table>
           </div>
           <div class="callout good">
-            <b>暂停组：</b>暂停后这个组既不随进食增加，也不自然衰减，适合剧情、新手保护或临时活动。恢复后按正常规则继续。
+            <b>暂停组：</b>暂停期间该组不随进食增加，也不自然衰减；适用于剧情、新手保护或限时活动。恢复后按正常规则继续。
           </div>
         </section>
 
         <section class="page-section" id="demo" aria-labelledby="demo-title">
-          <h2 id="demo-title"><span class="num">08</span>动手试试</h2>
-          <p class="lead">看懂了，就点进演示，自己吃几口试试。</p>
-          <p>演示用虚构食物和示例阈值展示六组营养、阶段和跨组条件的响应。它不连接游戏、不读取服务器配置，也不代表任何服务器的真实数值。</p>
+          <h2 id="demo-title"><span class="num">08</span>交互演示</h2>
+          <p class="lead">交互演示可用于验证上述数值与条件行为。</p>
+          <p>演示使用虚构食物与示例阈值，展示营养组、阶段和跨组条件的响应；不连接游戏，不读取服务器配置。</p>
           <div class="demo-card">
             <div><b>营养交互演示</b><span>六组进度条 · 四种示例食物 · 跨组条件 · 中英切换</span></div>
             <a href="../nutrition-demo/">打开演示</a>
           </div>
 
-          <h3>最后记三句</h3>
+          <h3>要点回顾</h3>
           <ol class="summary-list">
-            <li><b>0–100，阶段看整数。</b>小数会保留，但判定阶段时四舍五入。</li>
-            <li><b>饱食度掉，营养值才掉。</b>按衰减率算，饱和度不算；死亡不清空。</li>
-            <li><b>阶段管状态，条件规则管这一口。</b>具体组、阈值和效果，永远看你所在服务器。</li>
+            <li><b>数值范围为 0–100。</b>小数保留，阶段判定时四舍五入。</li>
+            <li><b>营养值随饱食度消耗按衰减率下降。</b>饱和度不参与；死亡不清空。</li>
+            <li><b>阶段控制持续状态，条件规则控制单次进食结算。</b>实际组、阈值与效果以服务器配置为准。</li>
           </ol>
         </section>
 
