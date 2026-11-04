@@ -39,7 +39,7 @@
     </section>
 
     <div class="notice" role="note">
-      <strong>范围说明：</strong>本页解释机制，不提供默认值。营养组、阶段、衰减率、命令和效果均由服务器配置；图中数字仅用于说明计算与交互。
+      <strong>范围说明：</strong>下方营养面板采用 Forge 主线随模组提供的营养组、阶段、加成和配色配置；玩家数值是为展示多个阶段而选取的示例值，不是初始值。NeoForge 支线的内置阶段不同，实际内容以所在服务器加载的配置为准。
     </div>
 
     <div class="layout">
@@ -89,69 +89,18 @@
           </div>
 
           <h3>营养面板示意</h3>
-          <p>按 H 打开营养面板。每个营养组占一行，显示组名、进度条和百分比；进度条上的分区对应阶段，悬停可查看阶段说明。</p>
+          <p>按 H 打开营养面板。组名、配色和阶段范围取自 Forge 主线内置 JSON；悬停或键盘聚焦每个阶段，查看其实际配置的加成预览。默认阶段没有手写名称或描述，因此提示仅显示区间、配置的加成与必要的点击指令提示。</p>
 
           <div class="figure">
-            <div class="mock-panel" aria-label="营养面板示意">
-              <div class="mock-head"><b>营养面板 · 示意</b><span>按 H 打开</span></div>
-              <div class="mock-rows">
-                <div class="mock-row" style="--c:#89b4fa">
-                  <span class="mock-icon" aria-hidden="true"></span><span class="mock-name">乳制品</span>
-                  <div class="mock-track" tabindex="0" aria-label="乳制品 14.0%，示例低段">
-                    <span class="mock-seg" style="left:0;width:25%"></span><span class="mock-seg" style="left:25%;width:40%"></span><span class="mock-seg" style="left:65%;width:35%"></span>
-                    <span class="mock-fill" style="width:14%"></span>
-                    <span class="mock-tip">示例低段 0–24<br>点击可执行阶段命令（示意）</span>
-                  </div>
-                  <span class="mock-pct">14.0%</span>
-                </div>
-                <div class="mock-row" style="--c:#fab387">
-                  <span class="mock-icon" aria-hidden="true"></span><span class="mock-name">水果</span>
-                  <div class="mock-track" tabindex="0" aria-label="水果 54.0%，示例中段">
-                    <span class="mock-seg" style="left:0;width:25%"></span><span class="mock-seg" style="left:25%;width:40%"></span><span class="mock-seg" style="left:65%;width:35%"></span>
-                    <span class="mock-fill" style="width:54%"></span>
-                    <span class="mock-tip">示例中段 25–64<br>点击可执行阶段命令（示意）</span>
-                  </div>
-                  <span class="mock-pct">54.0%</span>
-                </div>
-                <div class="mock-row" style="--c:#f9e2af">
-                  <span class="mock-icon" aria-hidden="true"></span><span class="mock-name">谷物</span>
-                  <div class="mock-track" tabindex="0" aria-label="谷物 48.0%，示例中段">
-                    <span class="mock-seg" style="left:0;width:25%"></span><span class="mock-seg" style="left:25%;width:40%"></span><span class="mock-seg" style="left:65%;width:35%"></span>
-                    <span class="mock-fill" style="width:48%"></span>
-                    <span class="mock-tip">示例中段 25–64<br>点击可执行阶段命令（示意）</span>
-                  </div>
-                  <span class="mock-pct">48.0%</span>
-                </div>
-                <div class="mock-row" style="--c:#cba6f7">
-                  <span class="mock-icon" aria-hidden="true"></span><span class="mock-name">蛋白质</span>
-                  <div class="mock-track" tabindex="0" aria-label="蛋白质 33.0%，示例中段">
-                    <span class="mock-seg" style="left:0;width:25%"></span><span class="mock-seg" style="left:25%;width:40%"></span><span class="mock-seg" style="left:65%;width:35%"></span>
-                    <span class="mock-fill" style="width:33%"></span>
-                    <span class="mock-tip">示例中段 25–64<br>点击可执行阶段命令（示意）</span>
-                  </div>
-                  <span class="mock-pct">33.0%</span>
-                </div>
-                <div class="mock-row" style="--c:#f38ba8">
-                  <span class="mock-icon" aria-hidden="true"></span><span class="mock-name">糖分</span>
-                  <div class="mock-track" tabindex="0" aria-label="糖分 21.0%，示例低段">
-                    <span class="mock-seg" style="left:0;width:25%"></span><span class="mock-seg" style="left:25%;width:40%"></span><span class="mock-seg" style="left:65%;width:35%"></span>
-                    <span class="mock-fill" style="width:21%"></span>
-                    <span class="mock-tip">示例低段 0–24<br>点击可执行阶段命令（示意）</span>
-                  </div>
-                  <span class="mock-pct">21.0%</span>
-                </div>
-                <div class="mock-row" style="--c:#a6e3a1">
-                  <span class="mock-icon" aria-hidden="true"></span><span class="mock-name">蔬菜</span>
-                  <div class="mock-track" tabindex="0" aria-label="蔬菜 26.0%，示例中段">
-                    <span class="mock-seg" style="left:0;width:25%"></span><span class="mock-seg" style="left:25%;width:40%"></span><span class="mock-seg" style="left:65%;width:35%"></span>
-                    <span class="mock-fill" style="width:26%"></span>
-                    <span class="mock-tip">示例中段 25–64<br>点击可执行阶段命令（示意）</span>
-                  </div>
-                  <span class="mock-pct">26.0%</span>
-                </div>
-              </div>
+            <div class="mock-panel" aria-label="以 Forge 主线内置配置为依据的营养面板示意">
+              <div class="mock-head"><b>营养状态 · 配置示意</b><span>按 H 打开</span></div>
+              <div class="mock-rows" id="mock-rows"></div>
+              <div class="mock-actions"><button id="mock-check" type="button" aria-describedby="mock-bonus-tip">检查完毕</button><div class="mock-bonus-tip" id="mock-bonus-tip" role="tooltip"></div></div>
             </div>
-            <div class="figure-caption">HTML 模拟界面，并非游戏截图。组名、数量、阶段和数值均由服务器配置；悬停进度条可查看示例提示。</div>
+            <div class="figure-caption">HTML 模拟界面，不是游戏截图。六个色块不代替物品图标；展示数值为示例玩家状态，并非默认初始值。将鼠标移到阶段分区或使用 Tab 聚焦，查看该段的实际默认加成；悬停“检查完毕”可查看这组示例值当前激活的加成。这里不会实际执行游戏命令。</div>
+          </div>
+          <div class="source-note">
+            <b>配置来源</b>：<code>nutrition_groups.json</code> 与默认数据包中的 <code>nutrition_stages/*.json</code>、<code>nutrition_bonuses/*.json</code>；配色来自 <code>color_schemes.json</code>。例如默认蔬菜组的 <code>initialValue</code> 为 42、<code>decayRate</code> 为 6；图中 55% 只为展示 46–60 区间的加成。加成悬浮依据 <code>HealthyDietScreen</code> 与 <code>BonusTooltipUtil</code>，不是把任意描述写进默认配置。
           </div>
 
           <div class="callout good">
@@ -449,6 +398,151 @@
   <script src="assets/guide.js"></script>
   <script>
     (() => {
+      // 内置配置快照：nutrition_groups.json、nutrition_stages/*.json、nutrition_bonuses/*.json 与 color_schemes.json。
+      const groups = [
+        { key: "vegetables", name: "Vegetables", value: 55, initial: 42, decay: 6, colors: ["#FDFC47", "#3DF750"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]] },
+        { key: "fruits", name: "Fruits", value: 55, initial: 42, decay: 6, colors: ["#f4c4f3", "#fc67fa"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]], command: "81-100" },
+        { key: "meat", name: "Protein", value: 65, initial: 42, decay: 6, colors: ["#ff6a6e", "#ffc371"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]] },
+        { key: "grains", name: "Grains", value: 65, initial: 42, decay: 6, colors: ["#78350F", "#B45309", "#D97706", "#FDE68A"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]] },
+        { key: "sugar", name: "Sugar", value: 88, initial: 48, decay: 5, colors: ["#b3ffab", "#12fff7"], stages: [[0, 10], [11, 50], [51, 85], [86, 92], [93, 100]], command: "93-100" },
+        { key: "dairy", name: "Dairy", value: 88, initial: 48, decay: 5, colors: ["#8e9eab", "#eef2f3"], stages: [[0, 10], [11, 50], [51, 85], [86, 92], [93, 100]] }
+      ];
+      const rules = [
+        [{ vegetables: [0, 10] }, [["forge:block_reach", -1]], []],
+        [{ vegetables: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ vegetables: [61, 70] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor_toughness", 2]], []],
+        [{ vegetables: [71, 80] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor_toughness", 4]], []],
+        [{ vegetables: [81, 100] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor_toughness", 4]], []],
+        [{ fruits: [0, 10] }, [], [["minecraft:slowness", 0]]],
+        [{ fruits: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ fruits: [61, 70] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.attack_speed", 0.05]], []],
+        [{ fruits: [71, 80] }, [["minecraft:generic.max_health", 4], ["minecraft:generic.attack_speed", 0.1]], []],
+        [{ fruits: [81, 100] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.attack_speed", 0.2]], []],
+        [{ meat: [0, 10] }, [], [["minecraft:weakness", 0]]],
+        [{ meat: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ meat: [61, 70] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor", 1]], []],
+        [{ meat: [71, 80] }, [["minecraft:generic.max_health", 4], ["minecraft:generic.armor", 2]], []],
+        [{ meat: [81, 100] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.armor", 4]], []],
+        [{ grains: [0, 10] }, [], [["minecraft:slowness", 0]]],
+        [{ grains: [46, 60] }, [["minecraft:generic.attack_knockback", 0.5]], []],
+        [{ grains: [61, 70] }, [["minecraft:generic.max_health", 4]], []],
+        [{ grains: [71, 80] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.attack_damage", 0.5]], []],
+        [{ grains: [81, 100] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.attack_damage", 1]], []],
+        [{ sugar: [0, 10] }, [["minecraft:generic.attack_knockback", -0.2]], []],
+        [{ sugar: [51, 85] }, [], [["minecraft:speed", 0]]],
+        [{ sugar: [86, 92] }, [], [["minecraft:speed", 1]]],
+        [{ sugar: [93, 100] }, [], [["minecraft:speed", 1]]],
+        [{ dairy: [0, 10] }, [["forge:entity_reach", -0.3]], []],
+        [{ dairy: [51, 85] }, [["forge:step_height_addition", 0.2], ["forge:swim_speed", 0.2]], []],
+        [{ dairy: [86, 92] }, [["forge:swim_speed", 0.3], ["forge:step_height_addition", 0.52]], []],
+        [{ dairy: [93, 100] }, [["forge:swim_speed", 0.4], ["forge:step_height_addition", 0.6]], []],
+        [{ vegetables: [46, 60], fruits: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ vegetables: [81, 100], fruits: [81, 100] }, [["forge:block_reach", 1.5]], []],
+        [{ grains: [81, 100], meat: [81, 100] }, [["minecraft:generic.attack_speed", 0.5]], [["minecraft:resistance", 0]]],
+        [{ grains: [46, 60], meat: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ dairy: [93, 100], sugar: [93, 100] }, [["minecraft:generic.luck", -3]], [["minecraft:hunger", 0], ["minecraft:haste", 2], ["minecraft:slowness", 0]]],
+        [{ dairy: [86, 92], sugar: [86, 92] }, [], [["minecraft:haste", 1]]]
+      ];
+      const names = {
+        "forge:block_reach": "方块触及距离", "forge:entity_reach": "实体触及距离",
+        "forge:step_height_addition": "跨越高度", "forge:swim_speed": "游泳速度",
+        "minecraft:generic.max_health": "最大生命值", "minecraft:generic.armor_toughness": "盔甲韧性",
+        "minecraft:generic.armor": "盔甲", "minecraft:generic.attack_speed": "攻击速度",
+        "minecraft:generic.attack_damage": "攻击伤害", "minecraft:generic.attack_knockback": "攻击击退",
+        "minecraft:generic.luck": "幸运", "minecraft:slowness": "缓慢", "minecraft:weakness": "虚弱",
+        "minecraft:speed": "速度", "minecraft:resistance": "抗性提升", "minecraft:hunger": "饥饿", "minecraft:haste": "急迫"
+      };
+      const appendLine = (parent, text, style) => {
+        const line = document.createElement("span");
+        line.className = style;
+        line.textContent = text;
+        parent.append(line);
+      };
+      const rows = document.getElementById("mock-rows");
+      if (rows) {
+        for (const group of groups) {
+          const row = document.createElement("div");
+          row.className = "mock-row";
+          row.style.setProperty("--c", group.colors[0]);
+          row.style.setProperty("--text-color", group.colors[group.colors.length - 1]);
+          row.style.setProperty("--gradient", `linear-gradient(90deg, ${group.colors.join(", ")})`);
+          const icon = document.createElement("span");
+          icon.className = "mock-icon";
+          icon.setAttribute("aria-hidden", "true");
+          const name = document.createElement("span");
+          name.className = "mock-name";
+          name.textContent = group.name;
+          const track = document.createElement("div");
+          track.className = "mock-track";
+          const fill = document.createElement("span");
+          fill.className = "mock-fill";
+          fill.style.width = group.value + "%";
+          track.append(fill);
+          const tip = document.createElement("div");
+          tip.className = "mock-tip";
+          tip.setAttribute("role", "tooltip");
+          for (let i = 0; i < group.stages.length; i++) {
+            const [min, max] = group.stages[i];
+            const nextMin = group.stages[i + 1]?.[0] ?? 100;
+            const segment = document.createElement("button");
+            segment.type = "button";
+            segment.className = "mock-seg";
+            segment.style.left = min + "%";
+            segment.style.width = (nextMin - min) + "%";
+            const matches = rules.filter(([conditions]) => {
+              const bound = conditions[group.key];
+              return bound && bound[0] === min && bound[1] === max;
+            });
+            const other = conditions => Object.entries(conditions)
+              .filter(([key]) => key !== group.key)
+              .map(([key, bounds]) => `${groups.find(g => g.key === key).name} ${bounds[0]}~${bounds[1]}`)
+              .join(", ");
+            const details = [`${min}~${max}`];
+            for (const [conditions, attributes, effects] of matches) {
+              const suffix = other(conditions);
+              for (const [id, value] of attributes) details.push(`${value >= 0 ? "+" : ""}${value} ${names[id]}${suffix ? ` (${suffix})` : ""}`);
+              for (const [id, level] of effects) details.push(`${names[id]} Lv.${level + 1}${suffix ? ` (${suffix})` : ""}`);
+            }
+            if (group.command === `${min}-${max}`) details.push("点击执行说明指令");
+            segment.setAttribute("aria-label", `${group.name} 阶段 ${details.join("；")}`);
+            const showTip = () => {
+              tip.replaceChildren();
+              appendLine(tip, `${min}~${max}`, "tip-range");
+              for (const [conditions, attributes, effects] of matches) {
+                const suffix = other(conditions);
+                for (const [id, value] of attributes) appendLine(tip, `  ${value >= 0 ? "+" : ""}${value} ${names[id]}${suffix ? ` (${suffix})` : ""}`, value >= 0 ? "tip-attribute" : "tip-negative");
+                for (const [id, level] of effects) appendLine(tip, `  ${names[id]} Lv.${level + 1}${suffix ? ` (${suffix})` : ""}`, "tip-effect");
+              }
+              if (group.command === `${min}-${max}`) appendLine(tip, "点击执行说明指令", "tip-command");
+            };
+            segment.addEventListener("mouseenter", showTip);
+            segment.addEventListener("focus", showTip);
+            track.append(segment);
+            if (group.value >= min && group.value <= max) showTip();
+          }
+          track.append(tip);
+          const pct = document.createElement("span");
+          pct.className = "mock-pct";
+          pct.textContent = group.value.toFixed(1) + "%";
+          row.append(icon, name, track, pct);
+          rows.append(row);
+        }
+        const active = document.getElementById("mock-bonus-tip");
+        const attrTotals = new Map();
+        const effectLevels = new Map();
+        for (const [conditions, attributes, effects] of rules) {
+          if (!Object.entries(conditions).every(([key, [min, max]]) => {
+            const current = Math.round(groups.find(g => g.key === key).value);
+            return current >= min && current <= max;
+          })) continue;
+          for (const [id, value] of attributes) attrTotals.set(id, (attrTotals.get(id) ?? 0) + value);
+          for (const [id, level] of effects) effectLevels.set(id, Math.max(effectLevels.get(id) ?? 0, level));
+        }
+        appendLine(active, "当前激活的加成:", "tip-title");
+        for (const [id, value] of attrTotals) appendLine(active, `  ${value >= 0 ? "+" : ""}${value} ${names[id]}`, value >= 0 ? "tip-attribute" : "tip-negative");
+        for (const [id, level] of effectLevels) appendLine(active, `  ${names[id]} Lv.${level + 1}`, "tip-effect");
+      }
+
       const stageRange = document.getElementById("stage-range");
       const stageMarker = document.getElementById("stage-marker");
       const stageValue = document.getElementById("stage-value");
