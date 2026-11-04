@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Healthy Diet · 功能指南</title>
+  <link rel="stylesheet" href="assets/guide.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到正文</a>
+
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <span>Healthy Diet<small>FEATURE GUIDE</small></span>
+      </a>
+      <nav class="topnav" data-nav aria-label="章节导航">
+        <a href="index.html" aria-current="page">总览</a>
+        <a href="nutrition.html">营养值</a>
+      </nav>
+      <span class="lang-badge">中文</span>
+      <button class="menu-btn" type="button" data-menu aria-expanded="false" aria-label="打开章节导航">☰</button>
+    </div>
+  </header>
+
+  <main class="wrap" id="main">
+    <section class="hero">
+      <span class="eyebrow">HEALTHY DIET / FEATURE GUIDE</span>
+      <h1>把复杂的功能，拆成可以逐页读懂的规则。</h1>
+      <p>这套指南按功能域分区：营养、食物厌倦、品质、保质期、Tooltip、显示美化、TitlePro、小功能与服主配置。每一页只讲清楚一件事，并明确区分“示例”和“服务器实际配置”。</p>
+      <div class="tags">
+        <span class="tag">按当前源码整理</span>
+        <span class="tag">中文先行</span>
+        <span class="tag">不写死版本与数量</span>
+        <span class="tag">关键章节可交互</span>
+      </div>
+    </section>
+
+    <div class="notice" role="note">
+      <strong>先说明范围：</strong>本指南介绍模组提供的能力，不代表每个服务器都启用同一套数值。营养组、阶段阈值、命令、效果、保质期参数等均以你所在服务器和实际安装文件为准。
+    </div>
+
+    <section class="page-section">
+      <h2><span class="num">START</span>先看这里</h2>
+      <div class="grid-3">
+        <div class="mini-card">
+          <b>想先上手</b>
+          <span>从「营养值」开始：它决定吃什么、阶段怎么变化，也是后续条件规则与联动加成的基础。</span>
+        </div>
+        <div class="mini-card">
+          <b>想先体验</b>
+          <span>打开营养交互演示，用示例食物观察六组营养、阶段和跨组条件如何响应。演示不连接游戏。</span>
+        </div>
+        <div class="mini-card">
+          <b>想查配置</b>
+          <span>服主配置、命令、数据包和同步规则集中在「服主手册」；公开页面不写死内部版本号。</span>
+        </div>
+      </div>
+      <div class="callout good" style="margin-top:16px">
+        <b>阅读原则：</b>页面里的数字若标注“示例”，只用于解释机制；没有标注的数字来自当前源码默认值，仍可能被服务器覆盖。两者都不会冒充你所在世界的实际规则。
+      </div>
+    </section>
+
+    <section class="page-section">
+      <h2><span class="num">MAP</span>章节地图</h2>
+      <p>已完成的页面会显示为可点击卡片；其余章节按顺序整理。每页都会先做源码事实核对，再写公开文案。</p>
+      <div class="chapter-grid">
+        <a class="chapter ready" href="nutrition.html">
+          <span class="kicker">01 / NUTRITION</span>
+          <h3>营养值</h3>
+          <p>六组营养、数值与衰减、阶段、加成、条件规则、NBT 变体与管理命令。</p>
+          <span class="status">样章已完成 →</span>
+        </a>
+        <div class="chapter">
+          <span class="kicker">02 / FATIGUE</span>
+          <h3>食物厌倦</h3>
+          <p>短期厌倦、冷却恢复、终身厌食，以及两套机制如何叠加。</p>
+          <span class="status">整理中</span>
+        </div>
+        <div class="chapter">
+          <span class="kicker">03 / QUALITY</span>
+          <h3>品质、品级与物品注册</h3>
+          <p>图标角标、稀有度标签和独立注册物品三者的区别与配置。</p>
+          <span class="status">整理中</span>
+        </div>
+        <div class="chapter">
+          <span class="kicker">04 / SHELF LIFE</span>
+          <h3>保质期</h3>
+          <p>时间、温度与曲线、食用温度效果、冰箱保冷和多人服务器细节。</p>
+          <span class="status">整理中</span>
+        </div>
+        <div class="chapter">
+          <span class="kicker">05 / TOOLTIP</span>
+          <h3>Tooltip 与 D 模式</h3>
+          <p>提示行编排、显示设定、S/D 详情页、右 Ctrl 与饮食值行。</p>
+          <span class="status">整理中</span>
+        </div>
+        <div class="chapter">
+          <span class="kicker">06 / APPEARANCE</span>
+          <h3>渐变色与显示美化</h3>
+          <p>渐变方案、动态样式、纯色板，以及厌倦行和保质期状态行。</p>
+          <span class="status">整理中</span>
+        </div>
+        <div class="chapter">
+          <span class="kicker">07 / TITLEPRO</span>
+          <h3>TitlePro 与食用效果</h3>
+          <p>标题编辑器、五个标题指令、药水效果、食用指令和清除效果。</p>
+          <span class="status">整理中</span>
+        </div>
+        <div class="chapter">
+          <span class="kicker">08 / MISC</span>
+          <h3>小功能合集</h3>
+          <p>液体装填、去雾、方块食物、克隆物品、清弹窗与指令速查。</p>
+          <span class="status">整理中</span>
+        </div>
+        <div class="chapter">
+          <span class="kicker">09 / ADMIN</span>
+          <h3>服主手册</h3>
+          <p>全局配置、配置文件、数据包覆盖层与客户端/服务端同步规则。</p>
+          <span class="status">整理中</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section">
+      <h2><span class="num">DEMO</span>交互演示</h2>
+      <p>营养演示已先行完成：它使用虚构示例数据，展示六组营养、阶段区间和跨组条件的响应，不读取游戏或服务器数据。</p>
+      <div class="demo-card">
+        <div><b>营养交互演示</b><span>六组进度条 · 四种示例食物 · 跨组条件 · 中英切换</span></div>
+        <a href="../nutrition-demo/">打开演示</a>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <span>Healthy Diet · Feature Guide</span>
+      <span>基于当前源码整理 · 具体规则以服务器配置为准</span>
+    </footer>
+  </main>
+
+  <script src="assets/guide.js"></script>
+</body>
+</html>
