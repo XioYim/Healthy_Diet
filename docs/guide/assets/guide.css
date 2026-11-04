@@ -436,6 +436,18 @@ td code { white-space: nowrap; }
 .chapter.ready .status { color: var(--green); }
 .chapter a { margin-top: auto; color: var(--green); font-size: 12px; font-weight: 650; }
 .chapter a:hover { text-decoration: underline; }
+.chapter.ready:hover { border-color: var(--green); text-decoration: none; transform: translateY(-2px); }
+.chapter.ready h3 { color: var(--ink); }
+
+.demo-control { margin: 16px 0; padding: 17px; border: 1px solid var(--line); border-radius: 12px; background: #18182588; }
+.demo-control label { display: block; margin-bottom: 8px; color: var(--ink); font-size: 13px; font-weight: 650; }
+.demo-control input[type="range"] { display: block; width: 100%; accent-color: var(--green); }
+.demo-control select { max-width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--raised); color: var(--ink); font: inherit; }
+.demo-result { display: block; margin-top: 12px; padding: 10px 13px; border-radius: 8px; background: #a6e3a10d; color: var(--green); font-weight: 650; }
+.flow-note { display: block; margin-top: 8px; color: var(--faint); font-size: 11px; }
+.page-section details { margin: 10px 0; border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; background: #31324466; }
+.page-section summary { cursor: pointer; color: var(--ink); font-weight: 650; }
+.page-section details p, .page-section details ul { margin: 10px 0 2px; }
 
 /* ── illustrated explainers ─────────────────────────────── */
 .lead {
@@ -815,7 +827,7 @@ input[type="range"] {
 
 @media (max-width: 900px) {
   .layout { grid-template-columns: 1fr; }
-  .toc { position: static; display: none; }
+  .toc { position: static; display: block; }
   .toc.open { display: block; }
   .menu-btn { display: inline-grid; place-items: center; }
   .topnav { display: none; }
