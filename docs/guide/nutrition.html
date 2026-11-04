@@ -29,181 +29,395 @@
   <main class="wrap" id="main">
     <section class="hero">
       <span class="eyebrow">01 / NUTRITION</span>
-      <h1>营养值：让饮食结构变成可配置规则。</h1>
-      <p>不是只看饱食度，而是让不同食物分别推动多个营养组；数值、衰减、阶段、提示、命令、属性和效果都由服务器配置。</p>
+      <h1>营养值，其实就三件事：吃什么、涨多少、什么时候触发。</h1>
+      <p>别急着背数字。先把进度条和阶段看懂，剩下的规则就顺下来了。下面所有界面和数字都是示意，真正生效的永远是你所在服务器的配置。</p>
       <div class="tags">
-        <span class="tag">范围 0–100</span>
-        <span class="tag">支持小数</span>
-        <span class="tag">阶段判定四舍五入</span>
-        <span class="tag">服务器权威</span>
+        <span class="tag">0–100</span>
+        <span class="tag">可以带小数</span>
+        <span class="tag">阶段按整数判定</span>
+        <span class="tag">服务器说了算</span>
       </div>
     </section>
 
     <div class="notice" role="note">
-      <strong>阅读提示：</strong>本页说明模组提供的规则。你所在服务器实际启用了哪些营养组、阶段阈值、命令和加成，以服务器配置与游戏内营养面板为准；文中的区间和数值若标注“示例”，不冒充默认值。
+      <strong>先打个招呼：</strong>这篇是“看懂机制”，不是“背默认值”。你服务器的营养组、阶段、衰减率、命令和效果可能完全不一样；图里的数字只是用来讲清楚变化过程。
     </div>
 
     <div class="layout">
       <aside class="toc" data-toc aria-label="本页目录">
         <h2>本页目录</h2>
         <ol>
-          <li><a href="#overview">它改变什么</a></li>
-          <li><a href="#values">数值与衰减</a></li>
+          <li><a href="#overview">一分钟看懂</a></li>
+          <li><a href="#values">涨与掉</a></li>
           <li><a href="#stages">阶段</a></li>
-          <li><a href="#bonuses">加成与联动</a></li>
+          <li><a href="#bonuses">加成和联动</a></li>
           <li><a href="#conditions">条件规则</a></li>
-          <li><a href="#items">食物、变体与编辑器</a></li>
+          <li><a href="#items">编辑器和变体</a></li>
           <li><a href="#admin">管理与命令</a></li>
-          <li><a href="#demo">交互演示</a></li>
+          <li><a href="#demo">动手试试</a></li>
         </ol>
-        <div class="toc-note">默认示例常见六组：乳制品、水果、谷物、蛋白质、糖分、蔬菜。服务器可以增删或改名。</div>
+        <div class="toc-note">常见默认示例是六组：乳制品、水果、谷物、蛋白质、糖分、蔬菜。服务器可以增删、改名或调整顺序。</div>
       </aside>
 
       <article>
         <section class="page-section" id="overview" aria-labelledby="overview-title">
-          <h2 id="overview-title"><span class="num">01</span>它改变什么</h2>
-          <p>原版食物主要提供饱食度和饱和度。Healthy Diet 在此基础上加入营养组：一份食物可以同时改变多个组，每个组再独立决定怎么衰减、进入什么阶段、显示什么提示，以及阶段内是否给予属性或效果。</p>
-          <div class="grid-3">
-            <div class="mini-card">
-              <b>吃什么</b>
-              <span>同一份食物可以给多个组加值；不同食物形成不同的营养结构，而不是只比较饱食度。</span>
+          <h2 id="overview-title"><span class="num">01</span>一分钟看懂</h2>
+          <p class="lead">把每个营养组想成一根独立的水槽：左边是 0，右边是 100。吃一口，就是往某几根水槽里加水；饿肚子，水槽也会慢慢漏水。</p>
+          <p>所以“吃苹果”不是只加一个数，而是可能同时推动水果和糖分两根条。不同食物推动的组不一样，这就是饮食结构的来源。</p>
+
+          <div class="figure">
+            <div class="food-demo">
+              <div class="food-card">
+                <span class="food-icon" aria-hidden="true">苹</span>
+                <b>苹果</b>
+                <span>示例食物</span>
+              </div>
+              <div class="food-arrow" aria-hidden="true">→</div>
+              <div class="mini-bars" aria-label="苹果对两个营养组的示例影响">
+                <div class="mini-bar" style="--c:#fab387">
+                  <span class="name">水果</span>
+                  <span class="track"><span class="fill" style="width:54%"></span></span>
+                  <span class="num">+26</span>
+                </div>
+                <div class="mini-bar" style="--c:#f38ba8">
+                  <span class="name">糖分</span>
+                  <span class="track"><span class="fill" style="width:21%"></span></span>
+                  <span class="num">+12</span>
+                </div>
+              </div>
             </div>
-            <div class="mini-card">
-              <b>怎么变</b>
-              <span>每组有自己的初始值、衰减率和获取倍率；营养值会随饱食度消耗而下降。</span>
-            </div>
-            <div class="mini-card">
-              <b>何时生效</b>
-              <span>阶段和跨组条件可以触发提示、命令、属性或药水效果；具体内容由服务器配置。</span>
-            </div>
+            <div class="figure-caption">示例：一份食物可以同时影响多个组。条的长度是吃完后的示意值，不是服务器默认值。</div>
           </div>
-          <div class="callout">
-            <b>别把示例当默认：</b>本页用“缺乏 / 均衡 / 过量”等字样解释阶段，是为了好读；真实阶段名称、边界和效果由服务器定义。
+
+          <h3>游戏里大概长这样</h3>
+          <p>按 H 打开自己的营养面板后，你会看到一组一行：组名、进度条、百分比。进度条上的浅色分区就是阶段，鼠标移到条上能看到这一段的说明。</p>
+
+          <div class="figure">
+            <div class="mock-panel" aria-label="营养面板示意">
+              <div class="mock-head"><b>营养面板 · 示意</b><span>按 H 打开</span></div>
+              <div class="mock-rows">
+                <div class="mock-row" style="--c:#89b4fa">
+                  <span class="mock-icon" aria-hidden="true">乳</span><span class="mock-name">乳制品</span>
+                  <div class="mock-track" tabindex="0" aria-label="乳制品 14.0%，示例低段">
+                    <span class="mock-seg" style="left:0;width:25%"></span><span class="mock-seg" style="left:25%;width:40%"></span><span class="mock-seg" style="left:65%;width:35%"></span>
+                    <span class="mock-fill" style="width:14%"></span>
+                    <span class="mock-tip">示例低段 0–24<br>点击可执行阶段命令（示意）</span>
+                  </div>
+                  <span class="mock-pct">14.0%</span>
+                </div>
+                <div class="mock-row" style="--c:#fab387">
+                  <span class="mock-icon" aria-hidden="true">果</span><span class="mock-name">水果</span>
+                  <div class="mock-track" tabindex="0" aria-label="水果 54.0%，示例中段">
+                    <span class="mock-seg" style="left:0;width:25%"></span><span class="mock-seg" style="left:25%;width:40%"></span><span class="mock-seg" style="left:65%;width:35%"></span>
+                    <span class="mock-fill" style="width:54%"></span>
+                    <span class="mock-tip">示例中段 25–64<br>点击可执行阶段命令（示意）</span>
+                  </div>
+                  <span class="mock-pct">54.0%</span>
+                </div>
+                <div class="mock-row" style="--c:#f9e2af">
+                  <span class="mock-icon" aria-hidden="true">谷</span><span class="mock-name">谷物</span>
+                  <div class="mock-track" tabindex="0" aria-label="谷物 48.0%，示例中段">
+                    <span class="mock-seg" style="left:0;width:25%"></span><span class="mock-seg" style="left:25%;width:40%"></span><span class="mock-seg" style="left:65%;width:35%"></span>
+                    <span class="mock-fill" style="width:48%"></span>
+                    <span class="mock-tip">示例中段 25–64<br>点击可执行阶段命令（示意）</span>
+                  </div>
+                  <span class="mock-pct">48.0%</span>
+                </div>
+                <div class="mock-row" style="--c:#cba6f7">
+                  <span class="mock-icon" aria-hidden="true">蛋</span><span class="mock-name">蛋白质</span>
+                  <div class="mock-track" tabindex="0" aria-label="蛋白质 33.0%，示例中段">
+                    <span class="mock-seg" style="left:0;width:25%"></span><span class="mock-seg" style="left:25%;width:40%"></span><span class="mock-seg" style="left:65%;width:35%"></span>
+                    <span class="mock-fill" style="width:33%"></span>
+                    <span class="mock-tip">示例中段 25–64<br>点击可执行阶段命令（示意）</span>
+                  </div>
+                  <span class="mock-pct">33.0%</span>
+                </div>
+                <div class="mock-row" style="--c:#f38ba8">
+                  <span class="mock-icon" aria-hidden="true">糖</span><span class="mock-name">糖分</span>
+                  <div class="mock-track" tabindex="0" aria-label="糖分 21.0%，示例低段">
+                    <span class="mock-seg" style="left:0;width:25%"></span><span class="mock-seg" style="left:25%;width:40%"></span><span class="mock-seg" style="left:65%;width:35%"></span>
+                    <span class="mock-fill" style="width:21%"></span>
+                    <span class="mock-tip">示例低段 0–24<br>点击可执行阶段命令（示意）</span>
+                  </div>
+                  <span class="mock-pct">21.0%</span>
+                </div>
+                <div class="mock-row" style="--c:#a6e3a1">
+                  <span class="mock-icon" aria-hidden="true">蔬</span><span class="mock-name">蔬菜</span>
+                  <div class="mock-track" tabindex="0" aria-label="蔬菜 26.0%，示例中段">
+                    <span class="mock-seg" style="left:0;width:25%"></span><span class="mock-seg" style="left:25%;width:40%"></span><span class="mock-seg" style="left:65%;width:35%"></span>
+                    <span class="mock-fill" style="width:26%"></span>
+                    <span class="mock-tip">示例中段 25–64<br>点击可执行阶段命令（示意）</span>
+                  </div>
+                  <span class="mock-pct">26.0%</span>
+                </div>
+              </div>
+            </div>
+            <div class="figure-caption">这是用 HTML 模拟的界面示意，不是游戏截图。组名、数量、阶段和数值都由服务器决定；鼠标移到进度条上可以看示例提示。</div>
+          </div>
+
+          <div class="callout good">
+            <b>先记住一句话：</b>饱食度回答“现在饿不饿”，营养值回答“长期吃了什么”。两者不是同一个条。
           </div>
         </section>
 
         <section class="page-section" id="values" aria-labelledby="values-title">
-          <h2 id="values-title"><span class="num">02</span>数值与衰减</h2>
+          <h2 id="values-title"><span class="num">02</span>涨与掉</h2>
+          <p class="lead">吃一口，先算这一口加多少；饿肚子，再按衰减率慢慢掉。</p>
+          <p>进食增加的大致关系是：<b>食物基础值 × 该组获取倍率</b>，有终身厌食时还会再乘一个衰减系数。算完以后，最终值会被夹在 0–100。管理员指令、自然衰减和初始值不走“获取倍率”这个入口。</p>
+
+          <div class="calc" aria-label="衰减计算示意">
+            <div class="calc-row">
+              <label for="decay-rate">衰减率</label>
+              <input id="decay-rate" type="range" min="1" max="10" step="0.5" value="4">
+              <output id="decay-rate-out">4</output>
+            </div>
+            <div class="calc-row">
+              <label for="hunger-used">消耗饱食度</label>
+              <input id="hunger-used" type="range" min="0" max="20" step="1" value="20">
+              <output id="hunger-used-out">20</output>
+            </div>
+            <div class="calc-result">
+              <span>营养值大约下降 <strong id="decay-loss">5.0</strong> 点</span>
+              <small>公式：饱食度 ÷ 衰减率；只看饱食度，饱和度不算</small>
+            </div>
+            <div class="mini-bars">
+              <div class="mini-bar" style="--c:#a6e3a1">
+                <span class="name">剩余</span>
+                <span class="track"><span class="fill" id="decay-fill" style="width:95%"></span></span>
+                <span class="num" id="decay-remain">95.0</span>
+              </div>
+            </div>
+          </div>
+          <div class="figure-caption">拖动滑块看公式怎么变。这里从 100 开始算，只是演示，不代表你进服时的初始值。</div>
+
           <ul class="rules">
-            <li><span class="n">1</span><span><b>范围固定为 0–100。</b>营养值可以带小数；实际进食增加或条件规则变化后，都会被限制在这个范围内。</span></li>
-            <li><span class="n">2</span><span><b>判定阶段时四舍五入。</b>例如 59.6 会按 60 去匹配阶段区间，避免小数落在两个整数边界之间。</span></li>
-            <li><span class="n">3</span><span><b>衰减只看饱食度。</b>衰减率表示“每消耗 1 点饱食度，营养值下降多少分之一”；饱和度不参与。</span></li>
-            <li><span class="n">4</span><span><b>死亡不会清空营养值。</b>玩家重生时营养数据会随能力复制，不把死亡当成重开。</span></li>
-            <li><span class="n">5</span><span><b>每组还有获取倍率。</b>它只乘在“进食增加”这一入口；管理员指令、自然衰减和初始值不走这个倍率。</span></li>
+            <li><span class="n">1</span><span><b>范围是 0–100。</b>营养值可以带小数，但无论怎么加、怎么减，最后都不会冲出这个范围。</span></li>
+            <li><span class="n">2</span><span><b>阶段判定看整数。</b>系统会把当前值四舍五入后再找阶段，所以 59.6 会按 60 算。</span></li>
+            <li><span class="n">3</span><span><b>死亡不会清空。</b>重生时营养数据会跟着复制，不把死亡当成重新开始。</span></li>
           </ul>
 
-          <div class="example">
-            <span class="label">示例</span>
-            <p>假设某组的衰减率是 <code>4</code>：把一整条 20 点饱食度从满消耗到空，这个组大约下降 <code>20 ÷ 4 = 5</code> 点。数字越大，掉得越慢。</p>
-            <p>这是解释公式的示例，不代表你所在服务器真的使用 4。</p>
-          </div>
-
           <div class="callout warn">
-            <b>服务器可以改：</b>初始值、衰减率、获取倍率、组是否存在，都由服务器配置决定。进服后先看 <code>/headiet</code> 面板，不要按单机或别的服务器的数值推算。
+            <b>别拿示例当默认：</b>衰减率、初始值和获取倍率都能被服务器改。想知道自己世界里的实际值，进游戏看 <code>/headiet</code> 面板或问服主。
           </div>
         </section>
 
         <section class="page-section" id="stages" aria-labelledby="stages-title">
           <h2 id="stages-title"><span class="num">03</span>阶段</h2>
-          <p>每个营养组可以切成多个连续阶段。阶段决定当前数值属于哪一档，也决定这一档显示什么提示、能点击执行什么命令，以及自动加成预览里出现什么内容。</p>
+          <p class="lead">阶段就是给进度条贴标签：这一段叫“缺乏”，那一段叫“均衡”，再往右叫“过量”。标签只是名字，真正有用的是每段能挂什么。</p>
+          <p>阶段边界用整数划分，编辑器会检查相邻阶段，避免出现“小数刚好落在两个阶段中间”的空档。判定时先四舍五入，再找区间。</p>
 
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>阶段元素</th><th>作用</th></tr></thead>
-              <tbody>
-                <tr><td>区间</td><td>用整数边界划分；编辑器会校验相邻阶段，避免出现无法命中的空档。</td></tr>
-                <tr><td>名称与描述</td><td>在营养面板和悬浮提示里解释当前状态；可写注意事项或整合包设定。</td></tr>
-                <tr><td>点击命令</td><td>玩家在营养界面点击该阶段时执行。命令以管理员权限运行，输出被抑制。</td></tr>
-                <tr><td>自动加成预览</td><td>把该阶段配置的属性/效果自动追加到提示里；可用阶段设置关闭，避免和自己写的文字重复。</td></tr>
-              </tbody>
-            </table>
+          <div class="stage-demo" aria-label="阶段判定示意">
+            <div class="stage-ladder" aria-hidden="true">
+              <div class="stage-seg low">低 0–29</div>
+              <div class="stage-seg mid">中 30–69</div>
+              <div class="stage-seg high">高 70–100</div>
+              <span class="stage-marker" id="stage-marker" style="left:59.6%"></span>
+            </div>
+            <label class="slider-label" for="stage-range"><span>拖动试试</span><b id="stage-value">59.6</b></label>
+            <input id="stage-range" type="range" min="0" max="100" step="0.1" value="59.6" aria-label="示例营养值">
+            <div class="stage-readout">
+              <span>按整数判定：<b id="stage-rounded">60</b></span>
+              <span>当前示例阶段：<b id="stage-name">中段</b></span>
+            </div>
           </div>
+          <div class="figure-caption">阶段名称和 0–29 / 30–69 / 70–100 只是示例；你的服务器可能分更多段，也可能用完全不同的边界。</div>
 
-          <div class="example">
-            <span class="label">示例阶段</span>
-            <p><code>0–29 缺乏</code> · <code>30–69 均衡</code> · <code>70–100 过量</code>。这三段只是示意；真实服务器可能有更多段、不同名称或不同边界。</p>
+          <h3>每个阶段能配什么</h3>
+          <div class="grid-3">
+            <div class="mini-card">
+              <b>名称和描述</b>
+              <span>告诉玩家现在处于什么状态，以及这个状态要注意什么。描述会出现在营养面板的悬浮提示里。</span>
+            </div>
+            <div class="mini-card">
+              <b>点击命令</b>
+              <span>玩家在营养界面点击这一阶段时执行。命令以管理员权限运行，输出不刷屏。</span>
+            </div>
+            <div class="mini-card">
+              <b>自动加成预览</b>
+              <span>把这一阶段配置的属性和效果自动列进提示里；不想重复显示时可以关掉这个预览。</span>
+            </div>
           </div>
 
           <div class="callout">
-            <b>点击命令有冷却：</b>同一玩家的阶段命令点击间隔为 <b>1.5 秒</b>，服务端也会校验，防止连点刷屏。命令内容由服主配置，普通玩家点击即可触发一条以管理员权限执行的命令——不要在陌生服务器上盲目点击不理解的阶段。
+            <b>点击有冷却：</b>同一玩家的阶段命令点击间隔是 <b>1.5 秒</b>，服务端也会再校验一次。命令内容由服主决定；陌生服务器上别乱点看不懂的阶段。
           </div>
         </section>
 
         <section class="page-section" id="bonuses" aria-labelledby="bonuses-title">
-          <h2 id="bonuses-title"><span class="num">04</span>加成与联动</h2>
-          <p>阶段可以挂两类加成：<b>属性修饰器</b>和<b>药水效果</b>。玩家处于对应阶段时维持加成；离开阶段后不再维持，由刷新周期更新。</p>
-          <ul>
-            <li><b>刷新节奏：</b>属性加成默认约每 5 秒评估一次，药水效果默认约每 10 秒刷新一次；服务器可以调整这两个间隔。</li>
-            <li><b>效果时长：</b>在默认刷新节奏下，药水效果时长建议长于 10 秒，避免两次刷新之间出现断档。</li>
-            <li><b>属性运算：</b>支持加法、乘基础值、乘总值；多数场景先用加法，另外两种按服务器设计使用。</li>
-          </ul>
+          <h2 id="bonuses-title"><span class="num">04</span>加成和联动</h2>
+          <p class="lead">阶段里可以挂两样东西：属性，或者药水效果。多个组同时满足条件，就是联动加成。</p>
+          <div class="grid-3">
+            <div class="mini-card">
+              <b>属性加成</b>
+              <span>比如最大生命、移动速度。默认大约每 5 秒评估一次；服务器可以调整。</span>
+            </div>
+            <div class="mini-card">
+              <b>药水效果</b>
+              <span>比如生命恢复、抗性提升。默认大约每 10 秒刷新；效果时长最好长于 10 秒，避免断档。</span>
+            </div>
+            <div class="mini-card">
+              <b>联动加成</b>
+              <span>把多个组的区间写进同一份条件，全部满足才给；不是“任意一个满足”。</span>
+            </div>
+          </div>
 
-          <h3>联动加成</h3>
-          <p>联动加成不是“任意一个组满足”，而是把多个营养组的区间写进同一份条件里，<b>必须全部满足</b>才会给予对应的属性或效果。它适合表达“真正吃得均衡”这类组合规则。</p>
-          <div class="example">
-            <span class="label">示例</span>
-            <p>要求水果、蔬菜、谷物、蛋白质都落在各自设定的区间内，才获得一个额外效果。任何一个组离开区间，这个联动条件就不再成立。</p>
+          <div class="figure">
+            <div class="flow" aria-label="联动加成示意">
+              <div class="flow-node"><b>水果</b>30–69</div>
+              <div class="flow-arrow" aria-hidden="true">+</div>
+              <div class="flow-node"><b>蔬菜</b>30–69</div>
+              <div class="flow-arrow" aria-hidden="true">+</div>
+              <div class="flow-node"><b>谷物</b>30–69</div>
+              <div class="flow-arrow" aria-hidden="true">+</div>
+              <div class="flow-node"><b>蛋白质</b>30–69</div>
+              <div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node accent"><b>全部满足</b>才给额外效果</div>
+            </div>
+            <div class="figure-caption">联动条件不是“或”。任何一个组掉出区间，这个组合就不成立。</div>
+          </div>
+
+          <div class="callout">
+            <b>离开阶段会怎样：</b>加成不再维持，由刷新周期更新。属性会回收，药水效果则按自己的剩余时长自然结束；所以效果时长要和刷新节奏配合。
           </div>
         </section>
 
         <section class="page-section" id="conditions" aria-labelledby="conditions-title">
           <h2 id="conditions-title"><span class="num">05</span>条件规则</h2>
-          <p>条件规则是给单份食物配置的“有条件结算”：先检查若干营养组是否都落在指定区间，再对任意营养组施加变化、执行命令，或两者同时进行。它和阶段加成不是同一层：阶段看的是玩家当前处于哪一档，条件规则看的是“这一口吃下去时是否满足条件”。</p>
+          <p class="lead">普通营养值是“吃了就加”；条件规则是“先看条件，再决定这一口怎么算”。</p>
+          <p>它可以同时检查多个营养组，全部满足后，再对任意组做加减、执行命令，或者两件事一起做。条件组和目标组可以不是同一个组。</p>
 
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>部分</th><th>说明</th></tr></thead>
-              <tbody>
-                <tr><td>触发条件</td><td>可添加多个营养组区间；多个条件必须同时满足，每组只能出现一次。</td></tr>
-                <tr><td>营养变化</td><td>目标组不必是触发条件组；每条变化限制在 -100～100，结算后总数值仍限制在 0–100。</td></tr>
-                <tr><td>执行命令</td><td>可配置多条命令，按顺序执行；输出被抑制。</td></tr>
-                <tr><td>提示与倍率</td><td>可决定是否显示“这条规则造成的营养变化”提示；可决定本条规则的营养变化是否再乘各组的获取倍率。</td></tr>
-              </tbody>
-            </table>
+          <div class="figure">
+            <div class="flow" aria-label="条件规则执行顺序">
+              <div class="flow-node"><b>吃下食物</b>先结算普通营养值</div>
+              <div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node"><b>检查条件</b>多个区间必须全部满足</div>
+              <div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node accent"><b>执行结果</b>营养变化 / 命令</div>
+              <div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node"><b>夹到 0–100</b>不会冲出范围</div>
+            </div>
+            <div class="figure-caption">条件规则在普通营养结算之后判断，所以同一份食物对同一个组既写普通值、又写条件变化时，两段会先后生效。</div>
           </div>
 
-          <h3>为什么它能“不会冲出区间”</h3>
-          <p>条件规则在普通营养结算之后判断，并对最终数值再做 0–100 的夹取。因此可以用它把高价值食物限制在安全范围内，也可以用它把危险区间的数值拉回安全线。</p>
+          <div class="rule-mock" aria-label="条件规则示意">
+            <h4>一条条件规则 · 示意</h4>
+            <div class="rule-line">
+              <span class="rule-and">触发条件</span>
+              <span class="rule-chip cond">肉类 0–86</span>
+              <span class="rule-and">AND</span>
+              <span class="rule-chip cond">水果 30–100</span>
+            </div>
+            <div class="rule-line">
+              <span class="rule-and">营养变化</span>
+              <span class="rule-chip target">肉类 +20</span>
+              <span class="rule-chip target">糖分 -5</span>
+            </div>
+            <div class="rule-line">
+              <span class="rule-and">可选</span>
+              <span class="rule-chip cmd">执行命令</span>
+              <span class="rule-chip">显示提示</span>
+              <span class="rule-chip">获取倍率</span>
+            </div>
+          </div>
+
+          <h3>两个常见用法</h3>
           <div class="example">
-            <span class="label">示例：限制上限</span>
-            <p>条件：肉类在 <code>0–86</code>。目标：肉类 <code>+20</code>。</p>
-            <p>当前肉类 80 时吃下，最多加到 86 就停；当前已经是 90 时，条件不成立，不增加。</p>
+            <span class="label">把好东西限制在安全线内</span>
+            <p><b>条件：</b>肉类在 <code>0–86</code>。<b>目标：</b>肉类 <code>+20</code>。</p>
+            <p>你现在 80，吃下去最多到 86 就停；你已经 90，条件不成立，这一口不增加。</p>
           </div>
           <div class="example">
-            <span class="label">示例：拉回安全线</span>
-            <p>条件：肉类在 <code>86–100</code>。目标：肉类 <code>-30</code>。</p>
-            <p>当前肉类 95 时吃下，会降到 86 附近就停，不会一口气降到缺乏区。</p>
+            <span class="label">把危险值拉回来</span>
+            <p><b>条件：</b>肉类在 <code>86–100</code>。<b>目标：</b>肉类 <code>-30</code>。</p>
+            <p>你现在 95，吃下去会降到 86 附近就停，不会一口气降到缺乏区。</p>
           </div>
 
           <div class="callout warn">
-            <b>同一个组别重复叠加：</b>条件规则在普通营养值加完之后才判断。如果同一份食物对同一个组既配了普通营养值，又配了针对该组的条件变化，两段会先后生效；通常只选其中一种表达方式。
+            <b>一个组别重复叠加：</b>如果同一份食物对同一个组既配了普通营养值，又配了针对该组的条件变化，两段会先后生效。通常只选其中一种表达方式，别让它们互相打架。
           </div>
         </section>
 
         <section class="page-section" id="items" aria-labelledby="items-title">
-          <h2 id="items-title"><span class="num">06</span>食物、变体与编辑器</h2>
-          <p>手持物品输入 <code>/hdui</code> 打开这只物品的主菜单，再进入编辑器。编辑器把这只食物的营养、厌倦、口渴、饱食度、堆叠、品质、保质期、效果、指令、条件和清除效果集中在一个界面里。</p>
+          <h2 id="items-title"><span class="num">06</span>编辑器和变体</h2>
+          <p class="lead">在游戏里手持物品输入 <code>/hdui</code>，就能打开这只食物的配置入口。</p>
+          <p>编辑器把营养、厌倦、口渴、饱食度、堆叠、品质、保质期、效果、指令、条件和清除效果放在同一个界面里。下面只是布局示意，不是实际截图。</p>
 
-          <h3>NBT 变体</h3>
-          <p>同一个物品可以按 NBT 分成多个变体，每个变体保存自己的一份配置；玩家吃下时命中哪个变体，就使用哪一份。这样可以让同名但 NBT 不同的食物拥有不同的营养和效果。</p>
-          <div class="callout">
-            <b>变体不是覆盖全部：</b>堆叠上限是物品级属性，不能给同一物品的不同变体设不同堆叠数。口渴值等按物品计算的配置也按同样思路处理。
+          <div class="editor-mock" aria-label="物品编辑器示意">
+            <div class="editor-head"><b>物品编辑器 · 示意</b><span>手持物品 /hdui</span></div>
+            <div class="editor-tabs">
+              <span class="editor-tab active">营养值</span>
+              <span class="editor-tab">食物厌倦</span>
+              <span class="editor-tab">口渴值</span>
+              <span class="editor-tab">饱食度</span>
+              <span class="editor-tab">堆叠上限</span>
+              <span class="editor-tab">品质绑定</span>
+              <span class="editor-tab">保质期</span>
+              <span class="editor-tab">药水效果</span>
+              <span class="editor-tab">指令</span>
+              <span class="editor-tab">条件</span>
+              <span class="editor-tab">清除效果</span>
+            </div>
+            <div class="editor-body">
+              <div class="editor-field"><span>水果</span><span class="editor-input">+26</span></div>
+              <div class="editor-field"><span>糖分</span><span class="editor-input">+12</span></div>
+              <div class="editor-field"><span>条件规则</span><span class="editor-input">1 条 · 点击编辑</span></div>
+              <div class="editor-note">示例字段。实际页签、输入框和保存行为以当前游戏界面为准。</div>
+            </div>
           </div>
 
-          <h3>创建与管理入口</h3>
+          <h3>NBT 变体：同名物品，两套配置</h3>
+          <p>同一个物品可以按 NBT 分成多个变体。每个变体保存自己的一份配置；玩家吃下时命中哪个变体，就用哪一份。比如同一瓶药水，可以给不同 NBT 配不同的营养。</p>
+
+          <div class="variant-grid">
+            <div class="variant-card">
+              <span class="tag">变体 A</span>
+              <b>治疗药水</b>
+              <div class="mini-bar" style="--c:#fab387">
+                <span class="name">水果</span>
+                <span class="track"><span class="fill" style="width:20%"></span></span>
+                <span class="num">+8</span>
+              </div>
+              <div class="mini-bar" style="--c:#f38ba8">
+                <span class="name">糖分</span>
+                <span class="track"><span class="fill" style="width:12%"></span></span>
+                <span class="num">+4</span>
+              </div>
+            </div>
+            <div class="variant-card">
+              <span class="tag">变体 B</span>
+              <b>迅捷药水</b>
+              <div class="mini-bar" style="--c:#cba6f7">
+                <span class="name">蛋白质</span>
+                <span class="track"><span class="fill" style="width:16%"></span></span>
+                <span class="num">+6</span>
+              </div>
+              <div class="mini-bar" style="--c:#a6e3a1">
+                <span class="name">蔬菜</span>
+                <span class="track"><span class="fill" style="width:10%"></span></span>
+                <span class="num">+3</span>
+              </div>
+            </div>
+          </div>
+          <div class="figure-caption">变体数值只是示意。每个变体是独立配置，不是自动继承通用条。</div>
+
+          <div class="callout">
+            <b>堆叠上限是物品级的：</b>同一物品的不同变体不能各设一个堆叠数。口渴值等按物品计算的配置也按同样思路处理。
+          </div>
+
+          <h3>常用入口</h3>
           <ul>
-            <li><code>/hdui create</code>：创建营养组、品质、品级或注册物品；组 ID 创建后不可修改。</li>
-            <li><code>/hdui stage</code>：打开阶段配置界面。</li>
-            <li><code>/hdui groups [玩家]</code>：打开自己或指定玩家的营养面板，可直接改值或暂停某个组。</li>
-            <li><code>/hdui registry</code>：打开物品注册管理。</li>
-            <li><code>/hdui tooltip</code>：打开手持物品的 Tooltip 编辑入口。</li>
+            <li><code>/hdui create</code>：创建营养组、品质、品级或注册物品；组 ID 创建后不能改。</li>
+            <li><code>/hdui stage</code>：打开阶段配置。</li>
+            <li><code>/hdui groups [玩家]</code>：打开自己或指定玩家的营养面板。</li>
+            <li><code>/hdui registry</code>：物品注册管理。</li>
+            <li><code>/hdui tooltip</code>：手持物品的 Tooltip 编辑入口。</li>
           </ul>
-          <p>营养组的定义现在由数据包承载；在编辑器里创建或修改会写入配置覆盖层。旧的 <code>/hdgroups</code> 指令已经删除。</p>
+          <p>营养组定义现在由数据包承载；在编辑器里创建或修改会写入配置覆盖层。旧的 <code>/hdgroups</code> 已经删除。</p>
         </section>
 
         <section class="page-section" id="admin" aria-labelledby="admin-title">
           <h2 id="admin-title"><span class="num">07</span>管理与命令</h2>
-          <p>下面这些入口需要相应权限；普通玩家只需要用 <code>/headiet</code> 查看自己的面板。</p>
+          <p class="lead">普通玩家看自己的面板就够了；改别人的数值、暂停组，需要相应权限。</p>
           <div class="table-wrap">
             <table>
               <thead><tr><th>命令</th><th>用途</th></tr></thead>
@@ -217,20 +431,25 @@
             </table>
           </div>
           <div class="callout good">
-            <b>暂停组：</b>被暂停的营养组既不随进食增加，也不自然衰减，适合做剧情、新手保护或临时活动。恢复后按正常规则继续。
+            <b>暂停组：</b>暂停后这个组既不随进食增加，也不自然衰减，适合剧情、新手保护或临时活动。恢复后按正常规则继续。
           </div>
         </section>
 
         <section class="page-section" id="demo" aria-labelledby="demo-title">
-          <h2 id="demo-title"><span class="num">08</span>交互演示</h2>
-          <p>下面的演示用虚构食物和示例阈值展示六组营养、阶段和跨组条件的响应。它不连接游戏、不读取服务器配置，也不代表任何服务器的真实数值。</p>
+          <h2 id="demo-title"><span class="num">08</span>动手试试</h2>
+          <p class="lead">看懂了，就点进演示，自己吃几口试试。</p>
+          <p>演示用虚构食物和示例阈值展示六组营养、阶段和跨组条件的响应。它不连接游戏、不读取服务器配置，也不代表任何服务器的真实数值。</p>
           <div class="demo-card">
             <div><b>营养交互演示</b><span>六组进度条 · 四种示例食物 · 跨组条件 · 中英切换</span></div>
             <a href="../nutrition-demo/">打开演示</a>
           </div>
-          <div class="callout" style="margin-top:16px">
-            <b>演示和本文的关系：</b>演示负责“看见变化”，本文负责“解释规则”。演示里的数值只用于说明交互，不要拿来推算服务器阈值。
-          </div>
+
+          <h3>最后记三句</h3>
+          <ol class="summary-list">
+            <li><b>0–100，阶段看整数。</b>小数会保留，但判定阶段时四舍五入。</li>
+            <li><b>饱食度掉，营养值才掉。</b>按衰减率算，饱和度不算；死亡不清空。</li>
+            <li><b>阶段管状态，条件规则管这一口。</b>具体组、阈值和效果，永远看你所在服务器。</li>
+          </ol>
         </section>
 
         <footer class="page-footer">
@@ -242,5 +461,49 @@
   </main>
 
   <script src="assets/guide.js"></script>
+  <script>
+    (() => {
+      const stageRange = document.getElementById("stage-range");
+      const stageMarker = document.getElementById("stage-marker");
+      const stageValue = document.getElementById("stage-value");
+      const stageRounded = document.getElementById("stage-rounded");
+      const stageName = document.getElementById("stage-name");
+
+      const updateStage = () => {
+        const value = Number(stageRange.value);
+        const rounded = Math.round(value);
+        const name = rounded < 30 ? "低段" : rounded < 70 ? "中段" : "高段";
+        stageMarker.style.left = value + "%";
+        stageValue.textContent = value.toFixed(1);
+        stageRounded.textContent = String(rounded);
+        stageName.textContent = name;
+      };
+      stageRange.addEventListener("input", updateStage);
+      updateStage();
+
+      const rate = document.getElementById("decay-rate");
+      const hunger = document.getElementById("hunger-used");
+      const rateOut = document.getElementById("decay-rate-out");
+      const hungerOut = document.getElementById("hunger-used-out");
+      const lossOut = document.getElementById("decay-loss");
+      const remainOut = document.getElementById("decay-remain");
+      const remainFill = document.getElementById("decay-fill");
+
+      const updateDecay = () => {
+        const r = Number(rate.value);
+        const h = Number(hunger.value);
+        const loss = h / r;
+        const remain = Math.max(0, 100 - loss);
+        rateOut.textContent = String(r);
+        hungerOut.textContent = String(h);
+        lossOut.textContent = loss.toFixed(1);
+        remainOut.textContent = remain.toFixed(1);
+        remainFill.style.width = remain + "%";
+      };
+      rate.addEventListener("input", updateDecay);
+      hunger.addEventListener("input", updateDecay);
+      updateDecay();
+    })();
+  </script>
 </body>
 </html>
