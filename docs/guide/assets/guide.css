@@ -756,10 +756,15 @@ input[type="range"] {
   border: 1px solid transparent;
   border-radius: 5px;
   padding: 3px 7px;
+  background: transparent;
   color: var(--faint);
+  font: inherit;
   font-size: 10px;
   white-space: nowrap;
+  cursor: pointer;
 }
+.editor-tab:hover { border-color: #585b70; background: #31324466; color: var(--ink); }
+.editor-tab:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 .editor-tab.active { border-color: #a6e3a166; background: #a6e3a115; color: var(--green); }
 .editor-body { padding: 11px 12px 13px; display: grid; gap: 7px; }
 .editor-field {

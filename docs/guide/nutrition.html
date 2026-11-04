@@ -19,7 +19,6 @@
       <nav class="topnav" data-nav aria-label="章节导航">
         <a href="index.html">总览</a>
         <a href="nutrition.html" aria-current="page">营养值</a>
-        <a href="../nutrition-demo/">交互演示</a>
       </nav>
       <span class="lang-badge">中文</span>
       <button class="menu-btn" type="button" data-menu aria-expanded="false" aria-label="打开章节导航">☰</button>
@@ -54,7 +53,7 @@
           <li><a href="#conditions">条件规则</a></li>
           <li><a href="#items">编辑器与变体</a></li>
           <li><a href="#admin">管理与命令</a></li>
-          <li><a href="#demo">交互演示</a></li>
+          <li><a href="#summary">要点回顾</a></li>
         </ol>
         <div class="toc-note">常见默认配置包含六组：乳制品、水果、谷物、蛋白质、糖分、蔬菜。服务器可增删、改名或调整顺序。</div>
       </aside>
@@ -344,25 +343,20 @@
 
           <div class="editor-mock" aria-label="物品编辑器示意">
             <div class="editor-head"><b>物品编辑器 · 示意</b><span>手持物品 /hdui</span></div>
-            <div class="editor-tabs">
-              <span class="editor-tab active">营养值</span>
-              <span class="editor-tab">食物厌倦</span>
-              <span class="editor-tab">口渴值</span>
-              <span class="editor-tab">饱食度</span>
-              <span class="editor-tab">堆叠上限</span>
-              <span class="editor-tab">品质绑定</span>
-              <span class="editor-tab">保质期</span>
-              <span class="editor-tab">药水效果</span>
-              <span class="editor-tab">指令</span>
-              <span class="editor-tab">条件</span>
-              <span class="editor-tab">清除效果</span>
+            <div class="editor-tabs" role="tablist" aria-label="物品编辑器页签">
+              <button type="button" class="editor-tab active" role="tab" aria-selected="true" aria-controls="editor-panel" data-tab="nutrition">营养值</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="fatigue">食物厌倦</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="thirst">口渴值</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="hunger">饱食度</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="stack">堆叠上限</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="quality">品质绑定</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="shelf">保质期</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="effects">药水效果</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="commands">指令</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="conditions">条件</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="suppress">清除效果</button>
             </div>
-            <div class="editor-body">
-              <div class="editor-field"><span>水果</span><span class="editor-input">+26</span></div>
-              <div class="editor-field"><span>糖分</span><span class="editor-input">+12</span></div>
-              <div class="editor-field"><span>条件规则</span><span class="editor-input">1 条 · 点击编辑</span></div>
-              <div class="editor-note">示例字段；实际页签与保存行为以游戏内界面为准。</div>
-            </div>
+            <div class="editor-body" id="editor-panel" role="tabpanel" aria-live="polite"></div>
           </div>
 
           <h3>NBT 变体：同名物品的独立配置</h3>
@@ -435,16 +429,8 @@
           </div>
         </section>
 
-        <section class="page-section" id="demo" aria-labelledby="demo-title">
-          <h2 id="demo-title"><span class="num">08</span>交互演示</h2>
-          <p class="lead">交互演示可用于验证上述数值与条件行为。</p>
-          <p>演示使用虚构食物与示例阈值，展示营养组、阶段和跨组条件的响应；不连接游戏，不读取服务器配置。</p>
-          <div class="demo-card">
-            <div><b>营养交互演示</b><span>六组进度条 · 四种示例食物 · 跨组条件 · 中英切换</span></div>
-            <a href="../nutrition-demo/">打开演示</a>
-          </div>
-
-          <h3>要点回顾</h3>
+        <section class="page-section" id="summary" aria-labelledby="summary-title">
+          <h2 id="summary-title"><span class="num">08</span>要点回顾</h2>
           <ol class="summary-list">
             <li><b>数值范围为 0–100。</b>小数保留，阶段判定时四舍五入。</li>
             <li><b>营养值随饱食度消耗按衰减率下降。</b>饱和度不参与；死亡不清空。</li>
@@ -503,6 +489,100 @@
       rate.addEventListener("input", updateDecay);
       hunger.addEventListener("input", updateDecay);
       updateDecay();
+
+      const editorData = {
+        nutrition: {
+          fields: [["水果", "+26"], ["糖分", "+12"], ["条件规则", "1 条 · 点击编辑"]],
+          note: "示例字段；实际页签与保存行为以游戏内界面为准。"
+        },
+        fatigue: {
+          fields: [["最大连续食用次数", "3"], ["冷却所需其他食物数", "2"], ["自然冷却时间", "10 分钟"], ["厌倦时恢复饱食度", "0"]],
+          note: "示例字段；实际数值由物品配置决定。"
+        },
+        thirst: {
+          fields: [["饮水值", "+6"], ["联动", "传说生存（LSO）"]],
+          note: "口渴值走 LSO 联动；未安装对应模组时不生效。"
+        },
+        hunger: {
+          fields: [["饱食度", "+5"], ["饱和度", "+6.0"]],
+          note: "示例字段；与原版食物属性分别计算。"
+        },
+        stack: {
+          fields: [["堆叠上限", "16"], ["作用范围", "物品级，变体共用"]],
+          note: "堆叠上限是 Item 级属性，不随 NBT 变体变化。"
+        },
+        quality: {
+          fields: [["品质绑定", "good"], ["作用范围", "可按 NBT 变体绑定"]],
+          note: "品质负责显示与绑定，不直接增加营养或属性。"
+        },
+        shelf: {
+          fields: [["保质期", "60 分钟"], ["基础腐败倍率", "1.0"], ["过期产物", "minecraft:rotten_flesh"]],
+          note: "示例字段；完整保质期参数见保质期章节。"
+        },
+        effects: {
+          fields: [["生命恢复", "I · 5 秒 · 100%"], ["抗性提升", "I · 10 秒 · 50%"]],
+          note: "示例效果；等级、时长、概率与粒子均可单独配置。"
+        },
+        commands: {
+          fields: [["食用指令", "say 示例"], ["执行权限", "管理员（4）"], ["输出", "抑制"]],
+          note: "示例指令；实际命令由物品配置决定。"
+        },
+        conditions: {
+          fields: [["规则数量", "1 条"], ["触发条件", "肉类 0–86"], ["营养变化", "肉类 +20"]],
+          note: "条件规则可同时配置多个条件、目标与命令。"
+        },
+        suppress: {
+          fields: [["清除效果", "生命恢复"], ["说明", "食用时移除指定效果"]],
+          note: "示例字段；清除效果在食用时执行。"
+        }
+      };
+
+      const editorTabs = [...document.querySelectorAll(".editor-tab")];
+      const editorPanel = document.getElementById("editor-panel");
+
+      const renderEditor = key => {
+        const data = editorData[key];
+        if (!data || !editorPanel) return;
+        editorPanel.replaceChildren();
+        for (const [label, value] of data.fields) {
+          const row = document.createElement("div");
+          row.className = "editor-field";
+          const name = document.createElement("span");
+          name.textContent = label;
+          const field = document.createElement("span");
+          field.className = "editor-input";
+          field.textContent = value;
+          row.append(name, field);
+          editorPanel.append(row);
+        }
+        const note = document.createElement("div");
+        note.className = "editor-note";
+        note.textContent = data.note;
+        editorPanel.append(note);
+      };
+
+      const selectEditorTab = key => {
+        editorTabs.forEach(tab => {
+          const active = tab.dataset.tab === key;
+          tab.classList.toggle("active", active);
+          tab.setAttribute("aria-selected", String(active));
+          tab.tabIndex = active ? 0 : -1;
+        });
+        renderEditor(key);
+      };
+
+      editorTabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => selectEditorTab(tab.dataset.tab));
+        tab.addEventListener("keydown", event => {
+          if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+          event.preventDefault();
+          const offset = event.key === "ArrowRight" ? 1 : -1;
+          const next = editorTabs[(index + offset + editorTabs.length) % editorTabs.length];
+          next.focus();
+          next.click();
+        });
+      });
+      selectEditorTab("nutrition");
     })();
   </script>
 </body>
