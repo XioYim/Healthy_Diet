@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><title>配置项详解 · Healthy Diet 功能指南</title><link rel="stylesheet" href="assets/guide.css"></head>
+<body><a class="skip-link" href="#main">跳到正文</a><header class="topbar"><div class="wrap topbar-inner"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✦</span><span>Healthy Diet<small>FEATURE GUIDE</small></span></a><nav class="topnav" data-nav aria-label="章节导航"><a href="index.html">总览</a><a href="nutrition.html">营养值</a><a href="configuration.html" aria-current="page">配置项</a></nav><span class="lang-badge">中文</span><button class="menu-btn" type="button" data-menu aria-expanded="false" aria-label="打开章节导航">☰</button></div></header>
+<main class="wrap" id="main"><section class="hero"><span class="eyebrow">REFERENCE / CONFIGURATION</span><h1>配置项详解：先定位文件，再核对字段。</h1><p>这一页把服务器的玩法开关、客户端本地显示、营养数据包、物品与方块定义、保质期和温度表集中成一份字段索引。先判断文件属于谁，再决定用重载、重进还是重启。</p><div class="tags"><span class="tag">server.json</span><span class="tag">display.json</span><span class="tag">数据包字段</span><span class="tag">刷新边界</span></div></section>
+<div class="notice" role="note"><strong>默认值边界：</strong>表中的“默认”指字段在代码或新建配置中的初始值，不表示你的服务器正在使用该值。服务器文件、数据包和编辑器保存都可能覆盖它；带 <code>_note_</code> 前缀的字段只是只读说明，修改不会生效。</div>
+<div class="layout"><aside class="toc" data-toc aria-label="本页目录"><h2>本页目录</h2><ol><li><a href="#files">文件地图</a></li><li><a href="#server">server.json</a></li><li><a href="#display">display.json</a></li><li><a href="#nutrition">营养数据包</a></li><li><a href="#items">物品与方块</a></li><li><a href="#shelf">保质期与环境</a></li><li><a href="#appearance">外观与小工具</a></li><li><a href="#refresh">配置页与刷新</a></li></ol></aside><article>
+
+<section class="page-section" id="files"><h2><span class="num">01</span>配置放在哪，归谁管</h2><p class="lead">所有路径都相对于实例的 <code>config/healthy_diet/</code>；数据包路径另见 <code>data/&lt;命名空间&gt;/healthy_diet/</code>。先看“作用域”，再看“典型刷新方式”。</p>
+<label class="shelf-search-label" for="config-filter">按文件名、路径或字段过滤</label><input class="shelf-search" id="config-filter" type="search" autocomplete="off" placeholder="例如 server.json、temperature、quality_registry、刷新" data-config-filter>
+<p class="shelf-search-status" role="status" data-config-status>共 18 个配置入口；输入文件名、路径或字段名过滤。</p>
+<div class="table-wrap"><table data-config-table><thead><tr><th>文件 / 目录</th><th>作用域</th><th>负责内容</th><th>典型刷新</th></tr></thead><tbody>
+<tr data-search="server.json gameplay privacy shelfMerge 服务端 玩法 隐私 堆叠 合并"><td><code>server.json</code><br><small>gameplay / privacy / shelfMerge</small></td><td>服务端权威</td><td>保质期总开关、联动开关、属性/效果刷新间隔、保护物品、测试日志、阶段命令隐私、堆叠合并门槛</td><td>OP 页保存或编辑后 <code>/hdreload</code></td></tr>
+<tr data-search="display.json 客户端 本地 提示 温度 单位 布局 默认显示"><td><code>display.json</code></td><td>客户端本地</td><td>Tooltip 每行营养数、TitlePro 换行宽度、D 页宽度、温度单位、默认显示模式</td><td>客户端显示设定保存；手改后重进客户端</td></tr>
+<tr data-search="colors color_schemes.json 渐变 方案 颜色"><td><code>colors/color_schemes.json</code></td><td>两端外观</td><td>命名渐变方案，供品质、营养组、提示行和保质期方案引用</td><td>服务端 <code>/hdreload</code>；客户端本地文件按各端读取</td></tr>
+<tr data-search="colors solid_colors.json 纯色 色板 取色"><td><code>colors/solid_colors.json</code></td><td>两端外观</td><td>编辑器纯色取色盘的色卡数组</td><td>服务端 <code>/hdreload</code>；客户端本地文件按各端读取</td></tr>
+<tr data-search="fatigue fatigue_gradient.json 厌倦 渐变 配色"><td><code>fatigue/fatigue_gradient.json</code></td><td>显示外观</td><td>厌倦等级行、恢复进度行的方案与动画参数</td><td><code>/hdreload</code></td></tr>
+<tr data-search="fatigue fatigue_exempt.json 厌倦 豁免 恢复计数"><td><code>fatigue/fatigue_exempt.json</code></td><td>服务端玩法</td><td>吃下后不推进其他冷却食物恢复计数的物品 ID 列表</td><td><code>/hdreload</code></td></tr>
+<tr data-search="shelf_life seasons.json 季节 倍率 保质期"><td><code>shelf_life/seasons.json</code></td><td>服务端玩法</td><td>季节/节气保质期倍率、未加载 EC 时的回退倍率、显示名</td><td><code>/hdreload</code></td></tr>
+<tr data-search="shelf_life schemes 保质期 方案 文案 颜色 模板"><td><code>shelf_life/schemes/*.json</code></td><td>两端显示</td><td>保质期提示的文案模板、状态配色、符号、季节显示名</td><td><code>/hdreload</code> 并下发方案</td></tr>
+<tr data-search="temperature block_heat.json 方块 热源 温度"><td><code>temperature/block_heat.json</code></td><td>服务端玩法</td><td>非 LSO 分支的方块热源表：方块、状态条件、贡献温度</td><td><code>/hdreload</code> 或温度配置页保存</td></tr>
+<tr data-search="temperature weather_offsets.json 雨 雪 雷暴 温变"><td><code>temperature/weather_offsets.json</code></td><td>服务端玩法</td><td>24 节气降雨/雷暴的温变偏移</td><td><code>/hdreload</code> 或温度配置页保存</td></tr>
+<tr data-search="temperature day_night_offsets.json 昼夜 正午 午夜 温变"><td><code>temperature/day_night_offsets.json</code></td><td>服务端玩法</td><td>24 节气的正午/午夜温变幅度</td><td><code>/hdreload</code> 或温度配置页保存</td></tr>
+<tr data-search="temperature season_temperature.json 节气 环境 温度 偏移"><td><code>temperature/season_temperature.json</code></td><td>服务端玩法</td><td>24 节气附加环境温度（叠加在 EC 气候上）</td><td><code>/hdreload</code> 或温度配置页保存</td></tr>
+<tr data-search="bottle_fills.json 瓶子 装水 右键 液体 源方块"><td><code>bottle_fills.json</code></td><td>服务端玩法</td><td>手持物品右键液体源方块后的消耗与产物规则</td><td><code>/hdreload</code></td></tr>
+<tr data-search="fog_effects.json 雾 水下 岩浆 夜视 客户端"><td><code>fog_effects.json</code></td><td>客户端本地</td><td>拥有指定效果时的水下/岩浆雾距离</td><td>各客户端读取本地文件；服务器重载不代改</td></tr>
+<tr data-search="item_rarities.json 物品 品级 稀有度 指定"><td><code>item_rarities.json</code></td><td>服务端/同步</td><td>物品 ID → 品级 ID 的物品级兜底指定</td><td><code>/hdreload</code>；<code>/hdset rarity</code> 会写它</td></tr>
+<tr data-search="tooltip_templates.json 提示 模板 编辑器"><td><code>tooltip_templates.json</code></td><td>编辑器本地</td><td>[模板] 按钮使用的提示行模板数组</td><td>编辑器读写本实例文件；不当作跨客户端同步内容</td></tr>
+<tr data-search="quality_registry 注册 新物品 启动 品质"><td><code>quality_registry/*.json</code></td><td>启动期注册</td><td>新增独立品质物品的来源、注册名、品质、食用与堆叠属性</td><td>启动时生效；<code>/hdreload</code> 只重读待生效列表</td></tr>
+<tr data-search="datapack data healthy_diet items tooltips blocks nutrition quality rarities effect_lines 数据包 覆盖层"><td><code>datapack/data/&lt;ns&gt;/healthy_diet/</code><br><small>HD 覆盖层；世界数据包为 <code>data/&lt;ns&gt;/healthy_diet/</code></small><br><small>items / tooltips / blocks / nutrition_* / quality_levels / rarities / effect_lines</small></td><td>数据包（世界 + HD 覆盖层）</td><td>物品、提示、方块、营养、品质、品级和效果行定义；HD 覆盖层优先级最高</td><td>世界数据包用 <code>/reload</code>；HD 覆盖层用 <code>/hdreload</code></td></tr>
+</tbody></table></div>
+<div class="callout"><b>三个层次不要混：</b>配置文件（<code>config/healthy_diet/*.json</code>）、数据包（<code>data/.../healthy_diet/</code>）和启动期注册（<code>quality_registry/</code>）的生效方式不同。把数据包文件复制到 <code>config/healthy_diet/items/</code> 不会生成可由游戏读取的物品配置。</div>
+<div class="source-note">源码依据：<code>ConfigManager</code> 的路径常量与 <code>loadAll</code>、<code>ServerConfigFile.migrate</code>、<code>QualityRegistryLoader</code>。</div></section>
+
+<section class="page-section" id="server"><h2><span class="num">02</span><code>server.json</code>：服务端权威分节</h2><p class="lead">一个文件三个分节：<code>gameplay</code>、<code>privacy</code>、<code>shelfMerge</code>。旧版分离文件会在加载时迁入本文件，原文件移入 <code>migration_backup/</code>。</p>
+<div class="example"><span class="label">结构示意（省略只读 _note_ 字段）</span><pre style="overflow:auto;background:#181825;border:1px solid var(--line);border-radius:10px;padding:14px;font-size:12px;line-height:1.6">{
+  "gameplay": {
+    "shelfTemperatureEnabled": false,
+    "lsoIntegrationEnabled": true,
+    "ecIntegrationEnabled": true,
+    "proxyHeatstrokeEffect": true,
+    "bonusUpdateTicks": 100,
+    "effectUpdateTicks": 200,
+    "ejectIllegalProtectedItems": false,
+    "removeOwnerOnDeathDrop": false,
+    "debugLogs": false
+  },
+  "privacy": { "sendCommandTextToAllPlayers": false },
+  "shelfMerge": {
+    "mergeRemainingMinutes": 5,
+    "mergeTempThreshold": 10.0,
+    "mergeColdFreshThreshold": 20.0
+  }
+}</pre></div>
+<h3>gameplay：玩法与刷新间隔</h3>
+<div class="table-wrap"><table><thead><tr><th>字段</th><th>类型 / 默认</th><th>作用与边界</th></tr></thead><tbody>
+<tr><td><code>shelfTemperatureEnabled</code></td><td>boolean / <code>false</code></td><td>保质期与温度系统总开关。关闭时暂停衰减、温度/冷鲜推进、过期产物与过期指令、温度拒食、温区效果和相关提示；已有物品数据保留，关闭时段从下次结算中扣除，不追溯补算。</td></tr>
+<tr><td><code>lsoIntegrationEnabled</code></td><td>boolean / <code>true</code></td><td>是否允许 <code>hd:shelf</code> 使用 LSO 的完整世界环境；不关闭其他 LSO 兼容。</td></tr>
+<tr><td><code>ecIntegrationEnabled</code></td><td>boolean / <code>true</code></td><td>是否允许 <code>hd:shelf</code> 直接使用 EC 气候和 HD 的 EC 季节倍率；不修改 EC 已由 LSO 提供的内容。</td></tr>
+<tr><td><code>proxyHeatstrokeEffect</code></td><td>boolean / <code>true</code></td><td>把 LSO 中暑镜像为 EC 中暑（服务端每 5 秒检查，仅借助 EC 的模糊效果）；无 LSO 中暑或带免疫时移除 EC 中暑。</td></tr>
+<tr><td><code>bonusUpdateTicks</code></td><td>int / <code>100</code></td><td>属性加成结算间隔，单位 tick；限制在 1–1728000。默认约 5 秒。</td></tr>
+<tr><td><code>effectUpdateTicks</code></td><td>int / <code>200</code></td><td>药水效果加成刷新间隔，单位 tick；限制在 1–1728000。默认约 10 秒。</td></tr>
+<tr><td><code>ejectIllegalProtectedItems</code></td><td>boolean / <code>false</code></td><td>玩家持有从未被信任的保护物品时：<code>true</code> 丢到脚下；<code>false</code> 留在原位冻结并警告。默认关闭以免误判造成掉落消失。</td></tr>
+<tr><td><code>removeOwnerOnDeathDrop</code></td><td>boolean / <code>false</code></td><td>死亡掉落：<code>true</code> 清除所有掉落物的保护数据；<code>false</code> 只给原本无主的掉落写入死者 UUID，已有主人的掉落保持原主人。</td></tr>
+<tr><td><code>debugLogs</code></td><td>boolean / <code>false</code></td><td>服务端测试日志开关；开启后输出方块右键与放置食物/分口食物的详细日志。<code>/hdreload</code> 应用。</td></tr>
+</tbody></table></div>
+<h3>privacy：阶段命令文本</h3>
+<div class="table-wrap"><table><thead><tr><th>字段</th><th>类型 / 默认</th><th>作用与边界</th></tr></thead><tbody><tr><td><code>sendCommandTextToAllPlayers</code></td><td>boolean / <code>false</code></td><td>默认只向权限 4 的玩家下发阶段命令文本；<code>true</code> 时非 OP 也收到完整阶段配置，可用于公开玩法说明。它不改变命令执行权限。</td></tr></tbody></table></div>
+<h3>shelfMerge：堆叠合并门槛</h3>
+<div class="table-wrap"><table><thead><tr><th>字段</th><th>类型 / 默认</th><th>作用与边界</th></tr></thead><tbody>
+<tr><td><code>mergeRemainingMinutes</code></td><td>int / <code>5</code></td><td>两堆剩余保质期的最大差（分钟）仍可合并；限制在 1–1440。</td></tr>
+<tr><td><code>mergeTempThreshold</code></td><td>float / <code>10.0</code></td><td>两堆物品温度的最大差（°C）仍可合并；限制在 0–100，NaN 差值忽略。</td></tr>
+<tr><td><code>mergeColdFreshThreshold</code></td><td>float / <code>20.0</code></td><td>两堆冷鲜进度（0–100）的最大差仍可合并；限制在 0–100。</td></tr>
+</tbody></table></div>
+<div class="callout warn"><b>保存边界：</b>OP 配置页的「服务端显示」当前往返的是 <code>gameplay</code> 分节；<code>privacy</code> 与 <code>shelfMerge</code> 需要编辑 <code>server.json</code> 后执行 <code>/hdreload</code>。文件只读时配置页保存失败，不会改内存中的权威值。</div>
+<div class="source-note">源码依据：<code>ServerGameplayConfig</code>、<code>ServerPrivacyConfig</code>、<code>ShelfMergeConfig</code>、<code>ServerConfigFile</code>、<code>ConfigManager.saveServerGameplayConfig</code>。</div></section>
+
+<section class="page-section" id="display"><h2><span class="num">03</span><code>display.json</code>：客户端本地偏好</h2><p class="lead">这份文件只影响当前客户端的外观与编辑默认值，不参与服务器玩法同步。服务端下的玩法开关在 <code>server.json</code> 的 <code>gameplay</code>，不要写回这里。</p>
+<div class="table-wrap"><table><thead><tr><th>字段</th><th>类型 / 默认</th><th>作用与边界</th></tr></thead><tbody>
+<tr><td><code>nutritionPerLine</code></td><td>int / <code>6</code></td><td>Tooltip 每行最多显示的营养条目数；1 = 每组单行，数值越大越紧凑。编辑器范围 1–100。</td></tr>
+<tr><td><code>titleproWrapWidth</code></td><td>int / <code>1000</code></td><td>TitlePro 标题换行宽度（像素）；编辑器范围 1–100000。</td></tr>
+<tr><td><code>defaultConditionalGainEnabled</code></td><td>boolean / <code>true</code></td><td>新建条件营养规则时“实际增益”的默认开关；只初始化草稿，不是已保存规则的运行开关。</td></tr>
+<tr><td><code>infoGapWidth</code></td><td>int / <code>20</code></td><td>D 模式右对齐提示行左右内容的固定间距；编辑器范围 0–100000。</td></tr>
+<tr><td><code>maxInfoWidth</code></td><td>int / <code>320</code></td><td>D 模式信息面板的最大宽度（像素），超出换行；S 模式不受此上限限制。编辑器范围 0–100000。</td></tr>
+<tr><td><code>showUnifiedPotionStyle</code></td><td>boolean / <code>false</code></td><td>统一药水样式总开关；关闭时绕过所有物品和默认的“强制统一”选择。</td></tr>
+<tr><td><code>enableEnchantmentInfo</code></td><td>boolean / <code>true</code></td><td>D 模式自动显示附魔书说明（按 Enchantment Descriptions 约定读取语言键）。</td></tr>
+<tr><td><code>enablePotionInfo</code></td><td>boolean / <code>true</code></td><td>D 模式药水/效果信息总开关。关闭后 D 页不显示原版药水说明、HD 效果行、外部模组效果行、属性统一段和 LSO 口渴行；普通模式紧凑效果行、温区效果行、JEI/手写 D 文本和附魔说明不受影响。</td></tr>
+<tr><td><code>hideSystemPrefixes</code></td><td>boolean / <code>false</code></td><td>只隐藏 HD 自动添加的行首符号及其间距；不隐藏玩家手写名称、行内分隔符或分段文本。</td></tr>
+<tr><td><code>temperatureUnit</code></td><td>string / <code>celsius</code></td><td><code>celsius</code> 或 <code>fahrenheit</code>；只影响本客户端提示/HUD，配置文件和编辑器仍用摄氏。非法值回落摄氏。</td></tr>
+<tr><td><code>temperatureUnitChosen</code></td><td>boolean / <code>false</code></td><td>本客户端是否已明确选择温度单位；用于首次提示，不上传同步。</td></tr>
+<tr><td><code>groupLocalizePrompted</code></td><td>boolean / <code>false</code></td><td>OP 的营养组名称本地化提示是否已在本客户端显示或回答；仅本地记录。</td></tr>
+<tr><td><code>defaultEffectsShiftOnly</code></td><td>boolean / <code>false</code></td><td>新建药水效果行的默认显示模式：<code>false</code> 常显，<code>true</code> 仅按住 Shift；已保存的行保留自己的设置。</td></tr>
+<tr><td><code>defaultForceUnify</code></td><td>boolean / <code>false</code></td><td>新建效果行时“强制统一”的默认值；只对已有 Tooltip 配置/数据包条目的物品生效。</td></tr>
+<tr><td><code>defaultFoodBarDisplayMode</code></td><td>string / <code>always</code></td><td><code>always</code> 常显、<code>shift</code> 仅 Shift、<code>info</code> 仅 D 页、<code>off</code> 整体停用并退回原版饮食值行；只影响没有自身提示配置的物品和新建行。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>已移除的旧键：</b>面板宽度/偏移、文字阴影等旧外观字段不再由 <code>display.json</code> 控制；不要按旧教程写回。文件以 <code>_note_</code> 开头的说明字段只读。手改本文件后需要重进客户端；在“客户端显示设定”中保存会立即写回。</div>
+<div class="source-note">源码依据：<code>DisplayConfig</code>、<code>HdDisplayConfigScreen</code>、<code>ConfigManager.loadDisplayConfig</code>。</div></section>
+
+<section class="page-section" id="nutrition"><h2><span class="num">04</span>营养数据包：组、阶段、加成</h2><p class="lead">三类文件都在 <code>data/&lt;命名空间&gt;/healthy_diet/</code> 下，以营养组 ID 关联；HD 覆盖层写在 <code>config/healthy_diet/datapack/</code>。文件名就是组 ID，最多 64 个组。</p>
+<div class="table-wrap"><table><thead><tr><th>类型</th><th>路径</th><th>文件内容</th></tr></thead><tbody>
+<tr><td>营养组</td><td><code>nutrition_groups/&lt;组id&gt;.json</code></td><td>一个 <code>GroupDefinition</code> 对象：名称、符号、排序、颜色、衰减、初始值、获取倍率和可用条件。</td></tr>
+<tr><td>阶段</td><td><code>nutrition_stages/&lt;组id&gt;.json</code></td><td><code>stages</code> 数组与 <code>hideAutoBonus</code>；文件键是所属营养组。</td></tr>
+<tr><td>加成</td><td><code>nutrition_bonuses/&lt;组id&gt;.json</code></td><td><code>remark</code> 与 <code>bonuses</code> 数组；每条含条件、属性加成和效果加成。</td></tr>
+</tbody></table></div>
+<h3>营养组字段</h3>
+<div class="table-wrap"><table><thead><tr><th>字段</th><th>默认</th><th>说明</th></tr></thead><tbody>
+<tr><td><code>displayName</code></td><td><code>Group</code></td><td>界面和提示中的组名；实际默认组由内置数据包提供中文名。</td></tr>
+<tr><td><code>nutritionSymbol</code></td><td><code>Ψ </code></td><td>营养行前缀符号；空白会回落到默认符号并补一个空格。</td></tr>
+<tr><td><code>order</code></td><td><code>0</code></td><td>营养界面排序，升序；相同序号按组 ID 字母序。</td></tr>
+<tr><td><code>color</code></td><td><code>#FFFFFF</code></td><td><code>#RRGGBB</code> 为纯色；其他字符串按 <code>color_schemes.json</code> 的方案键处理。</td></tr>
+<tr><td><code>colorStyle</code></td><td><code>null</code></td><td>方案键配色时的动画参数：<code>dynamic</code>、<code>nameStyle</code>、<code>speed</code>、<code>steps</code>、<code>waveStep</code>、<code>pulseDelay</code>、两个反转开关及 <code>bold</code>/<code>italic</code>/<code>underlined</code>。纯色时忽略。</td></tr>
+<tr><td><code>decayRate</code></td><td><code>6.0</code></td><td>自然衰减速率：每消耗 1 点饱食度降低 <code>1/decayRate</code> 营养值；小于等于 0 视为不衰减。</td></tr>
+<tr><td><code>icon</code></td><td><code>""</code></td><td>可选图标资源名；留空使用界面默认显示。</td></tr>
+<tr><td><code>initialValue</code></td><td><code>0</code></td><td>新玩家或新增该组时的初始营养值，0–100。</td></tr>
+<tr><td><code>gainMultiplier</code></td><td><code>1</code></td><td>食物对该组的正负变化都乘此倍率；允许 0，负数/NaN/Infinity 视为非法并回落 1。最终值仍夹在 0–100。</td></tr>
+<tr><td><code>enabled</code></td><td><code>true</code></td><td>组总开关。关闭后该组对所有玩家隐藏、冻结、停止衰减与条件/加成；恢复后继续。</td></tr>
+<tr><td><code>requiredPlayerTag</code></td><td><code>""</code></td><td>要求玩家拥有的计分板标签，精确匹配；空 = 不限制。不是物品/方块标签。</td></tr>
+<tr><td><code>requiredModId</code></td><td><code>""</code></td><td>要求服务端已加载的 modid；空 = 不限制。未安装时该组对该玩家禁用，可用于整合包预置可选联动。</td></tr>
+<tr><td><code>nutritionTipColors</code></td><td>自动生成</td><td>四个独立提示颜色槽（普通/条件 × 增益/损失）；<code>nutritionTipColorsCustomized</code> 决定增益槽是否跟随组名颜色。手改前建议先用编辑器。</td></tr>
+</tbody></table></div>
+<div class="example"><span class="label">营养组示例（文件名即组 ID）</span><pre style="overflow:auto;background:#181825;border:1px solid var(--line);border-radius:10px;padding:14px;font-size:12px;line-height:1.6">{
+  "displayName": "水果",
+  "nutritionSymbol": "Ψ ",
+  "order": 2,
+  "color": "a",
+  "decayRate": 6.0,
+  "initialValue": 0,
+  "gainMultiplier": 1.0,
+  "enabled": true
+}</pre><p>这里的 <code>"a"</code> 是方案键示例，不是要求所有组都用它。</p></div>
+<h3>阶段字段</h3>
+<div class="table-wrap"><table><thead><tr><th>字段</th><th>默认</th><th>说明</th></tr></thead><tbody>
+<tr><td><code>stages[].min</code> / <code>max</code></td><td><code>0</code> / <code>100</code></td><td>闭区间边界；实际判定先把营养值四舍五入到整数。相邻阶段应连续，编辑器会拒绝重叠和空档。</td></tr>
+<tr><td><code>stages[].label</code></td><td><code>""</code></td><td>阶段名称。</td></tr>
+<tr><td><code>stages[].tooltip</code></td><td><code>[]</code></td><td>该阶段的附加提示文本行。</td></tr>
+<tr><td><code>stages[].commands</code></td><td><code>[]</code></td><td>进入/处于该阶段时按服务端规则执行的命令；文本只向 OP4 或开启隐私开关的服务器下发。</td></tr>
+<tr><td><code>hideAutoBonus</code></td><td><code>false</code></td><td>文件级开关；<code>true</code> 时该组所有阶段悬停不再自动追加范围标题和加成预览。</td></tr>
+</tbody></table></div>
+<h3>加成字段</h3>
+<div class="table-wrap"><table><thead><tr><th>字段</th><th>默认</th><th>说明</th></tr></thead><tbody>
+<tr><td><code>remark</code></td><td><code>""</code></td><td>编辑器列表中的备注名，不参与结算；留空显示文件名。</td></tr>
+<tr><td><code>bonuses[].conditions</code></td><td><code>{}</code></td><td>组 ID → <code>{min,max}</code> 的映射；同一加成内多个条件按“且”判断。</td></tr>
+<tr><td><code>bonuses[].attributeBonuses[]</code></td><td><code>[]</code></td><td><code>attribute</code>（默认 <code>minecraft:generic.max_health</code>）、<code>operation</code>（<code>add</code>/<code>multiply_base</code>/<code>multiply_total</code>，默认 <code>add</code>）、<code>value</code>。</td></tr>
+<tr><td><code>bonuses[].effectBonuses[]</code></td><td><code>[]</code></td><td><code>effect</code>、<code>level</code>（0 = I 级）、<code>duration</code>（tick，默认 200）、<code>showParticles</code>（默认 false）。</td></tr>
+</tbody></table></div>
+<div class="source-note">源码依据：<code>GroupDefinition</code>、<code>StageConfig</code>、<code>GroupBonusConfig</code>、<code>ConfigManager.loadGroupsFromPacksChecked</code>、<code>loadStageConfigsFromPacksChecked</code>、<code>loadGroupBonusesFromPacksChecked</code>。</div></section>
+
+<section class="page-section" id="items"><h2><span class="num">05</span>物品、提示、方块与品质</h2><p class="lead">这些类型的字段较多，下面只给字段组和入口；具体玩法解释分别放在营养、保质期、Tooltip 和品质章节，避免同一字段在三处写出不同含义。</p>
+<div class="table-wrap"><table><thead><tr><th>数据包类型</th><th>路径</th><th>主要字段 / 说明</th><th>相关章节</th></tr></thead><tbody>
+<tr><td>物品</td><td><code>items/&lt;物品路径&gt;.json</code></td><td>营养、效果、厌倦、保质期、指令、条件规则、堆叠、品质、品级、NBT 变体</td><td><a href="nutrition.html">营养</a> · <a href="fatigue.html">厌倦</a> · <a href="shelf-life.html">保质期</a></td></tr>
+<tr><td>Tooltip</td><td><code>tooltips/&lt;物品路径&gt;.json</code></td><td>名称覆盖、附加行、显隐开关、NBT 变体</td><td><a href="tooltip.html">Tooltip</a> · <a href="appearance.html">显示美化</a></td></tr>
+<tr><td>方块</td><td><code>blocks/&lt;方块路径&gt;.json</code></td><td>状态/主手/潜行条件、营养、效果、命令、冷却、取消原版交互</td><td><a href="misc.html#blocks">小功能</a></td></tr>
+<tr><td>品质</td><td><code>quality_levels/&lt;id&gt;.json</code></td><td>字符串 ID、名称、纯色/方案、分段、覆盖层</td><td><a href="quality.html">品质</a></td></tr>
+<tr><td>品级</td><td><code>rarities/&lt;id&gt;.json</code></td><td>品级 ID、分段、色表或方案、动画参数</td><td><a href="appearance.html">显示美化</a></td></tr>
+<tr><td>效果行</td><td><code>effect_lines/&lt;效果id&gt;.json</code></td><td>按效果 ID 固定的提示行配色与修饰；仅在物品效果行“强制统一”时压过物品设置</td><td><a href="tooltip.html">Tooltip</a></td></tr>
+</tbody></table></div>
+<h3>物品配置的字段组</h3>
+<div class="table-wrap"><table><thead><tr><th>字段组</th><th>说明</th><th>详见</th></tr></thead><tbody>
+<tr><td><code>nutrition</code></td><td>组 ID → 营养变化量；正负都乘组获取倍率，再与终身衰减和分口份数结算。</td><td><a href="nutrition.html">营养值</a></td></tr>
+<tr><td><code>effects</code></td><td>食用后药水效果，含等级、tick 时长、概率、粒子与新鲜度曲线。</td><td><a href="titlepro.html#effects">TitlePro 与效果</a></td></tr>
+<tr><td><code>foodCooldown</code></td><td>短期厌倦：<code>maxUses</code>、<code>cooldownCount</code>、<code>cooldownMinutes</code>、<code>restoreHunger</code>。</td><td><a href="fatigue.html">食物厌倦</a></td></tr>
+<tr><td><code>foodFatigue</code></td><td>终身衰减：<code>lossStart</code>、<code>aversionCount</code>；两者都设置才启用线性衰减。</td><td><a href="fatigue.html">食物厌倦</a></td></tr>
+<tr><td><code>shelf</code></td><td>基础时长、温度曲线、维度倍率、冷鲜/保冷、环境温变、食用温度效果。</td><td><a href="shelf-life.html">保质期</a></td></tr>
+<tr><td><code>onEatCommands</code> / <code>suppressEffects</code></td><td>进食指令与清除物品自带效果；分别有独立延迟。</td><td><a href="titlepro.html#feedback">进食反馈</a></td></tr>
+<tr><td><code>conditionalRules</code></td><td>营养条件 → 目标营养变化/命令/提示；一条规则整体保存。</td><td><a href="nutrition.html#conditions">条件规则</a></td></tr>
+<tr><td><code>stackSize</code></td><td>物品级堆叠上限，0 = 原版默认；重启生效。NBT 变体不能拥有独立堆叠上限。</td><td><a href="admin.html#clients">服主手册</a></td></tr>
+<tr><td><code>quality</code> / <code>rarity</code></td><td>绑定品质 ID 与品级 ID；品级按“命中变体 → 通用条 → item_rarities.json → 原版”的优先级取。</td><td><a href="quality.html">品质与品级</a></td></tr>
+<tr><td><code>nbtLock</code> / <code>variantName</code></td><td>NBT 变体锁与备注；空 <code>nbtLock</code> 是通用条，非空是变体。</td><td><a href="nutrition.html">NBT 变体</a></td></tr>
+</tbody></table></div>
+<h3>方块右键变体字段</h3>
+<div class="table-wrap"><table><thead><tr><th>字段</th><th>默认</th><th>说明</th></tr></thead><tbody>
+<tr><td><code>state</code></td><td><code>{}</code></td><td>方块状态属性子集；空 = 匹配该方块任意状态。状态属性越多，匹配优先级越高。</td></tr>
+<tr><td><code>hand</code></td><td><code>any</code></td><td><code>any</code>、<code>empty</code>（主手为空）或 <code>item</code>（主手物品需命中 <code>items</code>）。</td></tr>
+<tr><td><code>items</code></td><td><code>[]</code></td><td>物品 ID 或 <code>#标签</code> 列表；仅 <code>hand=item</code> 时参与匹配。</td></tr>
+<tr><td><code>consumeItem</code></td><td><code>0</code></td><td>触发时消耗主手数量；创造模式不消耗，数量不足视为条件不满足。</td></tr>
+<tr><td><code>sneak</code></td><td><code>any</code></td><td><code>any</code>、<code>require</code> 或 <code>forbid</code>。</td></tr>
+<tr><td><code>cooldownTicks</code></td><td><code>20</code></td><td>同一变体的触发冷却，0–72000 tick；0 = 不写冷却。</td></tr>
+<tr><td><code>cancelVanilla</code></td><td><code>false</code></td><td>匹配后是否取消原版方块交互；为 true 时长按会去重，为 false 时每次原版重发都要结算。</td></tr>
+<tr><td><code>nutrition</code></td><td><code>{}</code></td><td>组 ID → 变化量；受组获取倍率影响，但没有终身衰减和分口。</td></tr>
+<tr><td><code>effects</code> / <code>effectDelay</code></td><td><code>[]</code> / <code>0</code></td><td>效果列表与施加延迟（tick）；方块交互没有物品保质期，曲线效果不生效。</td></tr>
+<tr><td><code>commands</code> / <code>commandsAtBlock</code></td><td><code>[]</code> / <code>false</code></td><td>指令可写 <code>{x}</code> <code>{y}</code> <code>{z}</code>；<code>true</code> 时执行位置改为方块中心。</td></tr>
+<tr><td><code>titles</code> / <code>commandDelay</code></td><td><code>[]</code> / <code>0</code></td><td>TitlePro 标题与命令共用延迟（tick）。</td></tr>
+</tbody></table></div>
+<div class="callout warn"><b>禁用与变体：</b><code>items</code> 与 <code>tooltips</code> 支持 <code>.json.disabled</code> 禁用约定；<code>blocks</code> 没有这种约定。NBT 变体可以覆盖食物/提示字段，但 <code>stackSize</code> 是物品单例属性，变体中会被强制为 0。</div>
+<div class="source-note">源码依据：<code>ItemConfig</code>、<code>ItemTooltipConfig</code>、<code>BlockConfig</code>、<code>QualityLevelConfig</code>、<code>RarityConfig</code>、<code>EffectLineConfig</code>、<code>ConfigManager.findBlockVariant</code> 与数据包加载器。</div></section>
+
+<section class="page-section" id="shelf"><h2><span class="num">06</span>保质期与温度环境字段</h2><p class="lead">物品的 <code>shelf</code> 字段控制单件食物；<code>shelf_life/</code> 与 <code>temperature/</code> 下的文件控制季节、环境温变和显示方案。字段默认值适合新建，实际物品常在默认数据包中覆盖。</p>
+<h3>物品 <code>shelf</code> 顶层字段</h3>
+<div class="table-wrap"><table><thead><tr><th>字段</th><th>默认</th><th>说明</th></tr></thead><tbody>
+<tr><td><code>durationMinutes</code></td><td><code>60</code></td><td>基础保质时长，按分钟存储，1–99999。编辑器的 <code>durationUnit</code> 只是显示单位，不改变存储。</td></tr>
+<tr><td><code>durationUnit</code></td><td><code>minutes</code></td><td><code>minutes</code>、<code>hours</code>、<code>days</code>（现实日，1440 分钟）或 <code>game_days</code>（20 分钟）。非法值回落 <code>minutes</code>。</td></tr>
+<tr><td><code>resultItem</code></td><td><code>minecraft:air</code></td><td>过期后替换成的物品；空气表示消失。</td></tr>
+<tr><td><code>inheritTemperatureOnExpire</code></td><td><code>true</code></td><td>替换时让产物继承过期瞬间温度；只继承温度，产物保质期仍从 0 开始。</td></tr>
+<tr><td><code>expireCommand</code></td><td><code>""</code></td><td>玩家持有物品过期时以持有者为上下文执行的命令；掉落物/容器内过期不触发，不写入物品 NBT。</td></tr>
+<tr><td><code>baseDecayMultiplier</code></td><td><code>1.0</code></td><td>基础变质倍率，非负。</td></tr>
+<tr><td><code>temperatureCurves</code></td><td><code>[]</code></td><td>温度 → 变质倍率曲线，最多 16 条；字段见下。</td></tr>
+<tr><td><code>dimensionDecayMultipliers</code></td><td><code>{}</code></td><td>维度 ID → 倍率；未列出的维度为 1。</td></tr>
+<tr><td><code>scheme</code></td><td><code>hd:shelf_en</code></td><td>保质期显示方案 ID；旧 <code>hd:shelf</code> 会规范化到现行方案，不要继续写旧值。</td></tr>
+<tr><td><code>coldRetention</code></td><td><code>false</code></td><td>是否启用保冷：完全冻结时回充已消耗时间，非冻结时正常消耗并永久降低回充上限。</td></tr>
+<tr><td><code>coldRecoveryRate</code></td><td><code>1.0</code></td><td>完全冻结时每分钟回充的保冷分钟数，0–100。</td></tr>
+<tr><td><code>coldDegradationRate</code></td><td><code>15.0</code></td><td>每损失基础保质时间的该百分比，回充上限永久下降一档，1–100。</td></tr>
+<tr><td><code>temperatureEffectCurves</code></td><td><code>[]</code></td><td>食用时的温度区间效果，最多 20 条；字段见下。</td></tr>
+</tbody></table></div>
+<h3>温度曲线与食用温度效果</h3>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>字段</th><th>说明</th></tr></thead><tbody>
+<tr><td rowspan="4"><code>temperatureCurves[]</code></td><td><code>startTemperatureC</code> / <code>endTemperatureC</code></td><td>主区间端点，要求起点小于终点。</td></tr>
+<tr><td><code>startMultiplier</code> / <code>endMultiplier</code></td><td>端点倍率，0–100，按端点线性过渡。</td></tr>
+<tr><td><code>startBufferTemperatureC</code> / <code>endBufferTemperatureC</code></td><td>可选外缓冲端点；不填则主区间外不生效。旧 <code>startBufferC</code>/<code>endBufferC</code> 只读迁移。</td></tr>
+<tr><td>数量</td><td>最多 16 条；区间外倍率为 1。</td></tr>
+<tr><td rowspan="6"><code>temperatureEffectCurves[]</code></td><td><code>effectId</code></td><td>效果注册名；普通药水按常规施加，LSO 四个食用温度效果保留冷热语义。</td></tr>
+<tr><td><code>startTemperatureC</code> / <code>endTemperatureC</code></td><td>绝对摄氏度区间；普通新建要求起点小于终点。</td></tr>
+<tr><td><code>includeStart</code> / <code>includeEnd</code></td><td>端点是否包含，默认都包含。旧固定温区迁移可能生成单点区。</td></tr>
+<tr><td><code>startLevel</code> / <code>endLevel</code></td><td>0 = I 级，范围 0–127；区间内线性过渡。</td></tr>
+<tr><td><code>startDuration</code> / <code>endDuration</code></td><td>tick，范围 1–72000；20 tick = 1 秒。</td></tr>
+<tr><td><code>particles</code></td><td>是否显示粒子，默认 true；数量最多 20 条。</td></tr>
+</tbody></table></div>
+<h3><code>common</code> 与温变子对象</h3>
+<div class="table-wrap"><table><thead><tr><th>对象 / 字段</th><th>默认</th><th>说明</th></tr></thead><tbody>
+<tr><td><code>common.minTemperatureC</code> / <code>maxTemperatureC</code></td><td><code>-30</code> / <code>100</code></td><td>物品可存在的温度范围。</td></tr>
+<tr><td><code>common.initialTemperatureC</code></td><td><code>10</code></td><td>新物品初始温度。</td></tr>
+<tr><td><code>common.eatableMinTemperatureC</code> / <code>eatableMaxTemperatureC</code></td><td><code>-5</code> / <code>35</code></td><td>可食用温度区间；超出时按服务端规则拒绝食用。</td></tr>
+<tr><td><code>common.coldFreshStartC</code> / <code>freezingStartC</code> / <code>fullyFrozenC</code></td><td><code>3</code> / <code>-5</code> / <code>-20</code></td><td>冷鲜点、冷冻点、完全冻结点；用于冷鲜进度与保冷判定。</td></tr>
+<tr><td><code>common.highTemperatureC</code> / <code>preservationRate</code></td><td><code>30</code> / <code>0.8</code></td><td>高温区起点、保鲜率；保鲜率参与变质倍率。</td></tr>
+<tr><td><code>naturalEnvironment.temperatureChangeC</code> / <code>temperatureChangeMinutes</code></td><td><code>1</code> / <code>2</code></td><td>自然环境基础温变：每 2 分钟 1°C。</td></tr>
+<tr><td><code>naturalEnvironment.lowSpeed*</code> / <code>highSpeed*</code></td><td><code>0.3</code> / <code>5</code> / <code>5</code>；<code>1</code> / <code>5</code> / <code>5</code></td><td>温差加速：每 5°C 增加的倍率步长与上限；升温/降温分开配置。</td></tr>
+<tr><td><code>naturalEnvironment.*SpeedMultiplierBonus</code></td><td><code>0</code></td><td>冷冻区、低温区、常温区、高温区的额外加速倍率。</td></tr>
+<tr><td><code>fridgeTemperature.*ChangeC</code> / <code>*Minutes</code></td><td>冰箱 <code>5</code> / <code>2</code>；冷冻室 <code>10</code> / <code>2</code></td><td>冰箱/冷冻柜的基础温变速度。</td></tr>
+<tr><td><code>fridgeTemperature.*SpeedMultiplierBonus</code></td><td><code>0</code></td><td>冰箱内四个温区的额外加速倍率。</td></tr>
+<tr><td><code>temperatureZoneEffects</code></td><td><code>null</code></td><td>旧固定四温区输入，只读兼容；首次归一化时转换为 <code>temperatureEffectCurves</code> 并清空。新配置不要再写。</td></tr>
+</tbody></table></div>
+<h3><code>shelf_life/</code> 与 <code>temperature/</code></h3>
+<div class="table-wrap"><table><thead><tr><th>文件</th><th>结构 / 字段</th><th>说明</th></tr></thead><tbody>
+<tr><td><code>shelf_life/seasons.json</code></td><td><code>fallbackMultipliers.shelfLifeMultiplier</code>（默认 1.0）；<code>seasons[]</code> 含 <code>id</code>、<code>range</code>（EC 节气 0–23）、<code>shelfLifeMultiplier</code>（0–100）、<code>displayName</code></td><td>未加载 EC 时使用回退倍率；旧 6 季节文件照读照存，不强制迁移。</td></tr>
+<tr><td><code>temperature/season_temperature.json</code></td><td><code>terms[]</code> 含 <code>term</code>（0–23）与 <code>offset</code>（-100–100）</td><td>附加环境温度，叠加在 EC 气候上，不替换 EC 气候。</td></tr>
+<tr><td><code>temperature/weather_offsets.json</code></td><td><code>terms[]</code> 含 <code>term</code>、<code>rain</code>（默认 -1）、<code>thunder</code>（默认 -2）</td><td>雨雪/雷暴温变偏移；无降水不查表；范围 -100–100。</td></tr>
+<tr><td><code>temperature/day_night_offsets.json</code></td><td><code>terms[]</code> 含 <code>term</code>、<code>noon</code>、<code>night</code>（默认 0）</td><td>正午/午夜温变幅度；日内按余弦过渡，节气间平滑插值；全 0 等同关闭。</td></tr>
+<tr><td><code>temperature/block_heat.json</code></td><td><code>entries[]</code> 含 <code>block</code> 与 <code>rules[]</code>；规则含 <code>temperature</code>（-1000–1000）与 <code>properties</code></td><td>只在非 LSO 分支生效；同一方块按规则顺序匹配，第一条属性全命中的生效，空属性为兜底。</td></tr>
+</tbody></table></div>
+<div class="source-note">源码依据：<code>S2ShelfConfig</code>、<code>ShelfTemperatureCurve</code>、<code>ShelfTemperatureEffectCurve</code>、<code>ShelfDurationUnit</code>、<code>SeasonConfig</code>、<code>SeasonTemperatureConfig</code>、<code>WeatherOffsetsConfig</code>、<code>DayNightOffsetsConfig</code>、<code>BlockHeatConfig</code>。</div></section>
+
+<section class="page-section" id="appearance"><h2><span class="num">07</span>外观方案与小工具</h2><p class="lead">这些文件多数是共享外观或本机小工具，不改变营养/保质期结算。改配色前先确认目标行引用的是哪个方案键。</p>
+<div class="table-wrap"><table><thead><tr><th>文件</th><th>结构与关键字段</th><th>边界</th></tr></thead><tbody>
+<tr><td><code>colors/color_schemes.json</code></td><td>方案 ID → <code>{ "colors": ["#RRGGBB", ...] }</code>；方案 ID 被营养组、品质、提示行、品级和保质期方案引用</td><td>单个颜色可用，但两个以上才形成可见渐变；改共享方案会影响所有引用位置。</td></tr>
+<tr><td><code>colors/solid_colors.json</code></td><td><code>["#RRGGBB", ...]</code> 色卡数组</td><td>供编辑器纯色选择；非法项被忽略，不会生成颜色。</td></tr>
+<tr><td><code>fatigue/fatigue_gradient.json</code></td><td><code>enableGradient</code>；<code>fatigueLevelGradient</code> 与 <code>fatigueRecoveryGradient</code>，各含 <code>scheme</code>、<code>stars</code>、<code>dynamic</code>、<code>speed</code>、<code>steps</code>、<code>nameStyle</code>、<code>waveStep</code>、<code>pulseDelay</code>、两个反转开关和修饰</td><td>只影响厌倦提示的颜色与动画，不改变冷却/厌食阈值。</td></tr>
+<tr><td><code>fatigue/fatigue_exempt.json</code></td><td>物品 ID 字符串数组；默认含腐肉、药水、蜘蛛眼、牛奶桶</td><td>吃下这些物品不会推进其他冷却食物的恢复计数；不是“吃它永不厌倦”的配置。</td></tr>
+<tr><td><code>tooltip_templates.json</code></td><td>模板数组：<code>text</code>、<code>scheme</code>、<code>stars</code>、<code>shiftOnly</code>、<code>dynamic</code>、<code>nameStyle</code>、<code>speed</code>、<code>steps</code>、<code>waveStep</code>、<code>pulseDelay</code>、两个反转开关</td><td>编辑器 [模板] 按钮读取；属于本实例编辑辅助，不把它当作跨客户端下发内容。</td></tr>
+<tr><td><code>item_rarities.json</code></td><td>物品 ID → 品级 ID 的映射</td><td>物品级兜底；命中 NBT 变体的品级在物品配置条目中，优先级更高。<code>/hdset rarity clear &lt;物品ID&gt;</code> 删这里。</td></tr>
+<tr><td><code>bottle_fills.json</code></td><td><code>{ item, fluid, result, resultNbt }</code> 数组</td><td>只匹配液体源方块；创造模式不消耗也不产出；<code>resultNbt</code> 解析失败仍给结果物品，仅不带 NBT。</td></tr>
+<tr><td><code>fog_effects.json</code></td><td><code>effects</code>（默认夜视）、<code>waterFogStart</code> 80、<code>waterFogEnd</code> 160、<code>lavaFogEnd</code> 6</td><td>客户端本地；改变雾距离而非雾颜色；效果结束前平滑回退；服务器重载不代改本地文件。</td></tr>
+<tr><td><code>effect_lines/&lt;效果id&gt;.json</code></td><td><code>id</code>、<code>scheme</code>、<code>dynamic</code>、<code>nameStyle</code>、<code>speed</code>、<code>steps</code>、<code>waveStep</code>、<code>pulseDelay</code>、两个反转开关和修饰</td><td>只在物品药水效果行开启“强制统一”时压过物品自身设置；文本固定为效果名。</td></tr>
+</tbody></table></div>
+<div class="example"><span class="label">颜色方案结构</span><pre style="overflow:auto;background:#181825;border:1px solid var(--line);border-radius:10px;padding:14px;font-size:12px;line-height:1.6">{
+  "silver_mist": { "colors": ["#8e9eab", "#eef2f3"] },
+  "warm_example": { "colors": ["#f7971e", "#ffd200"] }
+}</pre><p>方案键只是颜色来源，不决定某条提示是否显示；显隐仍由 Tooltip 配置和可见性开关控制。</p></div>
+<div class="source-note">源码依据：<code>RaritySchemeConfig</code>、<code>RarityColors</code>、<code>FatigueGradientConfig</code>、<code>TooltipTemplateConfig</code>、<code>BottleFillConfig</code>、<code>FogEffectConfig</code>、<code>EffectLineConfig</code>。</div></section>
+
+<section class="page-section" id="refresh"><h2><span class="num">08</span>游戏内入口与刷新方式</h2><p class="lead">同一个“保存”在不同位置含义不同：客户端本地文件、服务端权威分节和启动期注册不能互相替代。</p>
+<h3>游戏内配置菜单</h3>
+<div class="table-wrap"><table><thead><tr><th>入口</th><th>覆盖内容</th><th>权限 / 生效</th></tr></thead><tbody>
+<tr><td>客户端显示设定</td><td><code>display.json</code>：Tooltip 布局、温度单位、默认显示模式</td><td>所有玩家；保存写本机文件，立即应用</td></tr>
+<tr><td>服务端显示</td><td><code>server.json</code> 的 <code>gameplay</code>：保质期总开关、联动、刷新间隔、保护物品、测试日志</td><td>OP4；服务端保存并回执，在线玩家收到投影</td></tr>
+<tr><td>温度与环境</td><td>季节倍率、方块热量、雨雪/昼夜/节气温度</td><td>OP4；按各分页读取和保存</td></tr>
+<tr><td>群系温度</td><td>与已安装的温度/群系兼容相关的编辑入口</td><td>OP4；具体项随环境变化</td></tr>
+</tbody></table></div>
+<h3>改完之后做什么</h3>
+<div class="grid-2"><div class="mini-card"><b>只改服务端规则</b><span>例如 <code>server.json</code>、营养组/阶段/加成、物品、方块、品级、颜色和保质期方案：保存或编辑后执行 <code>/hdreload</code>，让本模组重新读盘并向在线玩家重发权威内容。</span></div><div class="mini-card"><b>只改本机外观</b><span>例如 <code>display.json</code>、客户端 <code>fog_effects.json</code>、本地提示模板：在各客户端处理；服务器执行 <code>/hdreload</code> 不会替你改这些本地文件。</span></div></div>
+<div class="table-wrap"><table><thead><tr><th>修改内容</th><th>推荐动作</th><th>为什么</th></tr></thead><tbody>
+<tr><td><code>server.json</code> gameplay / privacy / shelfMerge</td><td>配置页保存，或编辑后 <code>/hdreload</code></td><td>服务端权威值在加载时读入；保存路径会写分节并重推。</td></tr>
+<tr><td><code>display.json</code>、本地雾效、本地模板</td><td>在对应客户端保存；手改后重进客户端</td><td>不参与服务端同步，<code>/hdreload</code> 不远程重写本地文件。</td></tr>
+<tr><td>营养组 / 阶段 / 加成、物品、提示、方块、品质、品级、效果行</td><td>保存后 <code>/hdreload</code>；世界数据包改动可用原版 <code>/reload</code></td><td>HD 覆盖层由 <code>/hdreload</code> 以磁盘为准重建；世界数据包由资源管理器刷新。</td></tr>
+<tr><td>新增/删除 <code>quality_registry/</code> 条目</td><td>两端同步定义后重启</td><td>物品注册只发生在启动阶段；<code>/hdreload</code> 只重算待生效列表。</td></tr>
+<tr><td>物品 <code>stackSize</code></td><td>重启</td><td>堆叠上限是物品单例属性；NBT 变体不能各自覆盖。</td></tr>
+<tr><td>共享客户端资源（贴图、字体等）</td><td>分发到各客户端</td><td>服务端配置只能描述引用，不能把资源推送到客户端。</td></tr>
+</tbody></table></div>
+<div class="callout warn"><b>不要把 <code>/hdreload</code> 当成原版 <code>/reload</code>：</b>它只重载 Healthy Diet 自身可重载的配置和 HD 覆盖层；原版数据包/资源包、其他模组的资源以及客户端本地文件仍按各自流程处理。</div>
+<div class="demo-card"><div><b>需要确认具体物品字段？</b><span>营养、厌倦、保质期、Tooltip 和品质章节分别解释字段的玩法含义；本页只负责“字段在哪、默认是什么、改完怎么生效”。</span></div><a href="admin.html">查看服主手册 →</a></div>
+<div class="source-note">源码依据：<code>HdModConfigScreen</code>、<code>HdDisplayConfigScreen</code>、<code>HdTempIntegrationScreen</code>、<code>HDReloadCommand.reloadAll</code>、<code>QualityRegistryLoader</code>。</div></section>
+
+<footer class="page-footer"><span>Healthy Diet · 配置项详解</span><a href="index.html">返回章节地图</a></footer></article></div></main>
+<script src="assets/guide.js"></script>
+<script>
+(() => {
+  const input = document.querySelector('[data-config-filter]');
+  if (!input) return;
+  const rows = [...document.querySelectorAll('[data-config-table] tbody tr')];
+  const status = document.querySelector('[data-config-status]');
+  const update = () => {
+    const query = input.value.trim().toLowerCase();
+    let shown = 0;
+    for (const row of rows) {
+      const hit = !query || (row.dataset.search || row.textContent).toLowerCase().includes(query);
+      row.hidden = !hit;
+      if (hit) shown++;
+    }
+    if (status) status.textContent = query ? `匹配 ${shown} / ${rows.length} 个配置入口` : `共 ${rows.length} 个配置入口；输入文件名、路径或字段名过滤。`;
+  };
+  input.addEventListener('input', update);
+  update();
+})();
+</script>
+</body></html>
