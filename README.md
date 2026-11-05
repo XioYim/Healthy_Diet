@@ -5,10 +5,10 @@
 [中文](#中文) · [English](#english)
 
 ---
-[Wiki ](https://www.bilibili.com/video/BV1tHYu6REwz) 
+[Wiki ](https://github.com/XioYim/Healthy_Diet/wiki/Wiki) 
 ---
 
-#演示 https://github.com/XioYim/Healthy_Diet/wiki/Wiki
+[#视频演示](https://www.bilibili.com/video/BV1tHYu6REwz) 
 
 ## 中文
 
