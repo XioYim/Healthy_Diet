@@ -136,12 +136,13 @@
             <div class="shelf-viewer-grid"><div><h4>食用时的温度效果</h4><div data-shelf-effects></div></div><div><h4>环境中的温变速度</h4><div data-shelf-environment></div></div></div>
             <p class="shelf-source" data-shelf-source></p>
           </div>
+          <div class="demo-card"><div><b>查看完整物品数据？</b><span>独立食物查询器以同样五个默认案例为起点，可查看营养、温度、温变、温区、保质期、效果和食用条件，也能导入 <code>/hdinfo</code> JSON。</span></div><a href="food-query.html">打开独立食物查询器 →</a></div>
           <h3>粘贴自己的查询 JSON (仅本地读取)</h3>
           <p>游戏内使用 <code>/hdinfo</code> 获取查询 JSON；可在此粘贴 <code>schemaVersion: 1</code>、含 <code>config.shelf</code> 的单物品查询对象。页面仅解析保质期相关字段，不上传、不保存，也不修改游戏配置。需要查看营养、效果等完整数据时请使用模组自带的食物查询器。</p>
           <label class="shelf-search-label" for="shelf-json">查询对象 JSON</label>
           <textarea id="shelf-json" class="shelf-json" rows="5" spellcheck="false" placeholder="{\"schemaVersion\":1,\"itemId\":\"minecraft:apple\",\"config\":{\"shelf\":{...}}}" data-shelf-json></textarea>
           <div class="shelf-import-row"><button type="button" data-shelf-import>本地查看这份配置</button><span role="status" data-shelf-import-status>不会连接服务器；没有保质期配置的物品会明确提示。</span></div>
-          <div class="figure-caption">内置案例只摘录与本页展示相关的真实配置字段；随模组提供的旧四区输入按现行统一曲线迁移规则展示。服务器数据包、兼容模组安装及玩家持有物品的运行状态可能不同。独立查询器可显示完整的 <code>/hdinfo</code> 数据。</div>
+          <div class="figure-caption">内置案例只摘录与本页展示相关的真实配置字段；随模组提供的旧四区输入按现行统一曲线迁移规则展示。服务器数据包、兼容模组安装及玩家持有物品的运行状态可能不同。<a href="food-query.html">独立食物查询器</a>可显示完整的 <code>/hdinfo</code> 数据。</div>
           <div class="source-note">案例依据：<code>src/main/resources/defaults/datapack/data/{minecraft,farmersdelight}/healthy_diet/items/</code> 中五个同名 JSON；查询对象结构依据 <code>ItemInfoSnapshot.viewerConfig</code> 与内置 <code>query_viewer.html</code>。</div>
         </section>
 
