@@ -5,7 +5,8 @@
 [中文](#中文) · [English](#english)
 
 ---
-[Wiki ](https://www.bilibili.com/video/BV1tHYu6REwz) https://github.com/XioYim/Healthy_Diet/wiki/Wiki
+[Wiki ](https://www.bilibili.com/video/BV1tHYu6REwz) 
+演示 https://github.com/XioYim/Healthy_Diet/wiki/Wiki
 ---
 ## 中文
 
