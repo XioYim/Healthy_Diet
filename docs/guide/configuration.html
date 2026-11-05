@@ -1,10 +1,71 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><title>配置项详解 · Healthy Diet 功能指南</title><link rel="stylesheet" href="assets/guide.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><title>配置项详解 · Healthy Diet 功能指南</title><link rel="stylesheet" href="assets/guide.css">
+<style>
+/* 仅本页：按游戏内 Screen 的面板尺寸、行高和色值绘制只读示意。 */
+.ui-preview { margin: 18px 0 10px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #11111b; }
+.ui-preview figcaption { margin: 0 0 10px; color: var(--muted); font-size: 12px; }
+.ui-preview figcaption strong { color: var(--ink); }
+.ui-stage { max-width: 100%; overflow-x: auto; padding: 14px; background: linear-gradient(145deg,#302d3a,#101018); border-radius: 8px; }
+.ui-window { width: 360px; margin: 0 auto; border: 1px solid #555; background: #1c1c1c; box-shadow: 0 12px 28px #0009; color: #fff; font: 11px/1.4 "Cascadia Code", "Microsoft YaHei", sans-serif; }
+.ui-window.wide { width: 440px; }
+.ui-window.biome { width: 480px; }
+.ui-window.dimension { width: 290px; }
+.ui-window.menu { min-height: 225px; border: 0; background: linear-gradient(135deg,#26382f,#20232d); box-shadow: none; }
+.ui-window.menu .ui-title { padding-top: 18px; background: transparent; }
+.ui-title { min-height: 24px; padding: 5px 8px; text-align: center; background: #181818; font-weight: 700; }
+.ui-window.biome .ui-title { color: #ffd24a; background: #252525; }
+.ui-viewport { height: 312px; margin: 4px; overflow-y: auto; background: #141414; scrollbar-color: #777 #2a2a2a; scrollbar-width: thin; }
+.ui-group { display: grid; place-items: center; min-height: 26px; color: #ffd24a; text-decoration: underline; text-underline-offset: 3px; }
+.ui-row { display: flex; align-items: center; min-height: 26px; gap: 4px; padding: 2px 8px; }
+.ui-row + .ui-row { border-top: 1px solid #ffffff08; }
+.ui-row .ui-name { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.ui-value { display: inline-block; min-width: 58px; padding: 3px 5px; border: 1px solid #a0a0a0; background: #000; text-align: right; white-space: nowrap; }
+.ui-value.number { min-width: 105px; text-align: left; }
+.ui-value.short { min-width: 46px; text-align: center; }
+.ui-value.long { flex: 1; min-width: 0; text-align: left; }
+.ui-value.readonly { border-color: #777; color: #ffff55; }
+.ui-button { display: inline-block; min-width: 34px; padding: 2px 5px; border: 1px solid #aaa; box-shadow: inset 1px 1px #ffffff30, inset -1px -1px #0008; background: linear-gradient(#727272,#555); color: #fff; text-align: center; white-space: nowrap; }
+.ui-button.reset { min-width: 16px; padding: 1px; }
+.ui-button.danger { color: #ff7979; }
+.ui-button.disabled { border-color: #555; background: #3b3b3b; color: #888; }
+.ui-footer { display: flex; justify-content: center; gap: 4px; padding: 5px 8px; }
+.ui-footer .ui-button { flex: 1; }
+.ui-footer[hidden] { display: none; }
+.ui-menu { padding: 20px 65px; display: grid; gap: 6px; }
+.ui-menu .ui-button { min-height: 20px; }
+.ui-tabbar { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 4px; padding: 3px 4px 5px; }
+.ui-tabbar button { min-height: 20px; padding: 0 3px; font: inherit; cursor: pointer; }
+.ui-tabbar button[aria-selected="true"] { border-color: #ffd24a; background: linear-gradient(#909090,#666); }
+.ui-tab-panel[hidden] { display: none; }
+.ui-window.wide .ui-viewport { height: 260px; }
+.ui-window.wide .ui-value.number { min-width: 100px; }
+.ui-window .ui-two { display: inline-flex; align-items: center; gap: 3px; }
+.ui-window .ui-two .ui-value { min-width: 40px; }
+.ui-window .ui-two small { color: #ccc; }
+.ui-biome-body { height: 212px; overflow-y: auto; padding: 5px; background: #141414; }
+.ui-biome-body .ui-row { min-height: 22px; }
+.ui-biome-body .ui-name { flex: 0 0 106px; color: #ffd24a; }
+.ui-biome-body .ui-value { min-width: 42px; }
+.ui-biome-body .ui-value.long { min-width: 0; }
+.ui-biome-body .ui-button { min-width: 66px; }
+.ui-help { display: grid; grid-template-columns: minmax(170px,35%) minmax(0,1fr); margin: 12px 0 22px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; font-size: 12.5px; }
+.ui-help dt, .ui-help dd { margin: 0; padding: 9px 12px; border-bottom: 1px solid var(--line-soft); overflow-wrap: anywhere; }
+.ui-help dt { background: #31324466; color: var(--ink); font-weight: 650; }
+.ui-help dd { color: var(--muted); }
+.ui-help dt:last-of-type, .ui-help dd:last-of-type { border-bottom: 0; }
+.ui-note { color: var(--faint); font-size: 12px; }
+.ui-dimension-rows { padding: 9px 10px; }
+.ui-dimension-rows .ui-name { display: block; margin: 5px 0 2px; }
+.ui-dimension-rows .ui-value { width: 100%; }
+.ui-dimension-rows .ui-row { padding: 3px 0; }
+.ui-dimension-rows .ui-row .ui-value { flex: 1; width: auto; min-width: 0; }
+@media (max-width: 620px) { .ui-preview { padding: 9px; } .ui-stage { padding: 8px; } .ui-help { grid-template-columns: 1fr; } .ui-help dt { border-bottom: 0; padding-bottom: 2px; } .ui-help dd { padding-top: 2px; } }
+</style></head>
 <body><a class="skip-link" href="#main">跳到正文</a><header class="topbar"><div class="wrap topbar-inner"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✦</span><span>Healthy Diet<small>FEATURE GUIDE</small></span></a><nav class="topnav" data-nav aria-label="章节导航"><a href="index.html">总览</a><a href="nutrition.html">营养值</a><a href="configuration.html" aria-current="page">配置项</a></nav><span class="lang-badge">中文</span><button class="menu-btn" type="button" data-menu aria-expanded="false" aria-label="打开章节导航">☰</button></div></header>
-<main class="wrap" id="main"><section class="hero"><span class="eyebrow">REFERENCE / CONFIGURATION</span><h1>配置项详解：先定位文件，再核对字段。</h1><p>这一页把服务器的玩法开关、客户端本地显示、营养数据包、物品与方块定义、保质期和温度表集中成一份字段索引。先判断文件属于谁，再决定用重载、重进还是重启。</p><div class="tags"><span class="tag">server.json</span><span class="tag">display.json</span><span class="tag">数据包字段</span><span class="tag">刷新边界</span></div></section>
-<div class="notice" role="note"><strong>默认值边界：</strong>表中的“默认”指字段在代码或新建配置中的初始值，不表示你的服务器正在使用该值。服务器文件、数据包和编辑器保存都可能覆盖它；带 <code>_note_</code> 前缀的字段只是只读说明，修改不会生效。</div>
-<div class="layout"><aside class="toc" data-toc aria-label="本页目录"><h2>本页目录</h2><ol><li><a href="#files">文件地图</a></li><li><a href="#server">server.json</a></li><li><a href="#display">display.json</a></li><li><a href="#nutrition">营养数据包</a></li><li><a href="#items">物品与方块</a></li><li><a href="#shelf">保质期与环境</a></li><li><a href="#appearance">外观与小工具</a></li><li><a href="#refresh">配置页与刷新</a></li></ol></aside><article>
+<main class="wrap" id="main"><section class="hero"><span class="eyebrow">REFERENCE / CONFIGURATION</span><h1>配置项详解：文件字段与游戏内界面。</h1><p>按文件定位服务器玩法与客户端显示设置，再用游戏内界面预览核对每个可见选项的作用、保存范围和刷新方式。</p><div class="tags"><span class="tag">server.json</span><span class="tag">display.json</span><span class="tag">游戏内界面预览</span><span class="tag">刷新边界</span></div></section>
+<div class="notice" role="note"><strong>默认值与预览边界：</strong>表中的“默认”指代码或新建配置的初始值，不表示你的服务器正在使用该值。下方仿游戏 UI 是只读 HTML 示意，不连接游戏、不显示实时配置，也不能保存；实际行数、语言、第三方模组与权限可能不同。带 <code>_note_</code> 前缀的字段只是只读说明，修改不会生效。</div>
+<div class="layout"><aside class="toc" data-toc aria-label="本页目录"><h2>本页目录</h2><ol><li><a href="#files">文件地图</a></li><li><a href="#server">server.json</a></li><li><a href="#display">display.json</a></li><li><a href="#nutrition">营养数据包</a></li><li><a href="#items">物品与方块</a></li><li><a href="#shelf">保质期与环境</a></li><li><a href="#appearance">外观与小工具</a></li><li><a href="#ui">游戏内 UI 逐项图解</a></li><li><a href="#refresh">保存与刷新</a></li></ol></aside><article>
 
 <section class="page-section" id="files"><h2><span class="num">01</span>配置放在哪，归谁管</h2><p class="lead">所有路径都相对于实例的 <code>config/healthy_diet/</code>；数据包路径另见 <code>data/&lt;命名空间&gt;/healthy_diet/</code>。先看“作用域”，再看“典型刷新方式”。</p>
 <label class="shelf-search-label" for="config-filter">按文件名、路径或字段过滤</label><input class="shelf-search" id="config-filter" type="search" autocomplete="off" placeholder="例如 server.json、temperature、quality_registry、刷新" data-config-filter>
@@ -77,7 +138,7 @@
 
 <section class="page-section" id="display"><h2><span class="num">03</span><code>display.json</code>：客户端本地偏好</h2><p class="lead">这份文件只影响当前客户端的外观与编辑默认值，不参与服务器玩法同步。服务端下的玩法开关在 <code>server.json</code> 的 <code>gameplay</code>，不要写回这里。</p>
 <div class="table-wrap"><table><thead><tr><th>字段</th><th>类型 / 默认</th><th>作用与边界</th></tr></thead><tbody>
-<tr><td><code>nutritionPerLine</code></td><td>int / <code>6</code></td><td>Tooltip 每行最多显示的营养条目数；1 = 每组单行，数值越大越紧凑。编辑器范围 1–100。</td></tr>
+<tr><td><code>nutritionPerLine</code></td><td>int / <code>6</code></td><td>普通 Tooltip 营养与条件条目的显示上限；超过上限截断并附省略号。设为 1 只显示第一条，不是每组单独换行；编辑器范围 1–100。</td></tr>
 <tr><td><code>titleproWrapWidth</code></td><td>int / <code>1000</code></td><td>TitlePro 标题换行宽度（像素）；编辑器范围 1–100000。</td></tr>
 <tr><td><code>defaultConditionalGainEnabled</code></td><td>boolean / <code>true</code></td><td>新建条件营养规则时“实际增益”的默认开关；只初始化草稿，不是已保存规则的运行开关。</td></tr>
 <tr><td><code>infoGapWidth</code></td><td>int / <code>20</code></td><td>D 模式右对齐提示行左右内容的固定间距；编辑器范围 0–100000。</td></tr>
@@ -256,18 +317,98 @@
 }</pre><p>方案键只是颜色来源，不决定某条提示是否显示；显隐仍由 Tooltip 配置和可见性开关控制。</p></div>
 <div class="source-note">源码依据：<code>RaritySchemeConfig</code>、<code>RarityColors</code>、<code>FatigueGradientConfig</code>、<code>TooltipTemplateConfig</code>、<code>BottleFillConfig</code>、<code>FogEffectConfig</code>、<code>EffectLineConfig</code>。</div></section>
 
-<section class="page-section" id="refresh"><h2><span class="num">08</span>游戏内入口与刷新方式</h2><p class="lead">同一个“保存”在不同位置含义不同：客户端本地文件、服务端权威分节和启动期注册不能互相替代。</p>
+<section class="page-section" id="ui"><h2><span class="num">08</span>游戏内配置 UI：逐项图解</h2><p class="lead">下面按实际界面的入口和行顺序绘制 HTML 示意。深灰面板、黄色分组标题、输入框、♻、底部按钮参考游戏内界面；窄屏可在预览框内左右滑动。此处的按钮和数值不连服务器，只有温度预览页签可切换说明。</p>
+<h3>入口：<code>/hdconfig</code> 的四个配置按钮</h3>
+<figure class="ui-preview"><figcaption><strong>菜单预览 · OP 视角</strong>（普通玩家仅“客户端外观配置”可用，后三项置灰）</figcaption><div class="ui-stage"><div class="ui-window menu"><div class="ui-title">Healthy Diet — Mod 设置</div><div class="ui-menu"><span class="ui-button">客户端外观配置</span><span class="ui-button">服务端玩法配置</span><span class="ui-button">温度系统联动配置</span><span class="ui-button">群系温度</span><span class="ui-button">关闭</span></div></div></div></figure>
+<dl class="ui-help"><dt>客户端外观配置</dt><dd>每位玩家都能进入；只改变本机 <code>display.json</code>，不会调整服务器玩法。</dd><dt>服务端玩法配置</dt><dd>需要 OP 4；从服务端读取 <code>server.json → gameplay</code>，保存后等服务端回执并同步给在线玩家。</dd><dt>温度系统联动配置</dt><dd>需要 OP 4；读取季节倍率、方块热量、雨雪、昼夜、季节温变五组服务端表；另有 LSO 世界温度独立入口。</dd><dt>群系温度</dt><dd>需要 OP 4；按具体群系编辑其昼夜/天气温差，有 EC 时还可编辑 24 节气温度与降水。</dd><dt>关闭</dt><dd>回到打开此菜单前的游戏页面；不会自动保存子页尚未提交的草稿。</dd></dl>
+<h3>客户端外观配置：12 个可编辑项</h3>
+<p>行内数值是 <code>DisplayConfig</code> 新建时的默认值，不是你当前 <code>display.json</code> 的值。游戏中列表最多显示 12 行，可滚轮查看；每行的 ♻ 仅把该行草稿还原为默认值，仍需点击底部“保存”。</p>
+<figure class="ui-preview"><figcaption><strong>客户端页预览</strong> · 向下滚动框内列表可见后 3 项（预览本身只读）</figcaption><div class="ui-stage"><div class="ui-window"><div class="ui-title">客户端外观配置</div><div class="ui-viewport">
+<div class="ui-group">客户端布局</div>
+<div class="ui-row"><span class="ui-name" title="营养行最大条目数">营养行最大条目数</span><span class="ui-button reset">♻</span><span class="ui-value number">6</span></div>
+<div class="ui-row"><span class="ui-name" title="标题自动换行宽度(像素)">标题自动换行宽度(像素)</span><span class="ui-button reset">♻</span><span class="ui-value number">1000</span></div>
+<div class="ui-row"><span class="ui-name" title="信息右对齐间隙(像素)">信息右对齐间隙(像素)</span><span class="ui-button reset">♻</span><span class="ui-value number">20</span></div>
+<div class="ui-row"><span class="ui-name" title="D 模式信息面板最大宽度(像素)">D 模式信息面板最大宽度(像素)</span><span class="ui-button reset">♻</span><span class="ui-value number">320</span></div>
+<div class="ui-row"><span class="ui-name">显示强制统一药水样式</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">关</span></div>
+<div class="ui-row"><span class="ui-name">自动显示附魔信息</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">开</span></div>
+<div class="ui-row"><span class="ui-name">自动显示药水信息</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">开</span></div>
+<div class="ui-row"><span class="ui-name">隐藏前缀</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">关</span></div>
+<div class="ui-row"><span class="ui-name">温度单位</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">摄氏</span></div>
+<div class="ui-group">Tooltip 可见性默认值</div>
+<div class="ui-row"><span class="ui-name">默认效果行仅 Shift 显示</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">关</span></div>
+<div class="ui-row"><span class="ui-name" title="默认强制统一药水效果样式">默认强制统一药水效果样式</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">关</span></div>
+<div class="ui-row"><span class="ui-name">饮食值行默认显示方式</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">常显</span></div>
+</div><div class="ui-footer"><span class="ui-button">保存</span><span class="ui-button">返回</span></div></div></div></figure>
+<dl class="ui-help"><dt>营养行最大条目数 · 6</dt><dd>普通 Tooltip 营养与条件条目的显示上限；超出截断为“…”而不是另起行。1 只保留第一条；可设 1–100。</dd><dt>标题自动换行宽度 · 1000 px</dt><dd>TitlePro 标题文本超过指定像素宽度才换行；可设 1–100000。</dd><dt>信息右对齐间隙 · 20 px</dt><dd>D 信息模式中左侧文本与右对齐内容之间的固定空隙；可设 0–100000。</dd><dt>D 模式信息面板最大宽度 · 320 px</dt><dd>限制 D 信息面板宽度，超出时内容换行；S 保质期模式按自然宽度，不受此项限制。</dd><dt>显示强制统一药水样式 · 关</dt><dd>总开关。关闭时，即使物品行或下面“默认强制统一”开启，也不使用 HD 的统一效果样式。</dd><dt>自动显示附魔信息 · 开</dt><dd>在 D 信息模式自动显示附魔书说明，前提是有对应翻译文本；不影响附魔本身。</dd><dt>自动显示药水信息 · 开</dt><dd>控制 D 模式中的药水/效果信息块；关闭不影响普通紧凑效果行、温区效果行、手写说明或附魔说明。</dd><dt>隐藏前缀 · 关</dt><dd>仅隐藏 HD 自动加在行首的符号及间距；手写名称、行内分隔符仍保留。</dd><dt>温度单位 · 摄氏</dt><dd>点击在摄氏/华氏之间循环；只换本客户端 Tooltip 和 HUD 的显示，编辑界面与保存的配置仍用摄氏。</dd><dt>默认效果行仅 Shift 显示 · 关</dt><dd>新建效果行及未配置物品的默认可见方式；关=常显，开=按住 Shift 才显示，已保存行不改。</dd><dt>默认强制统一药水效果样式 · 关</dt><dd>新建效果行的强制统一初始值；先要打开上面的统一样式总开关，已保存行保留自己的选择。</dd><dt>饮食值行默认显示方式 · 常显</dt><dd>循环“常显 → Shift → 信息(D) → 关闭”；关闭退回原版/相关模组饮食值行。只影响未单独设置的物品及新建行。</dd><dt>保存 / 返回 / ♻</dt><dd>保存写当前客户端的 <code>display.json</code> 并立即应用；返回不保存草稿；♻ 只重置当前一行，不是全局恢复。</dd></dl>
+<div class="callout"><b>文件中有、界面里没有：</b><code>defaultConditionalGainEnabled</code>、<code>temperatureUnitChosen</code>、<code>groupLocalizePrompted</code> 是本地偏好/提示状态；不在这 12 个可编辑行里。<code>_note_*</code> 只读，完整字段见上方 <a href="#display">display.json 表</a>。</div>
+<h3>服务端玩法配置：9 项与重置动作</h3>
+<p>此页只保存 <code>server.json → gameplay</code>；<code>privacy</code>、<code>shelfMerge</code> 没有对应的游戏内行。下列为新建默认值，服务器实值要以 OP 打开时收到的回包为准。</p>
+<figure class="ui-preview"><figcaption><strong>服务端页预览</strong> · 在框内滚动查看末尾“测试与调试”和“重置”</figcaption><div class="ui-stage"><div class="ui-window"><div class="ui-title">服务端玩法配置</div><div class="ui-viewport">
+<div class="ui-group">服务端保质期玩法</div>
+<div class="ui-row"><span class="ui-name">保质期与控温系统</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">关</span></div>
+<div class="ui-row"><span class="ui-name">启用 LSO 联动</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">开</span></div>
+<div class="ui-row"><span class="ui-name">启用 EC 联动</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">开</span></div>
+<div class="ui-row"><span class="ui-name">代理中暑效果</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">开</span></div>
+<div class="ui-group">服务端营养玩法</div>
+<div class="ui-row"><span class="ui-name">属性加成刷新间隔(tick)</span><span class="ui-button reset">♻</span><span class="ui-value number">100</span></div>
+<div class="ui-row"><span class="ui-name">药水效果刷新间隔(tick)</span><span class="ui-button reset">♻</span><span class="ui-value number">200</span></div>
+<div class="ui-group">物品所有权保护</div>
+<div class="ui-row"><span class="ui-name">非法持有时掉落到脚下</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">关</span></div>
+<div class="ui-row"><span class="ui-name">死亡掉落移除主人标记</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">关</span></div>
+<div class="ui-group">测试与调试</div>
+<div class="ui-row"><span class="ui-name">测试日志</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">关</span></div>
+<div class="ui-group">重置</div>
+<div class="ui-row"><span class="ui-name">重置默认定义</span><span class="ui-button danger">重置</span></div>
+</div><div class="ui-footer"><span class="ui-button">保存</span><span class="ui-button">返回</span></div></div></div></figure>
+<dl class="ui-help"><dt>保质期与控温系统 · 关</dt><dd>保质期、温度、冷鲜的总开关；关闭期间暂停推进与相关效果，已有数据保留，重新打开不追补关闭时段。</dd><dt>启用 LSO 联动 · 开</dt><dd>允许食物保质期读取 LSO 的世界环境；关闭不等于关闭其他 LSO 功能。</dd><dt>启用 EC 联动 · 开</dt><dd>允许食物直接使用 EC 气候与 HD 季节变质倍率；不修改 LSO 自带的季节影响。</dd><dt>代理中暑效果 · 开</dt><dd>服务端把 LSO 中暑镜像为 EC 中暑以显示模糊效果；不代替玩家体温规则，是否生效还取决于联动和免疫状态。</dd><dt>属性加成刷新间隔 · 100 tick</dt><dd>营养组的属性奖励重新计算周期，默认约 5 秒；允许 1–1728000 tick。</dd><dt>药水效果刷新间隔 · 200 tick</dt><dd>营养组的药水效果奖励刷新周期，默认约 10 秒；允许 1–1728000 tick。</dd><dt>非法持有时掉落到脚下 · 关</dt><dd>从未被信任的玩家持有受保护物品时，开=丢到脚下，关=留在原位冻结并警告；默认关可减少误判丢失风险。</dd><dt>死亡掉落移除主人标记 · 关</dt><dd>开=所有死亡掉落物清除已有主人，关=仅为原本无主的掉落标注死者，已有主人的保持不变。</dd><dt>测试日志 · 关</dt><dd>开启后服务端输出方块右键和放置/分口食物的诊断明细；所有玩家都会记，排查后建议关闭。</dd><dt>重置默认定义 · 重置</dt><dd>不是重置这 9 个开关！点此后还要确认，会把营养组、阶段、加成、品质、品级五类<strong>默认定义</strong>写回 HD 覆盖层，同名覆盖、缺失补齐、自建 ID 保留，并立即重载；不可撤销，操作前备份。</dd><dt>保存 / 返回 / ♻</dt><dd>保存发送服务端并等待成功回执；失败不当作成功。返回放弃未保存草稿；♻ 只改当前行的待保存值。</dd></dl>
+<div class="callout warn"><b>特别注意“重置”：</b>红色操作钮和每行的 ♻ 是两种完全不同的动作；前者经确认后立即改服务端数据包，即使没点底部“保存”也会执行。</div>
+<h3>温度系统联动配置：五个表页 + LSO 世界温度入口</h3>
+<p>六个入口按游戏内的两行三列排列。前五个是同一页签组，切换页签会保留未保存的输入；点击其中任一“保存”会校验并一起提交五张表。第六个“LSO 世界温度”会打开独立页面，不走五表合并保存。预览页签只切换下方说明，不修改文件。</p>
+<figure class="ui-preview"><figcaption><strong>温度页预览</strong> · 点击页签切换示意（数据行示例，真实条目来自服务端）</figcaption><div class="ui-stage"><div class="ui-window wide" data-ui-preview><div class="ui-title">温度系统联动配置</div><div class="ui-tabbar" role="tablist" aria-label="温度配置预览页签">
+<button class="ui-button" type="button" role="tab" id="ui-tab-multiplier" aria-controls="ui-pane-multiplier" aria-selected="true" tabindex="0" data-ui-tab="multiplier">变质倍率</button>
+<button class="ui-button" type="button" role="tab" id="ui-tab-block" aria-controls="ui-pane-block" aria-selected="false" tabindex="-1" data-ui-tab="block">方块温变</button>
+<button class="ui-button" type="button" role="tab" id="ui-tab-daynight" aria-controls="ui-pane-daynight" aria-selected="false" tabindex="-1" data-ui-tab="daynight">昼夜温变</button>
+<button class="ui-button" type="button" role="tab" id="ui-tab-season" aria-controls="ui-pane-season" aria-selected="false" tabindex="-1" data-ui-tab="season">季节温变</button>
+<button class="ui-button" type="button" role="tab" id="ui-tab-weather" aria-controls="ui-pane-weather" aria-selected="false" tabindex="-1" data-ui-tab="weather">雨雪温变</button>
+<button class="ui-button" type="button" role="tab" id="ui-tab-dimension" aria-controls="ui-pane-dimension" aria-selected="false" tabindex="-1" data-ui-tab="dimension">LSO 世界温度</button>
+</div><div class="ui-viewport">
+<div class="ui-tab-panel" role="tabpanel" id="ui-pane-multiplier" aria-labelledby="ui-tab-multiplier" data-ui-pane="multiplier"><div class="ui-group">季节保质期倍率</div><div class="ui-row"><span class="ui-name">立春</span><span class="ui-button reset">♻</span><span class="ui-value number">1</span></div><div class="ui-row"><span class="ui-name">雨水</span><span class="ui-button reset">♻</span><span class="ui-value number">1</span></div><div class="ui-row"><span class="ui-name">… 后续按服务端季节表排列</span></div></div>
+<div class="ui-tab-panel" role="tabpanel" id="ui-pane-block" aria-labelledby="ui-tab-block" data-ui-pane="block" hidden><div class="ui-row"><span class="ui-value long" style="color:#888">搜索中文名 / 英文名 / ID / 语言键</span></div><div class="ui-group">方块温变</div><div class="ui-row"><span class="ui-name">营火 [lit=true]</span><span class="ui-button reset">♻</span><span class="ui-value number">配置值</span></div><div class="ui-row"><span class="ui-name">… 方块/状态由服务端配置决定</span></div></div>
+<div class="ui-tab-panel" role="tabpanel" id="ui-pane-daynight" aria-labelledby="ui-tab-daynight" data-ui-pane="daynight" hidden><div class="ui-group">昼夜温变</div><div class="ui-row"><span class="ui-name">立春</span><span class="ui-two"><span class="ui-button reset">♻</span><small>正午</small><span class="ui-value">0</span><span class="ui-button reset">♻</span><small>午夜</small><span class="ui-value">0</span></span></div><div class="ui-row"><span class="ui-name">雨水</span><span class="ui-two"><span class="ui-button reset">♻</span><small>正午</small><span class="ui-value">0</span><span class="ui-button reset">♻</span><small>午夜</small><span class="ui-value">0</span></span></div><div class="ui-row"><span class="ui-name">… 同样格式共 24 节气</span></div></div>
+<div class="ui-tab-panel" role="tabpanel" id="ui-pane-season" aria-labelledby="ui-tab-season" data-ui-pane="season" hidden><div class="ui-group">季节温变</div><div class="ui-row"><span class="ui-name">立春</span><span class="ui-button reset">♻</span><span class="ui-value number">0</span></div><div class="ui-row"><span class="ui-name">雨水</span><span class="ui-button reset">♻</span><span class="ui-value number">0</span></div><div class="ui-row"><span class="ui-name">… 同样格式共 24 节气</span></div></div>
+<div class="ui-tab-panel" role="tabpanel" id="ui-pane-weather" aria-labelledby="ui-tab-weather" data-ui-pane="weather" hidden><div class="ui-group">雨雪温变</div><div class="ui-row"><span class="ui-name">立春</span><span class="ui-two"><span class="ui-button reset">♻</span><small>雨/雪</small><span class="ui-value">-1</span><span class="ui-button reset">♻</span><small>雷雨/雪</small><span class="ui-value">-2</span></span></div><div class="ui-row"><span class="ui-name">雨水</span><span class="ui-two"><span class="ui-button reset">♻</span><small>雨/雪</small><span class="ui-value">-1</span><span class="ui-button reset">♻</span><small>雷雨/雪</small><span class="ui-value">-2</span></span></div><div class="ui-row"><span class="ui-name">… 同样格式共 24 节气</span></div></div>
+<div class="ui-tab-panel" role="tabpanel" id="ui-pane-dimension" aria-labelledby="ui-tab-dimension" data-ui-pane="dimension" hidden><div class="ui-group">单独打开 LSO 世界温度表单</div><div class="ui-row"><span class="ui-name">维度 ID · 基础温度 · 海拔影响 · 海平面高度</span></div><div class="ui-row"><span class="ui-name">详情见下面的独立页面预览。</span></div></div>
+</div><div class="ui-footer" data-ui-footer><span class="ui-button">保存</span><span class="ui-button">返回</span></div></div></div></figure>
+<dl class="ui-help"><dt>变质倍率 · 服务端季节表</dt><dd>每行一个实际存在的季节/节气 ID，<code>0–100</code>，默认复位为 1；大于 1 加速变质，小于 1 减慢。需 EC 有效节气及服务端“启用 EC 联动”，不改变气温；旧六季节文件仍按六条显示。</dd><dt>方块温变 · 搜索框</dt><dd>按中文名、英文名、方块 ID 或语言键过滤；清空恢复全部。搜索不丢弃已改却未保存的温度。</dd><dt>方块温变 · 每个方块/状态行</dt><dd>正数加热、负数降温，范围 -1000 至 1000；同一方块不同状态会分行，距离和遮挡影响实际贡献。♻ 还原打开页面时的该行数值；“新增方块”从背包选择可放置方块并进入确认流程。HD 自有热量表用于 HD/EC 回退分支；LSO 的世界热量读取走其来源，不能把两者当同一张表。</dd><dt>昼夜温变 · 每节气双框</dt><dd>左“正午”、右“午夜”，各为 -100 至 100°C，默认 0；一天内平滑过渡。若群系另填对应端点，群系值优先。</dd><dt>季节温变 · 每节气单框</dt><dd>每节气额外加算的摄氏温差，-100 至 100°C，默认 0；有 EC 时按当前节气，没有则取立春；不是覆盖 EC 的既有温度。</dd><dt>雨雪温变 · 每节气双框</dt><dd>左“雨/雪”默认 -1°C，右“雷雨/雪”默认 -2°C；各可设 -100 至 100°C。无降水时不施加；群系单独覆盖优先，雷暴不再叠加普通雨雪值。</dd><dt>保存 / 返回 / ♻</dt><dd>五个表页共用一次服务端保存，切页不会丢草稿；保存前校验全部页。每个 ♻ 仅复位对应输入框，返回放弃未保存值。方块页底部另有“新增方块”。</dd><dt>LSO 世界温度</dt><dd>第六个按钮打开独立表单（见下），不是五表页签；仅在 LSO 联动环境中有实际作用，保存后须按 LSO 数据包机制执行 <code>/reload</code>。</dd></dl>
+<p class="ui-note">24 节气行顺序：立春、雨水、惊蛰、春分、清明、谷雨、立夏、小满、芒种、夏至、小暑、大暑、立秋、处暑、白露、秋分、寒露、霜降、立冬、小雪、大雪、冬至、小寒、大寒。预览只显示前两行，不代表其余 22 行缺失。</p>
+<h3>LSO 世界温度：独立维度表单</h3>
+<figure class="ui-preview"><figcaption><strong>独立页预览</strong> · 新建草稿示意；不代表当前世界、LSO 文件或服务端的真实值</figcaption><div class="ui-stage"><div class="ui-window dimension"><div class="ui-title">LSO 世界温度</div><div style="text-align:center;color:#ffffaa">新增草稿(确认后才写入)</div><div class="ui-dimension-rows"><span class="ui-name">维度 ID</span><span class="ui-value long">（新建时输入维度 ID）</span><span class="ui-name">基础温度</span><span class="ui-value long">20</span><span class="ui-name">海平面高度 / 海拔影响</span><div class="ui-row"><span class="ui-value">64</span><span class="ui-button">海拔影响: 开</span></div><div style="min-height:19px;color:#ff7979">&nbsp;</div></div><div class="ui-footer"><span class="ui-button">查询当前维度</span><span class="ui-button">文件列表</span><span class="ui-button">保存</span><span class="ui-button">关闭</span></div></div></div></figure>
+<dl class="ui-help"><dt>维度 ID</dt><dd>新建时填完整维度 ID（如 <code>minecraft:the_nether</code>）；载入现有文件后只读，不能借改 ID 覆盖另一维度。</dd><dt>基础温度</dt><dd>LSO 世界温度的绝对量纲，不是 °C；可设 -1000 至 1000 的有限数字。</dd><dt>海平面高度 / 海拔影响</dt><dd><code>sea_level_height</code> 为整数，初始草稿 64；<code>has_altitude</code> 控制高度影响，开启时高处更冷。</dd><dt>查询当前维度</dt><dd>从服务端请求玩家当前维度的世界温度快照；不保存。</dd><dt>文件列表</dt><dd>可搜索、载入或新增维度；“删除”只对 HD 覆盖层文件开放，原生/世界数据包文件只读，删覆盖后回落下一层。</dd><dt>保存 / 关闭</dt><dd>保存写入 HD 配置数据包（已有条目编辑，原生条目创建覆盖），成功后仍须手动 <code>/reload</code>；关闭不保存草稿。旧“昼夜循环刻数”字段不在当前表单中。</dd></dl>
+<h3>群系温度：按群系的覆盖与 24 节气</h3>
+<figure class="ui-preview"><figcaption><strong>群系页预览</strong> · 示例群系仅用于排版；“基温:?” 表示此离线示意没有游戏内读数</figcaption><div class="ui-stage"><div class="ui-window biome"><div class="ui-title">设定群系基础温度</div><div class="ui-biome-body">
+<div class="ui-row"><span class="ui-name">群系(基温:?)</span><span class="ui-value long">minecraft:plains</span><span class="ui-button">查询其他群系</span></div>
+<div class="ui-row"><span class="ui-name">昼夜温差</span><span class="ui-value long" style="color:#55ffff">正午 · 留空继承</span><span class="ui-value long" style="color:#55ffff">午夜 · 留空继承</span><span class="ui-button">平均温度</span></div>
+<div class="ui-row"><span class="ui-name">雨雪/雷雨温差</span><span class="ui-value long" style="color:#55ffff">雨雪 · 留空继承</span><span class="ui-value long" style="color:#55ffff">雷雨 · 留空继承</span><span class="ui-button">平均降水</span></div>
+<div class="ui-row"><span class="ui-name" style="color:#ccc">立春</span><span class="ui-value readonly">额外 0</span><span class="ui-value">EC 偏移</span><span class="ui-value">降水值</span><span class="ui-value">预计 °C</span><span class="ui-button disabled">自动分配</span></div>
+<div class="ui-row"><span class="ui-name" style="color:#ccc">雨水</span><span class="ui-value readonly">额外 0</span><span class="ui-value">EC 偏移</span><span class="ui-value">降水值</span><span class="ui-value">预计 °C</span><span class="ui-button disabled">自动分配</span></div>
+<div class="ui-row"><span class="ui-name" style="color:#ccc">… 其余节气同结构</span></div>
+</div><div class="ui-footer"><span class="ui-button">查询所在群系</span><span class="ui-button">刷新</span><span class="ui-button">保存</span><span class="ui-button">删除覆盖</span><span class="ui-button">关闭</span></div></div></div></figure>
+<dl class="ui-help"><dt>群系（基温:…）/ 查询其他群系</dt><dd>一次编辑一个群系。基温来自原版群系、只读且不是摄氏度；输入群系 ID 或从列表选择，右侧按钮仅在 EC 可用时显示。</dd><dt>昼夜温差 · 正午 / 午夜</dt><dd>此群系的两个独立覆盖值（°C）：留空继承全局同名端点，填 0 表示显式覆盖成零而非继承；不会与全局值相加。</dd><dt>雨雪/雷雨温差 · 两个输入框</dt><dd>同样留空继承全局，填数值覆盖；只影响温度，雷雨时用雷雨框，不再加普通雨雪框。与昼夜覆盖均属于 HD 自有配置。</dd><dt>平均温度 / 平均降水</dt><dd>EC 环境才出现；批量调整各节气的预计 °C 或最终降水值，属于草稿，仍需保存。</dd><dt>24 节气 · 黄色额外温差</dt><dd>只读展示“季节温变”页同一节气的值；想修改须回温度系统的“季节温变”页；不包含在右侧的 EC 预计气温内。</dd><dt>24 节气 · EC 偏移 / 最终降水</dt><dd>有 EC 时可编辑；EC 偏移不是 °C，最终降水是基础值加节气偏移，不等于完整降雨概率。留空沿用原有设置。</dd><dt>24 节气 · 预计气温 / 自动分配</dt><dd>预计气温按摄氏展示 EC 气候估算，不含方块、天气、昼夜额外值，不能代表玩家/食物最终温度。改预计值后点该行“自动分配”反推 EC 偏移，再点保存。</dd><dt>查询所在群系 / 刷新</dt><dd>前者选玩家脚下的群系并请求配置；后者重算预计值、空白默认值和当前服务端温度详情，不写盘。</dd><dt>保存 / 删除覆盖 / 关闭</dt><dd>保存提交 EC 气候（有 EC 时）及 HD 群系覆盖；EC 气候改动需按 EC 资源重载机制执行 <code>/reload</code>。删除覆盖仅删除此群系 HD 昼夜/天气覆盖以恢复继承，不是删除 EC 或原版群系；关闭不保存草稿。</dd></dl>
+<div class="callout warn"><b>无 EC 时的界面差异：</b>不显示 24 条 EC 节气编辑行，也没有“查询其他群系/平均温度/平均降水”；群系昼夜与雨雪四个覆盖框仍可用。旧的独立“LSO 群系温度”和“LSO 方块温变”按钮不在当前温度页的六个有效入口里，别按旧截图寻找。</div>
+<div class="source-note">源码依据：<code>HdModConfigScreen.init</code>、<code>HdPanelConfigScreen.render</code>、<code>HdDisplayConfigScreen.buildClientRows/buildServerRows/onSave</code>、<code>HdTempIntegrationScreen.init/onSave</code>、<code>LsoDimensionTempScreen.init</code>、<code>LsoDimensionFileListScreen.init</code>、<code>HdBiomeClimateScreen.init/save</code>、<code>CPacketResetDefaults.handle</code>。</div></section>
+
+<section class="page-section" id="refresh"><h2><span class="num">09</span>保存与刷新方式</h2><p class="lead">同一个“保存”在不同位置含义不同：客户端本地文件、服务端权威分节和启动期注册不能互相替代。</p>
 <h3>游戏内配置菜单</h3>
 <div class="table-wrap"><table><thead><tr><th>入口</th><th>覆盖内容</th><th>权限 / 生效</th></tr></thead><tbody>
-<tr><td>客户端显示设定</td><td><code>display.json</code>：Tooltip 布局、温度单位、默认显示模式</td><td>所有玩家；保存写本机文件，立即应用</td></tr>
-<tr><td>服务端显示</td><td><code>server.json</code> 的 <code>gameplay</code>：保质期总开关、联动、刷新间隔、保护物品、测试日志</td><td>OP4；服务端保存并回执，在线玩家收到投影</td></tr>
-<tr><td>温度与环境</td><td>季节倍率、方块热量、雨雪/昼夜/节气温度</td><td>OP4；按各分页读取和保存</td></tr>
-<tr><td>群系温度</td><td>与已安装的温度/群系兼容相关的编辑入口</td><td>OP4；具体项随环境变化</td></tr>
+<tr><td>客户端外观配置</td><td><code>display.json</code>：Tooltip 布局、温度单位、默认显示模式</td><td>所有玩家；保存写本机文件，立即应用</td></tr>
+<tr><td>服务端玩法配置</td><td><code>server.json</code> 的 <code>gameplay</code>：保质期总开关、联动、刷新间隔、保护物品、测试日志</td><td>OP4；服务端保存并回执，在线玩家收到投影</td></tr>
+<tr><td>温度系统联动配置</td><td>季节倍率、方块热量、雨雪/昼夜/节气温度及 LSO 世界温度入口</td><td>OP4；五个主表页同批保存，LSO 世界温度另存</td></tr>
+<tr><td>群系温度</td><td>按群系的昼夜/天气温差；有 EC 时还可调节气温度与降水</td><td>OP4；EC 字段保存后按其资源机制重载</td></tr>
 </tbody></table></div>
 <h3>改完之后做什么</h3>
 <div class="grid-2"><div class="mini-card"><b>只改服务端规则</b><span>例如 <code>server.json</code>、营养组/阶段/加成、物品、方块、品级、颜色和保质期方案：保存或编辑后执行 <code>/hdreload</code>，让本模组重新读盘并向在线玩家重发权威内容。</span></div><div class="mini-card"><b>只改本机外观</b><span>例如 <code>display.json</code>、客户端 <code>fog_effects.json</code>、本地提示模板：在各客户端处理；服务器执行 <code>/hdreload</code> 不会替你改这些本地文件。</span></div></div>
 <div class="table-wrap"><table><thead><tr><th>修改内容</th><th>推荐动作</th><th>为什么</th></tr></thead><tbody>
-<tr><td><code>server.json</code> gameplay / privacy / shelfMerge</td><td>配置页保存，或编辑后 <code>/hdreload</code></td><td>服务端权威值在加载时读入；保存路径会写分节并重推。</td></tr>
+<tr><td><code>server.json</code> gameplay / privacy / shelfMerge</td><td>gameplay 用 OP 页保存；privacy、shelfMerge 手改后 <code>/hdreload</code></td><td>游戏内页只往返 gameplay；另两节没有该页编辑行。</td></tr>
 <tr><td><code>display.json</code>、本地雾效、本地模板</td><td>在对应客户端保存；手改后重进客户端</td><td>不参与服务端同步，<code>/hdreload</code> 不远程重写本地文件。</td></tr>
 <tr><td>营养组 / 阶段 / 加成、物品、提示、方块、品质、品级、效果行</td><td>保存后 <code>/hdreload</code>；世界数据包改动可用原版 <code>/reload</code></td><td>HD 覆盖层由 <code>/hdreload</code> 以磁盘为准重建；世界数据包由资源管理器刷新。</td></tr>
 <tr><td>新增/删除 <code>quality_registry/</code> 条目</td><td>两端同步定义后重启</td><td>物品注册只发生在启动阶段；<code>/hdreload</code> 只重算待生效列表。</td></tr>
@@ -275,7 +416,7 @@
 <tr><td>共享客户端资源（贴图、字体等）</td><td>分发到各客户端</td><td>服务端配置只能描述引用，不能把资源推送到客户端。</td></tr>
 </tbody></table></div>
 <div class="callout warn"><b>不要把 <code>/hdreload</code> 当成原版 <code>/reload</code>：</b>它只重载 Healthy Diet 自身可重载的配置和 HD 覆盖层；原版数据包/资源包、其他模组的资源以及客户端本地文件仍按各自流程处理。</div>
-<div class="demo-card"><div><b>需要确认具体物品字段？</b><span>营养、厌倦、保质期、Tooltip 和品质章节分别解释字段的玩法含义；本页只负责“字段在哪、默认是什么、改完怎么生效”。</span></div><a href="admin.html">查看服主手册 →</a></div>
+<div class="demo-card"><div><b>需要确认具体物品字段？</b><span>营养、厌倦、保质期、Tooltip 和品质章节分别解释字段的玩法含义；本页负责“字段在哪、游戏内选项是什么、改完怎么生效”。</span></div><a href="admin.html">查看服主手册 →</a></div>
 <div class="source-note">源码依据：<code>HdModConfigScreen</code>、<code>HdDisplayConfigScreen</code>、<code>HdTempIntegrationScreen</code>、<code>HDReloadCommand.reloadAll</code>、<code>QualityRegistryLoader</code>。</div></section>
 
 <footer class="page-footer"><span>Healthy Diet · 配置项详解</span><a href="index.html">返回章节地图</a></footer></article></div></main>
@@ -298,6 +439,30 @@
   };
   input.addEventListener('input', update);
   update();
+
+  const preview = document.querySelector('[data-ui-preview]');
+  const tabs = [...preview.querySelectorAll('[data-ui-tab]')];
+  const panes = [...preview.querySelectorAll('[data-ui-pane]')];
+  const selectTab = (tab) => {
+    for (const item of tabs) {
+      const selected = item === tab;
+      item.setAttribute('aria-selected', String(selected));
+      item.tabIndex = selected ? 0 : -1;
+    }
+    for (const pane of panes) pane.hidden = pane.dataset.uiPane !== tab.dataset.uiTab;
+    preview.querySelector('[data-ui-footer]').hidden = tab.dataset.uiTab === 'dimension';
+    preview.querySelector('.ui-viewport').scrollTop = 0;
+  };
+  for (const tab of tabs) {
+    tab.addEventListener('click', () => selectTab(tab));
+    tab.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+      event.preventDefault();
+      const next = tabs[(tabs.indexOf(tab) + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+      selectTab(next);
+      next.focus();
+    });
+  }
 })();
 </script>
 </body></html>
