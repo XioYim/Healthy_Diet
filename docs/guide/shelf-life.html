@@ -138,7 +138,7 @@
           </div>
           <div class="demo-card"><div><b>查看完整物品数据？</b><span>独立食物查询器以同样五个默认案例为起点，可查看营养、温度、温变、温区、保质期、效果和食用条件，也能导入 <code>/hdinfo</code> JSON。</span></div><a href="food-query.html">打开独立食物查询器 →</a></div>
           <h3>粘贴自己的查询 JSON (仅本地读取)</h3>
-          <p>游戏内使用 <code>/hdinfo</code> 获取查询 JSON；可在此粘贴 <code>schemaVersion: 1</code>、含 <code>config.shelf</code> 的单物品查询对象。页面仅解析保质期相关字段，不上传、不保存，也不修改游戏配置。需要查看营养、效果等完整数据时请使用模组自带的食物查询器。</p>
+          <p>游戏内使用 <code>/hdinfo [item]</code> 会打开客户端本地查询器，不会在聊天直接打印 JSON；若从游戏内查询器取得快照 JSON，可在此粘贴 <code>schemaVersion: 1</code>、含 <code>config.shelf</code> 的单物品查询对象。页面仅解析保质期相关字段，不上传、不保存，也不修改游戏配置。需要查看营养、效果等完整数据时请使用模组自带的食物查询器。</p>
           <label class="shelf-search-label" for="shelf-json">查询对象 JSON</label>
           <textarea id="shelf-json" class="shelf-json" rows="5" spellcheck="false" placeholder="{\"schemaVersion\":1,\"itemId\":\"minecraft:apple\",\"config\":{\"shelf\":{...}}}" data-shelf-json></textarea>
           <div class="shelf-import-row"><button type="button" data-shelf-import>本地查看这份配置</button><span role="status" data-shelf-import-status>不会连接服务器；没有保质期配置的物品会明确提示。</span></div>
@@ -149,7 +149,7 @@
         <section class="page-section" id="world">
           <h2><span class="num">04</span>离开背包后的时间与多人保护</h2>
           <p>玩家持有物品时按玩家游玩时钟结算；物品在容器中或作为掉落物时按世界时钟结算。重新取出、打开容器或检查物品，会结算之前尚未处理的时间，不能只看打开容器的一瞬间。</p>
-          <p>受保护物品的主人和当前受信任玩家<strong>全部不在线</strong>时，离线账本记录并在相应世界域结算中扣除该时段；只要仍有一位有权者在线，不能简单认为「主人下线就暂停」。<code>/hdtrust</code> 用于管理当前与曾经信任名单，借出或移交时还要看物品保护状态。</p>
+          <p>受保护物品的主人和当前受信任玩家<strong>全部不在线</strong>时，离线账本记录并在相应世界域结算中扣除该时段；只要仍有一位有权者在线，不能简单认为「主人下线就暂停」。玩家可用 <code>/hdtrust add &lt;玩家名&gt;</code>、<code>remove &lt;玩家名&gt;</code>、<code>forget &lt;玩家名&gt;</code>、<code>list</code> 管理自己的保护物品信任名单 (无需 OP)：add 信任在线玩家；remove 移出当前名单但保留曾信任历史；forget 同时清掉历史；list 查看两类名单。借出或移交时还要看物品保护状态，remove 不会追溯撤销曾经取得物品的所有权。</p>
           <div class="callout warn"><b>堆叠不只看物品 ID：</b>剩余时长、当前物品温度、冷鲜差异和所有权标记等都可能限制合并；查询模板里的基础时长不能当作现有堆叠的实时剩余值。</div>
           <div class="source-note">源码依据：<code>S2Engine</code>、<code>S2Handler</code>、<code>S2OfflineLedger</code>、<code>S2StackMerge</code>。</div>
           <div class="demo-card"><div><b>接着了解显示</b><span>普通物品提示和 S 详情中的保质期行，由 Tooltip 的布局与显示规则控制。</span></div><a href="tooltip.html">查看 Tooltip →</a></div>

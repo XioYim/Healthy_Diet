@@ -928,6 +928,40 @@ input[type="range"] {
   th:first-child, td:first-child { white-space: nowrap; }
 }
 
+/* 源码结构示意：仅图中的链接可跳转，游戏按钮及字段一律只读。 */
+.guide-ui { margin: 18px 0; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #11111b; }
+.guide-ui figcaption { color: var(--muted); font-size: 12px; margin-bottom: 10px; }
+.guide-ui figcaption strong { color: var(--ink); }
+.guide-ui-stage { max-width: 100%; overflow-x: auto; padding: 14px; border-radius: 8px; background: linear-gradient(145deg,#302d3a,#101018); }
+.guide-ui-window { width: 550px; margin: 0 auto; border: 1px solid #555; background: #1c1c1c; box-shadow: 0 12px 28px #0009; color: #eee; font: 11px/1.5 "Cascadia Code", "Microsoft YaHei", sans-serif; }
+.guide-ui-window.effect { width: 660px; }
+.guide-ui-title { padding: 6px 10px; background: #181818; text-align: center; color: #ffd24a; font-weight: bold; }
+.guide-ui-tabs { display: flex; gap: 5px; padding: 7px 10px; border-bottom: 1px solid #555; }
+.guide-ui-tabs a { flex: 1; padding: 3px; border: 1px solid #777; background: #444; text-align: center; color: #eee; white-space: nowrap; }
+.guide-ui-tabs a[aria-current="location"] { border-color: #ffd24a; color: #ffd24a; }
+.guide-ui-tabs a:hover, .guide-ui-tabs a:focus-visible { background: #606060; color: #fff; }
+.guide-ui-tabs a.guide-ui-button.green { color: #a6e3a1; }
+.guide-ui-columns { display: grid; grid-template-columns: 135px minmax(0,1fr); min-height: 240px; }
+.guide-ui-list { padding: 9px; border-right: 1px solid #555; background: #242424; }
+.guide-ui-list span { display: block; margin-bottom: 5px; padding: 4px; border: 1px solid #555; }
+.guide-ui-list .selected { border-color: #ffd24a; color: #ffd24a; }
+.guide-ui-content { padding: 8px 12px; }
+.guide-ui-row { display: grid; grid-template-columns: 100px minmax(0,1fr); align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1px solid #ffffff0c; }
+.guide-ui-field { padding: 3px 7px; border: 1px solid #888; background: #080808; color: #ddd; overflow-wrap: anywhere; }
+.guide-ui-group { color: #ffd24a; text-align: center; text-decoration: underline; padding: 6px 2px; }
+.guide-ui-bar { display: flex; border: 1px solid #aaa; margin: 9px 0; min-height: 23px; }
+.guide-ui-bar span { flex: 1; border-right: 1px solid #333; text-align: center; background: #597456; color: #fff; }
+.guide-ui-bar span:nth-child(2n) { background: #566374; }
+.guide-ui-bar span:last-child { border-right: 0; }
+.guide-ui-actions { display: flex; flex-wrap: wrap; gap: 5px; padding: 7px 9px; border-top: 1px solid #555; }
+.guide-ui-button { display: inline-block; padding: 2px 7px; border: 1px solid #aaa; background: linear-gradient(#727272,#555); color: #fff; white-space: nowrap; }
+.guide-ui-button.green { color: #a6e3a1; }
+.guide-ui-button.red { color: #ff7979; }
+.guide-ui-button.disabled { color: #aaa; border-color: #555; background: #3b3b3b; }
+.guide-ui-hint { display: block; color: #ffd24a; font-size: 10px; margin-top: 6px; }
+.guide-ui-note { margin-top: 8px; color: var(--faint); font-size: 11px; }
+@media (max-width: 620px) { .guide-ui { padding: 8px; } .guide-ui-stage { padding: 8px; } }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * { transition: none !important; }

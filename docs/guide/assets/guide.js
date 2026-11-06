@@ -5,7 +5,8 @@
 
   if (nav) {
     const chapters = [
-      ["index.html", "总览"], ["nutrition.html", "营养值"], ["fatigue.html", "食物厌倦"],
+      ["index.html", "总览"], ["introduction.html", "介绍与安装"], ["quick-start.html", "玩家入门"],
+      ["nutrition.html", "营养值"], ["fatigue.html", "食物厌倦"],
       ["quality.html", "品质与品级"], ["shelf-life.html", "保质期"], ["tooltip.html", "Tooltip"],
       ["appearance.html", "显示美化"], ["titlepro.html", "TitlePro"],
       ["misc.html", "小功能"], ["admin.html", "服主手册"]

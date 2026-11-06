@@ -319,7 +319,8 @@
 
 <section class="page-section" id="ui"><h2><span class="num">08</span>游戏内配置 UI：逐项图解</h2><p class="lead">下面按实际界面的入口和行顺序绘制 HTML 示意。深灰面板、黄色分组标题、输入框、♻、底部按钮参考游戏内界面；窄屏可在预览框内左右滑动。此处的按钮和数值不连服务器，只有温度预览页签可切换说明。</p>
 <h3>入口：<code>/hdconfig</code> 的四个配置按钮</h3>
-<figure class="ui-preview"><figcaption><strong>菜单预览 · OP 视角</strong>（普通玩家仅“客户端外观配置”可用，后三项置灰）</figcaption><div class="ui-stage"><div class="ui-window menu"><div class="ui-title">Healthy Diet — Mod 设置</div><div class="ui-menu"><span class="ui-button">客户端外观配置</span><span class="ui-button">服务端玩法配置</span><span class="ui-button">温度系统联动配置</span><span class="ui-button">群系温度</span><span class="ui-button">关闭</span></div></div></div></figure>
+<p><code>/hdconfig</code> 是客户端本地命令，<strong>执行命令本身会检查 OP4</strong>；非 OP 玩家可从其他游戏界面进入本地“客户端外观配置”，不等于可以直接执行该命令。下列预览为 OP 视角，并不表示网页或服务器控制台可以打开本机界面。</p>
+<figure class="ui-preview"><figcaption><strong>菜单预览 · OP 视角</strong>（普通玩家从其他界面进入此菜单时，仅“客户端外观配置”可用，后三项置灰）</figcaption><div class="ui-stage"><div class="ui-window menu"><div class="ui-title">Healthy Diet — Mod 设置</div><div class="ui-menu"><span class="ui-button">客户端外观配置</span><span class="ui-button">服务端玩法配置</span><span class="ui-button">温度系统联动配置</span><span class="ui-button">群系温度</span><span class="ui-button">关闭</span></div></div></div></figure>
 <dl class="ui-help"><dt>客户端外观配置</dt><dd>每位玩家都能进入；只改变本机 <code>display.json</code>，不会调整服务器玩法。</dd><dt>服务端玩法配置</dt><dd>需要 OP 4；从服务端读取 <code>server.json → gameplay</code>，保存后等服务端回执并同步给在线玩家。</dd><dt>温度系统联动配置</dt><dd>需要 OP 4；读取季节倍率、方块热量、雨雪、昼夜、季节温变五组服务端表；另有 LSO 世界温度独立入口。</dd><dt>群系温度</dt><dd>需要 OP 4；按具体群系编辑其昼夜/天气温差，有 EC 时还可编辑 24 节气温度与降水。</dd><dt>关闭</dt><dd>回到打开此菜单前的游戏页面；不会自动保存子页尚未提交的草稿。</dd></dl>
 <h3>客户端外观配置：12 个可编辑项</h3>
 <p>行内数值是 <code>DisplayConfig</code> 新建时的默认值，不是你当前 <code>display.json</code> 的值。游戏中列表最多显示 12 行，可滚轮查看；每行的 ♻ 仅把该行草稿还原为默认值，仍需点击底部“保存”。</p>

@@ -151,7 +151,7 @@
 
         <section class="page-section" id="stages" aria-labelledby="stages-title">
           <h2 id="stages-title"><span class="num">03</span>阶段</h2>
-          <p class="lead">阶段是营养值区间及其关联行为。每个区间可设置名称、说明、命令和加成。</p>
+          <p class="lead">阶段是营养值区间及其关联行为；阶段标题、描述和点击指令在阶段页编辑，跨组的持续效果与属性加成在独立效果页按区间条件配置。</p>
           <p>阶段边界使用整数。编辑器会校验相邻区间，避免数值落在阶段之间的空档；判定时先四舍五入，再匹配区间。</p>
 
           <div class="stage-demo" aria-label="阶段判定示意">
@@ -189,11 +189,26 @@
           <div class="callout">
             <b>点击冷却：</b>阶段命令的同一玩家点击间隔为 <b>1.5 秒</b>，服务端会再次校验。命令由服主配置；请勿点击来源不明的阶段命令。
           </div>
+          <h3>游戏内 <code>/hdui stage</code>：阶段／指令／描述</h3>
+          <p>需要 OP4；左侧只列启用的营养组。以下三张图分别固定展示一个 Tab 的结构；图中的标签链接可跳转到对应图，图中按钮和输入框是只读示意，不能替游戏保存。</p>
+          <figure class="guide-ui" id="stage-editor"><figcaption><strong>阶段 Tab</strong> · 依据源码绘制的只读 HTML 示意，不是游戏截图/实时服务器数值；区间均为示例。</figcaption>
+            <div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">阶段管理 · /hdui stage (OP4)</div><div class="guide-ui-columns"><div class="guide-ui-list"><span>启用组列表</span><span class="selected">示例组 (非实值)</span></div><div class="guide-ui-content">
+              <div class="guide-ui-tabs"><a href="#stage-editor" aria-current="location">阶段</a><a href="#stage-command">指令</a><a href="#stage-description">描述</a><a href="#effect-editor" class="guide-ui-button green">效果 ↗</a></div>
+              <div class="guide-ui-group">阶段区间 · 点击进度条选段</div><div class="guide-ui-bar"><span>0–29</span><span>30–69</span><span>70–100</span></div><div class="guide-ui-row"><span>当前选择</span><span class="guide-ui-field">示例：30–69 (未读取服务器)</span></div><span class="guide-ui-hint">相邻边界须连续；增加、删除与分割写入本组待保存草稿。</span>
+            </div></div><div class="guide-ui-actions"><span class="guide-ui-button">+ 增加阶段</span><span class="guide-ui-button">− 删除阶段</span><span class="guide-ui-button">分割阶段</span><span class="guide-ui-button">保存</span></div></div></div>
+            <div class="guide-ui-note">点选已配置色块后才可删除/分割；右上绿色“效果”会跳独立游戏页面，不是第四个 Tab。</div></figure>
+          <figure class="guide-ui" id="stage-command"><figcaption><strong>指令 Tab</strong> · 依据源码绘制的只读 HTML 示意，不是游戏截图/实时服务器数值。</figcaption>
+            <div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">阶段管理 · 点击指令</div><div class="guide-ui-columns"><div class="guide-ui-list"><span>启用组列表</span><span class="selected">示例组 (非实值)</span></div><div class="guide-ui-content"><div class="guide-ui-tabs"><a href="#stage-editor">阶段</a><a href="#stage-command" aria-current="location">指令</a><a href="#stage-description">描述</a><a href="#effect-editor" class="guide-ui-button green">效果 ↗</a></div><div class="guide-ui-group">先在进度条选中已配置阶段</div><div class="guide-ui-bar"><span>0–29</span><span>30–69</span><span>70–100</span></div><div class="guide-ui-row"><span>点击触发指令</span><span class="guide-ui-field">示例：此处填写指令</span></div><span class="guide-ui-hint">玩家在 /headiet 手动点击阶段才触发，不因数值进入区间自动执行。</span></div></div><div class="guide-ui-actions"><span class="guide-ui-button">+ 新增指令</span><span class="guide-ui-button">保存</span></div></div></div>
+            <div class="guide-ui-note">指令与阶段划分、描述共用本组总保存；此处不编辑营养联动效果。</div></figure>
+          <figure class="guide-ui" id="stage-description"><figcaption><strong>描述 Tab</strong> · 依据源码绘制的只读 HTML 示意，不是游戏截图/实时服务器数值。</figcaption>
+            <div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">阶段管理 · 悬浮描述</div><div class="guide-ui-columns"><div class="guide-ui-list"><span>启用组列表</span><span class="selected">示例组 (非实值)</span></div><div class="guide-ui-content"><div class="guide-ui-tabs"><a href="#stage-editor">阶段</a><a href="#stage-command">指令</a><a href="#stage-description" aria-current="location">描述</a><a href="#effect-editor" class="guide-ui-button green">效果 ↗</a></div><div class="guide-ui-group">先在进度条选中已配置阶段</div><div class="guide-ui-bar"><span>0–29</span><span>30–69</span><span>70–100</span></div><div class="guide-ui-row"><span>阶段标题</span><span class="guide-ui-field">示例：可选标题</span></div><div class="guide-ui-row"><span>描述文本</span><span class="guide-ui-field">示例：悬浮提示文字 (可逐行添加)</span></div></div></div><div class="guide-ui-actions"><span class="guide-ui-button">+ 新增描述</span><span class="guide-ui-button">自动Tooltip信息 当前:显示</span><span class="guide-ui-button">保存</span></div></div></div>
+            <div class="guide-ui-note">阶段、指令、描述三 Tab 的草稿一次保存；切组、离开或转到效果页时如有未保存修改，会提示保存/舍弃/关闭。“自动Tooltip信息”是立即单独提交的组级开关，不属于该草稿。</div></figure>
+          <div class="source-note">界面依据：<code>StageManageScreen.buildContentTabs/buildEffectButton/buildStageBottomButtons</code>、<code>buildCommandRows/buildDescriptionRows</code> 与当前 <code>zh_cn</code> 标签。</div>
         </section>
 
         <section class="page-section" id="bonuses" aria-labelledby="bonuses-title">
           <h2 id="bonuses-title"><span class="num">04</span>加成与联动</h2>
-          <p class="lead">阶段可绑定属性修饰器或药水效果；多个组同时满足区间条件时，可触发联动加成。</p>
+          <p class="lead">独立效果页可为一个或多个营养组的区间组合配置持续属性修饰器和药水效果；全部条件满足时触发联动加成。它不是食物吃下后的一次性药水效果编辑页。</p>
           <div class="grid-3">
             <div class="mini-card">
               <b>属性加成</b>
@@ -227,6 +242,17 @@
           <div class="callout">
             <b>离开阶段后：</b>加成不再维持，由刷新周期更新。属性修饰器会被回收；药水效果按剩余时长结束，因此时长需与刷新节奏匹配。
           </div>
+          <h3>独立效果与属性加成页</h3><p>从 <a href="#stage-editor">阶段页的绿色“效果”入口</a>进入；仅展示启用组。点击某组进度条的阶段可填起止，手工输入后需点“自选”才提交范围。Shift 点击可追加/取消选中阶段；同时选择多个组时，对每个选中区间组合分别保存到 <code>nutrition_bonuses</code>，不能将这些条件理解为一张单组阶段表。</p>
+          <figure class="guide-ui" id="effect-editor"><figcaption><strong>营养效果页 (独立页面)</strong> · 依据源码绘制的只读 HTML 示意，不是游戏截图/实时服务器数值；区间与组名仅作示例。</figcaption>
+            <div class="guide-ui-stage"><div class="guide-ui-window effect"><div class="guide-ui-title">营养效果与属性加成 · /hdui stage → 效果</div><div class="guide-ui-content"><div class="guide-ui-group">选择启用的营养组和范围 (跨组可组合)</div>
+              <div class="guide-ui-row"><span>示例组 A</span><span class="guide-ui-field">进度条 [0–29 | 30–69 | 70–100]　起点 [30]　终点 [69]　自选</span></div>
+              <div class="guide-ui-row"><span>示例组 B</span><span class="guide-ui-field">进度条 [0–29 | 30–69 | 70–100]　起点 [70]　终点 [100]　自选</span></div>
+              <span class="guide-ui-hint">Shift 点击进度条可多选；点“自选”可提交手输区间，即使与已有阶段不一致。</span><div class="guide-ui-group">选中组合的内容</div>
+              <div class="guide-ui-row"><span>药水效果</span><span class="guide-ui-field">选中组合后添加；不等于单次食用效果</span></div><div class="guide-ui-row"><span>属性加成</span><span class="guide-ui-field">选中组合后添加</span></div>
+              <div class="guide-ui-row"><span>当前文件</span><span class="guide-ui-field">无 (新组合尚未保存)</span></div></div>
+              <div class="guide-ui-actions"><span class="guide-ui-button">+ 新增药水效果</span><span class="guide-ui-button">+ 新增属性加成</span><span class="guide-ui-button">导出效果</span><span class="guide-ui-button">导出属性</span><span class="guide-ui-button">查询文件</span><span class="guide-ui-button">保存</span><span class="guide-ui-button red">取消</span><span class="guide-ui-button disabled">删除文件</span></div></div></div>
+            <div class="guide-ui-note">保存会先弹备注输入框，取消备注即放弃本次保存；“取消”恢复未保存的效果/属性编辑。只有正在编辑已存在文件时，“删除文件”才可用。导出分别更新药水/属性列表，查询文件打开浏览/搜索窗口；图中按钮不执行这些操作。</div></figure>
+          <div class="source-note">界面依据：<code>EffectManageScreen.buildGroupRangeControls/buildBottomButtons/saveEffectRows</code> 与当前 <code>zh_cn</code> 标签。物品单次食用效果另见 <a href="titlepro.html#effects">食用药水效果</a>。</div>
         </section>
 
         <section class="page-section" id="conditions" aria-labelledby="conditions-title">
@@ -308,6 +334,17 @@
             <div class="editor-body" id="editor-panel" role="tabpanel" aria-live="polite"></div>
           </div>
 
+          <h3>另一个入口：<code>/hdui create</code> 的营养值 Tab</h3>
+          <p><code>/hdui create</code> 要求 OP4，创建/修改的是营养组<strong>定义</strong>，并非修改某位玩家当前数值。品质和品级位于同一编辑器的另外两个 Tab；<a href="quality.html#quality-editor">品质图</a>、<a href="quality.html#rarity-editor">品级图</a>可直接跳转。</p>
+          <figure class="guide-ui" id="group-editor"><figcaption><strong>创建页 · 营养值 Tab</strong> · 依据源码绘制的只读 HTML 示意，不是游戏截图/实时服务器数值；新建状态不展示服务器现有条目。</figcaption>
+            <div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">HD 创建　　[创建] [删除] [新增] [☼]</div><div class="guide-ui-columns"><div class="guide-ui-list"><span class="selected">+ 新建条目</span><span>服务器已有营养组 (此处不列实值)</span></div><div class="guide-ui-content"><div class="guide-ui-tabs"><a href="#group-editor" aria-current="location">营养值</a><a href="quality.html#quality-editor">品质</a><a href="quality.html#rarity-editor">品级</a></div>
+              <div class="guide-ui-row"><span>ID</span><span class="guide-ui-field">新建时填写；已有条目的 ID 只读</span></div><div class="guide-ui-row"><span>名称</span><span class="guide-ui-field">名称输入　[颜色 → 纯色/渐变]</span></div>
+              <div class="guide-ui-row"><span>图标</span><span class="guide-ui-field">物品 ID　[图标预览] [手持]</span></div><div class="guide-ui-row"><span>衰减率</span><span class="guide-ui-field">正数</span></div><div class="guide-ui-row"><span>初值</span><span class="guide-ui-field">0–100；新建组时在线玩家获得初值</span></div>
+              <div class="guide-ui-row"><span>获取倍率</span><span class="guide-ui-field">不小于 0</span></div><div class="guide-ui-row"><span>Tag判定</span><span class="guide-ui-field">可选：玩家标签</span></div><div class="guide-ui-row"><span>Mod判定</span><span class="guide-ui-field">可选：已加载 modid</span></div>
+              <div class="guide-ui-row"><span>排序</span><span class="guide-ui-field">整数</span></div><div class="guide-ui-row"><span>开关</span><span class="guide-ui-field">启用中 / 禁用中</span></div><div class="guide-ui-row"><span>提示颜色</span><span class="guide-ui-field">配置四色 → 独立颜色界面</span></div><span class="guide-ui-hint">无效 ID、图标或数值会出现校验提示并禁用创建/保存。</span>
+            </div></div></div></div><div class="guide-ui-note">标题栏“新增”清空进入新建；“创建/保存”写定义，“删除”仅对已有条目可用；☼ 是默认营养组名称的本地语言化确认操作，会修改服务端显示名，并非客户端私有翻译。创建营养组不等于注册独立新物品。</div></figure>
+          <div class="source-note">界面依据：<code>HdCreateScreen.buildGroupForm/buildHeaderButtons/groupErrors</code>；注册新物品另见 <a href="quality.html#registry">注册管理器</a>。</div>
+
           <h3>NBT 变体：同名物品的独立配置</h3>
           <p>同一物品可按 NBT 划分为多个变体，每个变体保存独立配置；进食时使用命中变体的配置。例如同一药水的不同 NBT 可配置不同营养。</p>
 
@@ -349,11 +386,11 @@
 
           <h3>常用入口</h3>
           <ul>
-            <li><code>/hdui create</code>：创建营养组、品质、品级或注册物品；组 ID 创建后不能改。</li>
-            <li><code>/hdui stage</code>：打开阶段配置。</li>
-            <li><code>/hdui groups [玩家]</code>：打开自己或指定玩家的营养面板。</li>
-            <li><code>/hdui registry</code>：物品注册管理。</li>
-            <li><code>/hdui tooltip</code>：手持物品的 Tooltip 编辑入口。</li>
+            <li><code>/hdui create</code> (OP4)：创建/修改营养组、品质、品级定义；组 ID 创建后不可随意改，不注册独立物品。</li>
+            <li><code>/hdui stage</code> (OP4)：打开<a href="#stage-editor">阶段/指令/描述</a>编辑，绿色“效果”通往<a href="#effect-editor">独立加成页</a>。</li>
+            <li><code>/hdui groups [玩家]</code> (OP4)：执行者打开自己或指定玩家的<strong>数值管理屏</strong>，不是普通营养面板，也不创建组定义。</li>
+            <li><code>/hdui registry</code> (OP4)：打开注册管理器查看、刷新和删除注册项；新物品 ID 按启动流程生效。</li>
+            <li><code>/hdui tooltip</code> (OP4)：手持物品的 Tooltip 编辑入口；详见<a href="tooltip.html#edit">Tooltip 编辑</a>。</li>
           </ul>
           <p>营养组定义由数据包承载；编辑器中的创建或修改会写入配置覆盖层。旧 <code>/hdgroups</code> 已删除。</p>
         </section>
@@ -363,13 +400,14 @@
           <p class="lead">普通玩家可查看自身面板；修改其他玩家数值或暂停营养组需要相应权限。</p>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>命令</th><th>用途</th></tr></thead>
+              <thead><tr><th>命令</th><th>权限 / 用途与对象</th></tr></thead>
               <tbody>
-                <tr><td><code>/headiet</code></td><td>打开自己的营养面板。</td></tr>
-                <tr><td><code>/headiet add &lt;玩家&gt; &lt;组&gt; &lt;数值&gt;</code></td><td>增加指定玩家的某组营养值。</td></tr>
-                <tr><td><code>/headiet subtract &lt;玩家&gt; &lt;组&gt; &lt;数值&gt;</code></td><td>减少指定玩家的某组营养值。</td></tr>
-                <tr><td><code>/headiet set &lt;玩家&gt; &lt;组&gt; &lt;数值&gt;</code></td><td>把某组设为指定值，支持小数。</td></tr>
-                <tr><td><code>/hdui groups [玩家]</code></td><td>打开营养管理面板，可改值或暂停组。</td></tr>
+                <tr><td><code>/headiet</code> 或 <code>/headiet open</code></td><td>玩家本人，无 OP 要求：把营养面板发给自己。</td></tr>
+                <tr><td><code>/headiet open &lt;玩家&gt;</code></td><td>OP2：把营养面板发给<strong>指定玩家</strong>，不是执行者查看该玩家的面板。</td></tr>
+                <tr><td><code>/headiet add &lt;玩家&gt; &lt;组&gt; &lt;数值&gt;</code></td><td>OP4：增加目标玩家对应组数值；输入 0–100，可带小数。</td></tr>
+                <tr><td><code>/headiet subtract &lt;玩家&gt; &lt;组&gt; &lt;数值&gt;</code></td><td>OP4：减少目标玩家对应组数值；输入 0–100，可带小数。</td></tr>
+                <tr><td><code>/headiet set &lt;玩家&gt; &lt;组&gt; &lt;数值&gt;</code></td><td>OP4：把目标玩家对应组设为指定值；输入 0–100，可带小数。</td></tr>
+                <tr><td><code>/hdui groups [玩家]</code></td><td>OP4：执行者打开自己或指定玩家的营养<strong>管理屏</strong>，可调数值或暂停组；并非组定义编辑。</td></tr>
               </tbody>
             </table>
           </div>
