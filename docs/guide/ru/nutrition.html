@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Питательные вещества · Healthy Diet Руководство</title>
+  <link rel="stylesheet" href="assets/guide.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✦</span><span>Healthy Diet<small>FEATURE GUIDE</small></span></a>
+      <nav class="topnav" data-nav aria-label="Навигация по главам">
+        <a href="index.html">Обзор</a>
+        <a href="nutrition.html" aria-current="page">Питательные вещества</a>
+      </nav>
+      <span class="lang-badge">Русский</span>
+      <button class="menu-btn" type="button" data-menu aria-expanded="false" aria-label="Открыть навигацию по главам">☰</button>
+    </div>
+  </header>
+  <main class="wrap" id="main">
+    <section class="hero">
+      <span class="eyebrow">01 / NUTRITION</span>
+      <h1>Питательные вещества: значения, этапы и условные правила.</h1>
+      <p>Страница объясняет группы питания, снижение, этапы, бонусы и условные правила в порядке расчёта. Интерфейс и числа — примеры; фактические правила определяются сервером.</p>
+      <div class="tags"><span class="tag">Диапазон 0–100</span><span class="tag">Дроби поддерживаются</span><span class="tag">Этапы по целым</span><span class="tag">Настройка сервера</span></div>
+    </section>
+    <div class="layout">
+      <aside class="toc" data-toc aria-label="Содержание страницы">
+        <h2>Содержание страницы</h2>
+        <ol>
+          <li><a href="#overview">Обзор механизма</a></li>
+          <li><a href="#values">Рост и снижение</a></li>
+          <li><a href="#stages">Этапы</a></li>
+          <li><a href="#bonuses">Бонусы и связи</a></li>
+          <li><a href="#conditions">Условные правила</a></li>
+          <li><a href="#items">Редактор и варианты</a></li>
+          <li><a href="#admin">Управление и команды</a></li>
+          <li><a href="#summary">Итоги</a></li>
+        </ol>
+        <div class="toc-note">Обычная конфигурация содержит шесть групп: молочные продукты, фрукты, злаки, белки, сахар, овощи. Сервер может добавлять, удалять, переименовывать и менять порядок.</div>
+      </aside>
+      <article>
+        <section class="page-section" id="overview" aria-labelledby="overview-title">
+          <h2 id="overview-title"><span class="num">01</span>Обзор механизма</h2>
+          <p class="lead">Каждая группа питания — независимая шкала 0–100. Еда может влиять на несколько групп; при снижении голода группы уменьшаются с настроенной скоростью.</p>
+          <p>Вклад одной еды в разные группы различается: например, яблоко повышает фрукты и сахар. Различия между продуктами формируют структуру рациона.</p>
+          <div class="figure">
+            <div class="food-demo">
+              <div class="food-card"><span class="food-icon" aria-hidden="true">Я</span><b>Яблоко</b><span>Пример еды</span></div>
+              <div class="food-arrow" aria-hidden="true">→</div>
+              <div class="mini-bars" aria-label="Пример влияния яблока на две группы питания">
+                <div class="mini-bar" style="--c:#fab387"><span class="name">Фрукты</span><span class="track"><span class="fill" style="width:54%"></span></span><span class="num">+26</span></div>
+                <div class="mini-bar" style="--c:#f38ba8"><span class="name">Сахар</span><span class="track"><span class="fill" style="width:21%"></span></span><span class="num">+12</span></div>
+              </div>
+            </div>
+            <div class="figure-caption">Пример: одна еда влияет на несколько групп. Полосы — значения после расчёта, а не настройки сервера по умолчанию.</div>
+          </div>
+          <h3>Пример панели питания</h3>
+          <p>Нажмите H, чтобы открыть панель. Названия групп, цвета и диапазоны этапов берутся из встроенного JSON основной ветки Forge; наведите или сфокусируйте этап клавиатурой, чтобы увидеть предпросмотр настроенных бонусов. У этапов по умолчанию нет ручных названий и описаний, поэтому подсказка показывает только диапазон, настроенные бонусы и необходимое уведомление о команде.</p>
+          <div class="figure">
+            <div class="mock-panel" aria-label="Пример панели питания по встроенной конфигурации Forge">
+              <div class="mock-head"><b>Состояние питания · пример</b><span>H в игре</span></div>
+              <div class="mock-rows" id="mock-rows"></div>
+              <div class="mock-actions"><button id="mock-check" type="button" aria-describedby="mock-bonus-tip">Проверка завершена</button><div class="mock-bonus-tip" id="mock-bonus-tip" role="tooltip"></div></div>
+            </div>
+            <div class="figure-caption">HTML-макет, не скриншот игры. Шесть цветных блоков не заменяют иконки предметов; значения — пример состояния игрока, а не начальные по умолчанию. Наведите на зону этапа или сфокусируйте Tab, чтобы увидеть фактические бонусы; наведение на «Проверка завершена» показывает активные бонусы для этого примера. Команды игры здесь не выполняются.</div>
+          </div>
+          <div class="source-note"><b>Источник настроек</b>: <code>nutrition_groups.json</code> и <code>nutrition_stages/*.json</code>, <code>nutrition_bonuses/*.json</code> стандартного датапака; цвета — из <code>color_schemes.json</code>. Например, у стандартных овощей <code>initialValue</code> 42, <code>decayRate</code> 6; 55% на рисунке лишь показывает бонус диапазона 46–60. Подсказки бонусов основаны на <code>HealthyDietScreen</code> и <code>BonusTooltipUtil</code>, а не на произвольных описаниях в стандартной конфигурации.</div>
+          <div class="callout good"><b>Система значений:</b> голод и питательные вещества независимы; голод отвечает за сытость и еду, питание — за долгосрочную структуру рациона.</div>
+        </section>
+        <section class="page-section" id="values" aria-labelledby="values-title">
+          <h2 id="values-title"><span class="num">02</span>Рост и снижение</h2>
+          <p class="lead">Прирост от еды и снижение от голода — два независимых пути расчёта.</p>
+          <p>Прирост примерно равен <b>базовому значению еды × множителю получения группы</b>; при пожизненном отвращении добавляется коэффициент снижения. После расчёта значение ограничивается 0–100. Команды администратора, естественное снижение и начальные значения не используют множитель получения.</p>
+          <div class="calc" aria-label="Пример расчёта снижения">
+            <div class="calc-row"><label for="decay-rate">Скорость снижения</label><input id="decay-rate" type="range" min="1" max="10" step="0.5" value="4"><output id="decay-rate-out">4</output></div>
+            <div class="calc-row"><label for="hunger-used">Потрачено голода</label><input id="hunger-used" type="range" min="0" max="20" step="1" value="20"><output id="hunger-used-out">20</output></div>
+            <div class="calc-result"><span>Снижение питания <strong id="decay-loss">5.0</strong> пунктов</span><small>Формула: голод ÷ скорость снижения; учитывается только голод, не насыщение</small></div>
+            <div class="mini-bars"><div class="mini-bar" style="--c:#a6e3a1"><span class="name">Остаток</span><span class="track"><span class="fill" id="decay-fill" style="width:95%"></span></span><span class="num" id="decay-remain">95.0</span></div></div>
+          </div>
+          <div class="figure-caption">Ползунки демонстрируют формулу; расчёт начинается с 100 и не показывает фактическое начальное значение.</div>
+          <ul class="rules">
+            <li><span class="n">1</span><span><b>Диапазон всегда 0–100.</b> Дроби сохраняются, после расчёта значение ограничивается границами.</span></li>
+            <li><span class="n">2</span><span><b>Этапы определяются по целым.</b> Текущее значение округляется, затем сопоставляется этапу; например, 59.6 считается как 60.</span></li>
+            <li><span class="n">3</span><span><b>Смерть не очищает питание.</b> При возрождении данные копируются вместе со способностями игрока.</span></li>
+          </ul>
+          <div class="callout warn"><b>Пример и настройки:</b> скорость снижения, начальные значения и множители получения настраиваются сервером. Фактические значения смотрите в панели <code>/headiet</code> и настройках сервера.</div>
+        </section>
+        <section class="page-section" id="stages" aria-labelledby="stages-title">
+          <h2 id="stages-title"><span class="num">03</span>Этапы</h2>
+          <p class="lead">Этап — диапазон питания и связанное поведение; заголовок, описание и команда клика редактируются на странице этапов, а постоянные эффекты и бонусы атрибутов для нескольких групп — на отдельной странице эффектов по условиям диапазонов.</p>
+          <p>Границы этапов целые. Редактор проверяет соседние диапазоны, чтобы значения не попадали в промежутки; при определении сначала округляется значение, затем ищется диапазон.</p>
+          <div class="stage-demo" aria-label="Пример определения этапа">
+            <div class="stage-ladder" aria-hidden="true">
+              <div class="stage-seg low">Низкий 0–29</div><div class="stage-seg mid">Средний 30–69</div><div class="stage-seg high">Высокий 70–100</div>
+              <span class="stage-marker" id="stage-marker" style="left:59.6%"></span>
+            </div>
+            <label class="slider-label" for="stage-range"><span>Пример значения</span><b id="stage-value">59.6</b></label>
+            <input id="stage-range" type="range" min="0" max="100" step="0.1" value="59.6" aria-label="Пример значения питания">
+            <div class="stage-readout"><span>По целому: <b id="stage-rounded">60</b></span><span>Текущий этап: <b id="stage-name">Средний</b></span></div>
+          </div>
+          <div class="figure-caption">Названия этапов и 0–29 / 30–69 / 70–100 — пример; сервер может задать больше этапов и другие границы.</div>
+          <h3>Настройки этапа</h3>
+          <div class="grid-3">
+            <div class="mini-card"><b>Название и описание</b><span>Идентифицируют этап и описывают состояние; описание показывается в подсказке панели питания.</span></div>
+            <div class="mini-card"><b>Команда клика</b><span>Выполняется при нажатии игроком; работает с правами администратора, вывод подавляется.</span></div>
+            <div class="mini-card"><b>Автопредпросмотр бонусов</b><span>Добавляет настроенные атрибуты и эффекты в подсказку; можно отключить, чтобы избежать дублирования.</span></div>
+          </div>
+          <div class="callout"><b>Кулдаун клика:</b> команда этапа для одного игрока не чаще раза в <b>1,5 секунды</b>, сервер проверяет повторно. Команды задаёт владелец сервера; не нажимайте команды этапов неизвестного происхождения.</div>
+          <h3>В игре <code>/hdui stage</code>: этап／команда／описание</h3>
+          <p>Требуется OP4; слева только включённые группы питания. Три рисунка ниже показывают структуру каждой вкладки; ссылки на вкладки ведут к соответствующему рисунку. Кнопки и поля — только для чтения и не сохраняют настройки игры.</p>
+          <figure class="guide-ui" id="stage-editor"><figcaption><strong>Вкладка «Этап»</strong> · Только для чтения, HTML-схема по исходному коду; не скриншот игры и не данные сервера. Диапазоны — примеры.</figcaption><div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">Управление этапами · /hdui stage (OP4)</div><div class="guide-ui-columns"><div class="guide-ui-list"><span>Список групп</span><span class="selected">Пример группы (не фактические значения)</span></div><div class="guide-ui-content"><div class="guide-ui-tabs"><a href="#stage-editor" aria-current="location">Этап</a><a href="#stage-command">Команда</a><a href="#stage-description">Описание</a><a href="#effect-editor" class="guide-ui-button green">Эффекты ↗</a></div><div class="guide-ui-group">Диапазон · нажмите на полосу</div><div class="guide-ui-bar"><span>0–29</span><span>30–69</span><span>70–100</span></div><div class="guide-ui-row"><span>Текущий выбор</span><span class="guide-ui-field">Пример: 30–69 (сервер не прочитан)</span></div><span class="guide-ui-hint">Соседние границы непрерывны; добавление, удаление и разделение пишутся в черновик группы.</span></div></div><div class="guide-ui-actions"><span class="guide-ui-button">+ Добавить этап</span><span class="guide-ui-button">− Удалить этап</span><span class="guide-ui-button">Разделить этап</span><span class="guide-ui-button">Сохранить</span></div></div></div><div class="guide-ui-note">Удалять/разделять можно только выбранный настроенный блок; зелёная кнопка «Эффекты» открывает отдельную страницу игры, а не четвёртую вкладку.</div></figure>
+          <figure class="guide-ui" id="stage-command"><figcaption><strong>Вкладка «Команда»</strong> · Только для чтения, HTML-схема по исходному коду; не скриншот игры и не данные сервера.</figcaption><div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">Управление этапами · команда клика</div><div class="guide-ui-columns"><div class="guide-ui-list"><span>Список групп</span><span class="selected">Пример группы (не фактические значения)</span></div><div class="guide-ui-content"><div class="guide-ui-tabs"><a href="#stage-editor">Этап</a><a href="#stage-command" aria-current="location">Команда</a><a href="#stage-description">Описание</a><a href="#effect-editor" class="guide-ui-button green">Эффекты ↗</a></div><div class="guide-ui-group">Сначала выберите настроенный этап на полосе</div><div class="guide-ui-bar"><span>0–29</span><span>30–69</span><span>70–100</span></div><div class="guide-ui-row"><span>Команда по клику</span><span class="guide-ui-field">Пример: введите команду</span></div><span class="guide-ui-hint">Срабатывает только при ручном нажатии этапа в /headiet, а не при входе значения в диапазон.</span></div></div><div class="guide-ui-actions"><span class="guide-ui-button">+ Добавить команду</span><span class="guide-ui-button">Сохранить</span></div></div></div><div class="guide-ui-note">Команда, разделение этапа и описание используют общее сохранение группы; эффекты питания здесь не редактируются.</div></figure>
+          <figure class="guide-ui" id="stage-description"><figcaption><strong>Вкладка «Описание»</strong> · Только для чтения, HTML-схема по исходному коду; не скриншот игры и не данные сервера.</figcaption><div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">Управление этапами · описание при наведении</div><div class="guide-ui-columns"><div class="guide-ui-list"><span>Список групп</span><span class="selected">Пример группы (не фактические значения)</span></div><div class="guide-ui-content"><div class="guide-ui-tabs"><a href="#stage-editor">Этап</a><a href="#stage-command">Команда</a><a href="#stage-description" aria-current="location">Описание</a><a href="#effect-editor" class="guide-ui-button green">Эффекты ↗</a></div><div class="guide-ui-group">Сначала выберите настроенный этап на полосе</div><div class="guide-ui-bar"><span>0–29</span><span>30–69</span><span>70–100</span></div><div class="guide-ui-row"><span>Заголовок этапа</span><span class="guide-ui-field">Пример: необязательный заголовок</span></div><div class="guide-ui-row"><span>Текст описания</span><span class="guide-ui-field">Пример: текст подсказки (можно по строкам)</span></div></div></div><div class="guide-ui-actions"><span class="guide-ui-button">+ Добавить описание</span><span class="guide-ui-button">Автоподсказка сейчас: показ</span><span class="guide-ui-button">Сохранить</span></div></div></div><div class="guide-ui-note">Три вкладки сохраняются вместе; при смене группы, выходе или переходе к эффектам с несохранёнными изменениями предлагается сохранить/отменить/закрыть. «Автоподсказка» — отдельный переключатель группы, не входящий в черновик.</div></figure>
+          <div class="source-note">Основа интерфейса: <code>StageManageScreen.buildContentTabs/buildEffectButton/buildStageBottomButtons</code>, <code>buildCommandRows/buildDescriptionRows</code> и текущие подписи <code>zh_cn</code>.</div>
+        </section>
+        <section class="page-section" id="bonuses" aria-labelledby="bonuses-title">
+          <h2 id="bonuses-title"><span class="num">04</span>Бонусы и связи</h2>
+          <p class="lead">Отдельная страница эффектов задаёт постоянные модификаторы атрибутов и эффекты зелий для комбинации диапазонов одной или нескольких групп; при выполнении всех условий срабатывает связанный бонус. Это не страница однократных эффектов после еды.</p>
+          <div class="grid-3">
+            <div class="mini-card"><b>Бонусы атрибутов</b><span>Например, максимальное здоровье и скорость; по умолчанию оценка примерно раз в 5 секунд, сервер может изменить.</span></div>
+            <div class="mini-card"><b>Эффекты зелий</b><span>Например, регенерация и сопротивление; по умолчанию обновление примерно раз в 10 секунд. При таком темпе длительность эффекта должна быть больше 10 секунд.</span></div>
+            <div class="mini-card"><b>Связанный бонус</b><span>Диапазоны нескольких групп записываются в одну настройку и действуют при выполнении всех условий.</span></div>
+          </div>
+          <div class="figure">
+            <div class="flow" aria-label="Пример связанного бонуса">
+              <div class="flow-node"><b>Фрукты</b>30–69</div><div class="flow-arrow" aria-hidden="true">+</div>
+              <div class="flow-node"><b>Овощи</b>30–69</div><div class="flow-arrow" aria-hidden="true">+</div>
+              <div class="flow-node"><b>Злаки</b>30–69</div><div class="flow-arrow" aria-hidden="true">+</div>
+              <div class="flow-node"><b>Белки</b>30–69</div><div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node accent"><b>Все условия</b>Дополнительный эффект</div>
+            </div>
+            <div class="figure-caption">Связанные условия — логическое AND; выход любой группы из диапазона отменяет бонус.</div>
+          </div>
+          <div class="callout"><b>После выхода из этапа:</b> бонус не сохраняется и обновляется в следующем цикле; модификаторы атрибутов снимаются, эффекты зелий заканчиваются по оставшемуся времени, поэтому длительность должна соответствовать циклу обновления.</div>
+          <h3>Отдельная страница эффектов и бонусов атрибутов</h3><p>Вход — <a href="#stage-editor">зелёная кнопка «Эффекты» на странице этапов</a>; показываются только включённые группы. Нажатие этапа на полосе заполняет границы; после ручного ввода нажмите «Свой диапазон», чтобы отправить. Shift-клик добавляет/снимает этапы; при выборе нескольких групп каждая комбинация диапазонов сохраняется в <code>nutrition_bonuses</code> отдельно, это не таблица одного этапа.</p>
+          <figure class="guide-ui" id="effect-editor"><figcaption><strong>Страница эффектов питания (отдельная)</strong> · Только для чтения, HTML-схема по исходному коду; не скриншот игры и не данные сервера. Диапазоны и группы — примеры.</figcaption><div class="guide-ui-stage"><div class="guide-ui-window effect"><div class="guide-ui-title">Эффекты питания и бонусы атрибутов · /hdui stage → Эффекты</div><div class="guide-ui-content"><div class="guide-ui-group">Выберите включённые группы и диапазоны (можно комбинировать)</div><div class="guide-ui-row"><span>Пример группы A</span><span class="guide-ui-field">Полоса [0–29 | 30–69 | 70–100]　начало [30]　конец [69]　свой</span></div><div class="guide-ui-row"><span>Пример группы B</span><span class="guide-ui-field">Полоса [0–29 | 30–69 | 70–100]　начало [70]　конец [100]　свой</span></div><span class="guide-ui-hint">Shift-клик выбирает несколько полос; «свой» отправляет ручной диапазон, даже если он не совпадает с этапами.</span><div class="guide-ui-group">Содержимое выбранной комбинации</div><div class="guide-ui-row"><span>Эффекты зелий</span><span class="guide-ui-field">Добавляются после выбора; не однократный эффект еды</span></div><div class="guide-ui-row"><span>Бонусы атрибутов</span><span class="guide-ui-field">Добавляются после выбора</span></div><div class="guide-ui-row"><span>Текущий файл</span><span class="guide-ui-field">Нет (новая комбинация не сохранена)</span></div></div><div class="guide-ui-actions"><span class="guide-ui-button">+ Эффект зелья</span><span class="guide-ui-button">+ Бонус атрибута</span><span class="guide-ui-button">Экспорт эффектов</span><span class="guide-ui-button">Экспорт атрибутов</span><span class="guide-ui-button">Поиск файла</span><span class="guide-ui-button">Сохранить</span><span class="guide-ui-button red">Отмена</span><span class="guide-ui-button disabled">Удалить файл</span></div></div></div><div class="guide-ui-note">При сохранении сначала запрашивается примечание; отмена примечания отменяет сохранение. «Отмена» возвращает несохранённые правки эффектов/атрибутов. «Удалить файл» доступно только при редактировании существующего файла. Экспорт обновляет списки зелий/атрибутов, поиск открывает окно выбора; кнопки на рисунке ничего не выполняют.</div></figure>
+          <div class="source-note">Основа интерфейса: <code>EffectManageScreen.buildGroupRangeControls/buildBottomButtons/saveEffectRows</code> и текущие подписи <code>zh_cn</code>. Однократные эффекты предмета см. в <a href="titlepro.html#effects">эффектах зелий при употреблении</a>.</div>
+        </section>
+        <section class="page-section" id="conditions" aria-labelledby="conditions-title">
+          <h2 id="conditions-title"><span class="num">05</span>Условные правила</h2>
+          <p class="lead">Обычный расчёт питания выполняется при еде; условные правила после него определяют дополнительные изменения или команды по диапазонам питания.</p>
+          <p>Правило может проверять несколько групп и при выполнении всех условий менять любую группу, выполнять команды или и то и другое. Группы условий и цели могут различаться.</p>
+          <div class="figure">
+            <div class="flow" aria-label="Порядок условных правил">
+              <div class="flow-node"><b>Съесть еду</b>Сначала обычное питание</div><div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node"><b>Проверить условия</b>Все диапазоны должны совпасть</div><div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node accent"><b>Выполнить</b>Изменение / команда</div><div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node"><b>Ограничить 0–100</b>По границам</div>
+            </div>
+            <div class="figure-caption">Условные правила выполняются после обычного питания; если у одной еды для одной группы заданы обычное значение и условие, оба шага выполняются последовательно.</div>
+          </div>
+          <div class="rule-mock" aria-label="Пример условного правила">
+            <h4>Одно правило · пример</h4>
+            <div class="rule-line"><span class="rule-and">Условие</span><span class="rule-chip cond">Мясо 0–86</span><span class="rule-and">AND</span><span class="rule-chip cond">Фрукты 30–100</span></div>
+            <div class="rule-line"><span class="rule-and">Изменение</span><span class="rule-chip target">Мясо +20</span><span class="rule-chip target">Сахар -5</span></div>
+            <div class="rule-line"><span class="rule-and">Необязательно</span><span class="rule-chip cmd">Команда</span><span class="rule-chip">Уведомление</span><span class="rule-chip">Множитель</span></div>
+          </div>
+          <h3>Две частые настройки</h3>
+          <div class="example"><span class="label">Ограничение сверху</span><p><b>Условие:</b> мясо <code>0–86</code>. <b>Цель:</b> мясо <code>+20</code>.</p><p>При 80 еда поднимает максимум до 86; при 90 условие не выполняется и роста нет.</p></div>
+          <div class="example"><span class="label">Коррекция вниз</span><p><b>Условие:</b> мясо <code>86–100</code>. <b>Цель:</b> мясо <code>-30</code>.</p><p>При 95 еда снижает примерно до 86 и останавливается, не уходя в низкий диапазон.</p></div>
+          <div class="callout warn"><b>Двойной расчёт одной группы:</b> если у одной еды для одной группы заданы обычное значение и условное изменение, оба шага выполняются последовательно. Обычно оставляют один способ, чтобы избежать двойного расчёта.</div>
+        </section>
+        <section class="page-section" id="items" aria-labelledby="items-title">
+          <h2 id="items-title"><span class="num">06</span>Редактор и варианты</h2>
+          <p class="lead">Держите предмет и введите <code>/hdui</code>, чтобы открыть настройки этого предмета.</p>
+          <p>Редактор объединяет питание, пресыщение, жажду, голод, стак, качество, срок годности, эффекты, команды, условия и удаление эффектов. Рисунок ниже — схема, не скриншот.</p>
+          <div class="editor-mock" aria-label="Схема редактора предмета">
+            <div class="editor-head"><b>Редактор предмета · схема</b><span>Предмет в руке /hdui</span></div>
+            <div class="editor-tabs" role="tablist" aria-label="Вкладки редактора предмета">
+              <button type="button" class="editor-tab active" role="tab" aria-selected="true" aria-controls="editor-panel" data-tab="nutrition">Питание</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="fatigue">Пресыщение</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="thirst">Жажда</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="hunger">Голод</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="stack">Лимит стака</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="quality">Привязка качества</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="shelf">Срок годности</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="effects">Эффекты зелий</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="commands">Команды</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="conditions">Условия</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="suppress">Удаление эффектов</button>
+            </div>
+            <div class="editor-body" id="editor-panel" role="tabpanel" aria-live="polite"></div>
+          </div>
+          <h3>Другой вход: вкладка питания <code>/hdui create</code></h3>
+          <p><code>/hdui create</code> требует OP4 и создаёт/изменяет <strong>определения</strong> групп, а не текущие значения игрока. Качество и редкость — две другие вкладки того же редактора; <a href="quality.html#quality-editor">схема качества</a>, <a href="quality.html#rarity-editor">схема редкости</a>.</p>
+          <figure class="guide-ui" id="group-editor"><figcaption><strong>Страница создания · вкладка питания</strong> · Только для чтения, HTML-схема по исходному коду; не скриншот игры и не данные сервера. В новом состоянии существующие записи сервера не показываются.</figcaption><div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">HD Создание　　[Создать] [Удалить] [Добавить] [☼]</div><div class="guide-ui-columns"><div class="guide-ui-list"><span class="selected">+ Новый элемент</span><span>Существующие группы сервера (значения не показаны)</span></div><div class="guide-ui-content"><div class="guide-ui-tabs"><a href="#group-editor" aria-current="location">Питание</a><a href="quality.html#quality-editor">Качество</a><a href="quality.html#rarity-editor">Редкость</a></div><div class="guide-ui-row"><span>ID</span><span class="guide-ui-field">Вводится при создании; у существующих только чтение</span></div><div class="guide-ui-row"><span>Название</span><span class="guide-ui-field">Ввод имени　[цвет → сплошной/градиент]</span></div><div class="guide-ui-row"><span>Иконка</span><span class="guide-ui-field">ID предмета　[предпросмотр] [в руку]</span></div><div class="guide-ui-row"><span>Скорость снижения</span><span class="guide-ui-field">Положительное число</span></div><div class="guide-ui-row"><span>Начальное значение</span><span class="guide-ui-field">0–100; при создании группы игроки в сети получают значение</span></div><div class="guide-ui-row"><span>Множитель получения</span><span class="guide-ui-field">Не меньше 0</span></div><div class="guide-ui-row"><span>Проверка Tag</span><span class="guide-ui-field">Необязательно: тег игрока</span></div><div class="guide-ui-row"><span>Проверка Mod</span><span class="guide-ui-field">Необязательно: загруженный modid</span></div><div class="guide-ui-row"><span>Порядок</span><span class="guide-ui-field">Целое</span></div><div class="guide-ui-row"><span>Переключатель</span><span class="guide-ui-field">Вкл / выкл</span></div><div class="guide-ui-row"><span>Цвета подсказки</span><span class="guide-ui-field">Четыре цвета → отдельный экран</span></div><span class="guide-ui-hint">При недопустимом ID, иконке или числе показывается ошибка и создание/сохранение отключается.</span></div></div></div></div><div class="guide-ui-note">«Добавить» в заголовке очищает форму; «Создать/Сохранить» пишет определение, «Удалить» доступно только для существующего; ☼ — подтверждение локализации стандартного имени группы, меняет отображаемое имя сервера, а не личный перевод клиента. Создание группы не регистрирует отдельный новый предмет.</div></figure>
+          <div class="source-note">Основа интерфейса: <code>HdCreateScreen.buildGroupForm/buildHeaderButtons/groupErrors</code>; регистрация новых предметов — <a href="quality.html#registry">менеджер регистрации</a>.</div>
+          <h3>Варианты NBT: отдельные настройки одного предмета</h3>
+          <p>Один предмет можно разделить по NBT на варианты, каждый со своей настройкой; при еде используется настройка совпавшего варианта. Например, разные NBT одного зелья могут давать разное питание.</p>
+          <div class="variant-grid">
+            <div class="variant-card"><span class="tag">Вариант A</span><b>Зелье лечения</b><div class="mini-bar" style="--c:#fab387"><span class="name">Фрукты</span><span class="track"><span class="fill" style="width:20%"></span></span><span class="num">+8</span></div><div class="mini-bar" style="--c:#f38ba8"><span class="name">Сахар</span><span class="track"><span class="fill" style="width:12%"></span></span><span class="num">+4</span></div></div>
+            <div class="variant-card"><span class="tag">Вариант B</span><b>Зелье скорости</b><div class="mini-bar" style="--c:#cba6f7"><span class="name">Белки</span><span class="track"><span class="fill" style="width:16%"></span></span><span class="num">+6</span></div><div class="mini-bar" style="--c:#a6e3a1"><span class="name">Овощи</span><span class="track"><span class="fill" style="width:10%"></span></span><span class="num">+3</span></div></div>
+          </div>
+          <div class="figure-caption">Значения вариантов — пример. Каждый вариант хранит свою настройку и не наследует общую запись автоматически.</div>
+          <div class="callout"><b>Лимит стака — свойство уровня предмета:</b> разные варианты одного предмета не могут иметь разный лимит стака; то же для жажды и других свойств уровня предмета.</div>
+          <h3>Частые входы</h3>
+          <ul>
+            <li><code>/hdui create</code> (OP4): создание/изменение групп, качества и редкости; ID группы после создания не меняется, отдельные предметы не регистрируются.</li>
+            <li><code>/hdui stage</code> (OP4): <a href="#stage-editor">этап/команда/описание</a>, зелёная кнопка «Эффекты» ведёт на <a href="#effect-editor">отдельную страницу бонусов</a>.</li>
+            <li><code>/hdui groups [игрок]</code> (OP4): <strong>экран управления значениями</strong> себя или указанного игрока, а не обычная панель и не определение группы.</li>
+            <li><code>/hdui registry</code> (OP4): менеджер регистрации, просмотр, обновление и удаление записей; новые ID действуют по процедуре запуска.</li>
+            <li><code>/hdui tooltip</code> (OP4): вход редактирования подсказки предмета; см. <a href="tooltip.html#edit">редактирование подсказки</a>.</li>
+          </ul>
+          <p>Определения групп хранятся в датапаке; создание и изменение в редакторе пишутся в оверлей настроек. Старая команда <code>/hdgroups</code> удалена.</p>
+        </section>
+        <section class="page-section" id="admin" aria-labelledby="admin-title">
+          <h2 id="admin-title"><span class="num">07</span>Управление и команды</h2>
+          <p class="lead">Обычный игрок видит свою панель; изменение значений других игроков или приостановка групп требуют прав.</p>
+          <div class="table-wrap"><table><thead><tr><th>Команда</th><th>Права / назначение и цель</th></tr></thead><tbody>
+            <tr><td><code>/headiet</code> или <code>/headiet open</code></td><td>Сам игрок, OP не нужен: отправить панель себе.</td></tr>
+            <tr><td><code>/headiet open &lt;игрок&gt;</code></td><td>OP2: отправить панель <strong>указанному игроку</strong>, а не смотреть её за него.</td></tr>
+            <tr><td><code>/headiet add &lt;игрок&gt; &lt;группа&gt; &lt;значение&gt;</code></td><td>OP4: увеличить значение группы; 0–100, можно дробь.</td></tr>
+            <tr><td><code>/headiet subtract &lt;игрок&gt; &lt;группа&gt; &lt;значение&gt;</code></td><td>OP4: уменьшить значение группы; 0–100, можно дробь.</td></tr>
+            <tr><td><code>/headiet set &lt;игрок&gt; &lt;группа&gt; &lt;значение&gt;</code></td><td>OP4: установить значение группы; 0–100, можно дробь.</td></tr>
+            <tr><td><code>/hdui groups [игрок]</code></td><td>OP4: открыть <strong>экран управления</strong> питанием себя или игрока, менять значения или приостанавливать группы; не редактирование определений.</td></tr>
+          </tbody></table></div>
+          <div class="callout good"><b>Приостановка группы:</b> во время паузы группа не растёт от еды и не снижается естественно; подходит для сюжета, защиты новичков или временных событий. После возобновления действуют обычные правила.</div>
+        </section>
+        <section class="page-section" id="summary" aria-labelledby="summary-title">
+          <h2 id="summary-title"><span class="num">08</span>Итоги</h2>
+          <ol class="summary-list">
+            <li><b>Диапазон 0–100.</b> Дроби сохраняются, при определении этапа округляются.</li>
+            <li><b>Питание снижается по расходу голода со своей скоростью.</b> Насыщение не участвует; смерть не очищает.</li>
+            <li><b>Этапы управляют постоянным состоянием, условные правила — однократным расчётом еды.</b> Фактические группы, пороги и эффекты зависят от сервера.</li>
+          </ol>
+        </section>
+        <footer class="page-footer"><span>Healthy Diet · Питательные вещества</span><span>На основе текущего исходного кода · конкретные правила зависят от настроек сервера</span></footer>
+      </article>
+    </div>
+  </main>
+  <script src="assets/guide.js"></script>
+  <script>
+(() => {
+      // 内置配置快照：nutrition_groups.json、nutrition_stages/*.json、nutrition_bonuses/*.json 与 color_schemes.json。
+      const groups = [
+        { key: "vegetables", name: "Овощи", value: 55, initial: 42, decay: 6, colors: ["#FDFC47", "#3DF750"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]] },
+        { key: "fruits", name: "Фрукты", value: 55, initial: 42, decay: 6, colors: ["#f4c4f3", "#fc67fa"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]], command: "81-100" },
+        { key: "meat", name: "Белки", value: 65, initial: 42, decay: 6, colors: ["#ff6a6e", "#ffc371"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]] },
+        { key: "grains", name: "Злаки", value: 65, initial: 42, decay: 6, colors: ["#78350F", "#B45309", "#D97706", "#FDE68A"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]] },
+        { key: "sugar", name: "Сахар", value: 88, initial: 48, decay: 5, colors: ["#b3ffab", "#12fff7"], stages: [[0, 10], [11, 50], [51, 85], [86, 92], [93, 100]], command: "93-100" },
+        { key: "dairy", name: "Молочные продукты", value: 88, initial: 48, decay: 5, colors: ["#8e9eab", "#eef2f3"], stages: [[0, 10], [11, 50], [51, 85], [86, 92], [93, 100]] }
+      ];
+      const rules = [
+        [{ vegetables: [0, 10] }, [["forge:block_reach", -1]], []],
+        [{ vegetables: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ vegetables: [61, 70] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor_toughness", 2]], []],
+        [{ vegetables: [71, 80] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor_toughness", 4]], []],
+        [{ vegetables: [81, 100] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor_toughness", 4]], []],
+        [{ fruits: [0, 10] }, [], [["minecraft:slowness", 0]]],
+        [{ fruits: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ fruits: [61, 70] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.attack_speed", 0.05]], []],
+        [{ fruits: [71, 80] }, [["minecraft:generic.max_health", 4], ["minecraft:generic.attack_speed", 0.1]], []],
+        [{ fruits: [81, 100] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.attack_speed", 0.2]], []],
+        [{ meat: [0, 10] }, [], [["minecraft:weakness", 0]]],
+        [{ meat: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ meat: [61, 70] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor", 1]], []],
+        [{ meat: [71, 80] }, [["minecraft:generic.max_health", 4], ["minecraft:generic.armor", 2]], []],
+        [{ meat: [81, 100] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.armor", 4]], []],
+        [{ grains: [0, 10] }, [], [["minecraft:slowness", 0]]],
+        [{ grains: [46, 60] }, [["minecraft:generic.attack_knockback", 0.5]], []],
+        [{ grains: [61, 70] }, [["minecraft:generic.max_health", 4]], []],
+        [{ grains: [71, 80] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.attack_damage", 0.5]], []],
+        [{ grains: [81, 100] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.attack_damage", 1]], []],
+        [{ sugar: [0, 10] }, [["minecraft:generic.attack_knockback", -0.2]], []],
+        [{ sugar: [51, 85] }, [], [["minecraft:speed", 0]]],
+        [{ sugar: [86, 92] }, [], [["minecraft:speed", 1]]],
+        [{ sugar: [93, 100] }, [], [["minecraft:speed", 1]]],
+        [{ dairy: [0, 10] }, [["forge:entity_reach", -0.3]], []],
+        [{ dairy: [51, 85] }, [["forge:step_height_addition", 0.2], ["forge:swim_speed", 0.2]], []],
+        [{ dairy: [86, 92] }, [["forge:swim_speed", 0.3], ["forge:step_height_addition", 0.52]], []],
+        [{ dairy: [93, 100] }, [["forge:swim_speed", 0.4], ["forge:step_height_addition", 0.6]], []],
+        [{ vegetables: [46, 60], fruits: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ vegetables: [81, 100], fruits: [81, 100] }, [["forge:block_reach", 1.5]], []],
+        [{ grains: [81, 100], meat: [81, 100] }, [["minecraft:generic.attack_speed", 0.5]], [["minecraft:resistance", 0]]],
+        [{ grains: [46, 60], meat: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ dairy: [93, 100], sugar: [93, 100] }, [["minecraft:generic.luck", -3]], [["minecraft:hunger", 0], ["minecraft:haste", 2], ["minecraft:slowness", 0]]],
+        [{ dairy: [86, 92], sugar: [86, 92] }, [], [["minecraft:haste", 1]]]
+      ];
+      const names = {
+        "forge:block_reach": "Дальность блока", "forge:entity_reach": "Дальность сущности",
+        "forge:step_height_addition": "Высота шага", "forge:swim_speed": "Скорость плавания",
+        "minecraft:generic.max_health": "Макс. здоровье", "minecraft:generic.armor_toughness": "Прочность брони",
+        "minecraft:generic.armor": "Броня", "minecraft:generic.attack_speed": "Скорость атаки",
+        "minecraft:generic.attack_damage": "Урон атаки", "minecraft:generic.attack_knockback": "Отбрасывание атаки",
+        "minecraft:generic.luck": "Удача", "minecraft:slowness": "Замедление", "minecraft:weakness": "Слабость",
+        "minecraft:speed": "Скорость", "minecraft:resistance": "Сопротивление", "minecraft:hunger": "Голод", "minecraft:haste": "Спешка"
+      };
+      const appendLine = (parent, text, style) => {
+        const line = document.createElement("span");
+        line.className = style;
+        line.textContent = text;
+        parent.append(line);
+      };
+      const rows = document.getElementById("mock-rows");
+      if (rows) {
+        for (const group of groups) {
+          const row = document.createElement("div");
+          row.className = "mock-row";
+          row.style.setProperty("--c", group.colors[0]);
+          row.style.setProperty("--text-color", group.colors[group.colors.length - 1]);
+          row.style.setProperty("--gradient", `linear-gradient(90deg, ${group.colors.join(", ")})`);
+          const icon = document.createElement("span");
+          icon.className = "mock-icon";
+          icon.setAttribute("aria-hidden", "true");
+          const name = document.createElement("span");
+          name.className = "mock-name";
+          name.textContent = group.name;
+          const track = document.createElement("div");
+          track.className = "mock-track";
+          const fill = document.createElement("span");
+          fill.className = "mock-fill";
+          fill.style.width = group.value + "%";
+          track.append(fill);
+          const tip = document.createElement("div");
+          tip.className = "mock-tip";
+          tip.setAttribute("role", "tooltip");
+          for (let i = 0; i < group.stages.length; i++) {
+            const [min, max] = group.stages[i];
+            const nextMin = group.stages[i + 1]?.[0] ?? 100;
+            const segment = document.createElement("button");
+            segment.type = "button";
+            segment.className = "mock-seg";
+            segment.style.left = min + "%";
+            segment.style.width = (nextMin - min) + "%";
+            const matches = rules.filter(([conditions]) => {
+              const bound = conditions[group.key];
+              return bound && bound[0] === min && bound[1] === max;
+            });
+            const other = conditions => Object.entries(conditions)
+              .filter(([key]) => key !== group.key)
+              .map(([key, bounds]) => `${groups.find(g => g.key === key).name} ${bounds[0]}~${bounds[1]}`)
+              .join(", ");
+            const details = [`${min}~${max}`];
+            for (const [conditions, attributes, effects] of matches) {
+              const suffix = other(conditions);
+              for (const [id, value] of attributes) details.push(`${value >= 0 ? "+" : ""}${value} ${names[id]}${suffix ? ` (${suffix})` : ""}`);
+              for (const [id, level] of effects) details.push(`${names[id]} Lv.${level + 1}${suffix ? ` (${suffix})` : ""}`);
+            }
+            if (group.command === `${min}-${max}`) details.push("Нажмите, чтобы выполнить команду описания");
+            segment.setAttribute("aria-label", `${group.name} Этап ${details.join("；")}`);
+            const showTip = () => {
+              tip.replaceChildren();
+              appendLine(tip, `${min}~${max}`, "tip-range");
+              for (const [conditions, attributes, effects] of matches) {
+                const suffix = other(conditions);
+                for (const [id, value] of attributes) appendLine(tip, `  ${value >= 0 ? "+" : ""}${value} ${names[id]}${suffix ? ` (${suffix})` : ""}`, value >= 0 ? "tip-attribute" : "tip-negative");
+                for (const [id, level] of effects) appendLine(tip, `  ${names[id]} Lv.${level + 1}${suffix ? ` (${suffix})` : ""}`, "tip-effect");
+              }
+              if (group.command === `${min}-${max}`) appendLine(tip, "Нажмите, чтобы выполнить команду описания", "tip-command");
+            };
+            segment.addEventListener("mouseenter", showTip);
+            segment.addEventListener("focus", showTip);
+            track.append(segment);
+            if (group.value >= min && group.value <= max) showTip();
+          }
+          track.append(tip);
+          const pct = document.createElement("span");
+          pct.className = "mock-pct";
+          pct.textContent = group.value.toFixed(1) + "%";
+          row.append(icon, name, track, pct);
+          rows.append(row);
+        }
+        const active = document.getElementById("mock-bonus-tip");
+        const attrTotals = new Map();
+        const effectLevels = new Map();
+        for (const [conditions, attributes, effects] of rules) {
+          if (!Object.entries(conditions).every(([key, [min, max]]) => {
+            const current = Math.round(groups.find(g => g.key === key).value);
+            return current >= min && current <= max;
+          })) continue;
+          for (const [id, value] of attributes) attrTotals.set(id, (attrTotals.get(id) ?? 0) + value);
+          for (const [id, level] of effects) effectLevels.set(id, Math.max(effectLevels.get(id) ?? 0, level));
+        }
+        appendLine(active, "Текущие бонусы:", "tip-title");
+        for (const [id, value] of attrTotals) appendLine(active, `  ${value >= 0 ? "+" : ""}${value} ${names[id]}`, value >= 0 ? "tip-attribute" : "tip-negative");
+        for (const [id, level] of effectLevels) appendLine(active, `  ${names[id]} Lv.${level + 1}`, "tip-effect");
+      }
+
+      const stageRange = document.getElementById("stage-range");
+      const stageMarker = document.getElementById("stage-marker");
+      const stageValue = document.getElementById("stage-value");
+      const stageRounded = document.getElementById("stage-rounded");
+      const stageName = document.getElementById("stage-name");
+
+      const updateStage = () => {
+        const value = Number(stageRange.value);
+        const rounded = Math.round(value);
+        const name = rounded < 30 ? "Низкий" : rounded < 70 ? "Средний" : "Высокий";
+        stageMarker.style.left = value + "%";
+        stageValue.textContent = value.toFixed(1);
+        stageRounded.textContent = String(rounded);
+        stageName.textContent = name;
+      };
+      stageRange.addEventListener("input", updateStage);
+      updateStage();
+
+      const rate = document.getElementById("decay-rate");
+      const hunger = document.getElementById("hunger-used");
+      const rateOut = document.getElementById("decay-rate-out");
+      const hungerOut = document.getElementById("hunger-used-out");
+      const lossOut = document.getElementById("decay-loss");
+      const remainOut = document.getElementById("decay-remain");
+      const remainFill = document.getElementById("decay-fill");
+
+      const updateDecay = () => {
+        const r = Number(rate.value);
+        const h = Number(hunger.value);
+        const loss = h / r;
+        const remain = Math.max(0, 100 - loss);
+        rateOut.textContent = String(r);
+        hungerOut.textContent = String(h);
+        lossOut.textContent = loss.toFixed(1);
+        remainOut.textContent = remain.toFixed(1);
+        remainFill.style.width = remain + "%";
+      };
+      rate.addEventListener("input", updateDecay);
+      hunger.addEventListener("input", updateDecay);
+      updateDecay();
+
+      const editorData = {
+        nutrition: {
+          fields: [["Фрукты", "+26"], ["Сахар", "+12"], ["Условные правила", "1 шт. · нажмите для редактирования"]],
+          note: "Пример полей. Фактические вкладки и сохранение зависят от экрана игры."
+        },
+        fatigue: {
+          fields: [["Макс. подряд употреблений", "3"], ["Нужно другой еды для кулдауна", "2"], ["Время естественного кулдауна", "10 分钟"], ["Восстановление голода при пресыщении", "0"]],
+          note: "Пример полей. Фактические значения зависят от настроек предмета."
+        },
+        thirst: {
+          fields: [["Значение питья", "+6"], ["Интеграция", "Legendary Survival Overhaul (LSO)"]],
+          note: "口渴值走 LSO Интеграция；未安装对应模组时不生效。"
+        },
+        hunger: {
+          fields: [["Голод", "+5"], ["隠しГолод", "+6.0"]],
+          note: "Пример полей. Рассчитывается отдельно от ванильных свойств еды."
+        },
+        stack: {
+          fields: [["Лимит стака", "16"], ["Область", "Уровень предмета, общий для вариантов"]],
+          note: "Лимит стакаは Item レベル属性で、NBT バリアントごとに変化しません。"
+        },
+        quality: {
+          fields: [["Привязка качества", "good"], ["Область", "Можно привязать к варианту NBT"]],
+          note: "Качество отвечает за отображение и привязку, а не увеличивает питание или атрибуты напрямую."
+        },
+        shelf: {
+          fields: [["Срок годности", "60 минут"], ["Базовый множитель порчи", "1.0"], ["Продукт истечения", "minecraft:rotten_flesh"]],
+          note: "Пример полей. Полные параметры срока годности см. в главе о сроке годности."
+        },
+        effects: {
+          fields: [["Регенерация", "I · 5 с · 100%"], ["Сопротивление", "I · 10 с · 50%"]],
+          note: "Пример эффекта. Уровень, время, вероятность и частицы настраиваются отдельно."
+        },
+        commands: {
+          fields: [["Команда употребления", "say пример"], ["Права выполнения", "Администратор (4)"], ["Вывод", "Подавление"]],
+          note: "Пример команды. Фактическая команда зависит от настроек предмета."
+        },
+        conditions: {
+          fields: [["Число правил", "1 шт."], ["Условие", "Мясо 0–86"], ["Изменение питания", "Мясо +20"]],
+          note: "Условные правилаは複数の条件、対象、コマンドを同時に設定できます。"
+        },
+        suppress: {
+          fields: [["Удаление эффектов", "Регенерация"], ["Описание", "Удалить указанный эффект при употреблении"]],
+          note: "Пример полей. Удаление эффектов выполняется при употреблении."
+        }
+      };
+
+      const editorTabs = [...document.querySelectorAll(".editor-tab")];
+      const editorPanel = document.getElementById("editor-panel");
+
+      const renderEditor = key => {
+        const data = editorData[key];
+        if (!data || !editorPanel) return;
+        editorPanel.replaceChildren();
+        for (const [label, value] of data.fields) {
+          const row = document.createElement("div");
+          row.className = "editor-field";
+          const name = document.createElement("span");
+          name.textContent = label;
+          const field = document.createElement("span");
+          field.className = "editor-input";
+          field.textContent = value;
+          row.append(name, field);
+          editorPanel.append(row);
+        }
+        const note = document.createElement("div");
+        note.className = "editor-note";
+        note.textContent = data.note;
+        editorPanel.append(note);
+      };
+
+      const selectEditorTab = key => {
+        editorTabs.forEach(tab => {
+          const active = tab.dataset.tab === key;
+          tab.classList.toggle("active", active);
+          tab.setAttribute("aria-selected", String(active));
+          tab.tabIndex = active ? 0 : -1;
+        });
+        renderEditor(key);
+      };
+
+      editorTabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => selectEditorTab(tab.dataset.tab));
+        tab.addEventListener("keydown", event => {
+          if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+          event.preventDefault();
+          const offset = event.key === "ArrowRight" ? 1 : -1;
+          const next = editorTabs[(index + offset + editorTabs.length) % editorTabs.length];
+          next.focus();
+          next.click();
+        });
+      });
+      selectEditorTab("nutrition");
+    })();
+  </script>
+</body>
+</html>

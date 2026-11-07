@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>保存期限 · Healthy Diet 功能指南</title>
+  <link rel="stylesheet" href="assets/guide.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至正文</a>
+  <header class="topbar"><div class="wrap topbar-inner">
+    <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✦</span><span>Healthy Diet<small>FEATURE GUIDE</small></span></a>
+    <nav class="topnav" data-nav aria-label="章節導覽"><a href="index.html">總覽</a><a href="shelf-life.html" aria-current="page">保存期限</a></nav>
+    <span class="lang-badge">繁體中文</span><button class="menu-btn" type="button" data-menu aria-expanded="false" aria-label="開啟章節導覽">☰</button>
+  </div></header>
+  <main class="wrap" id="main">
+    <section class="hero">
+      <span class="eyebrow">04 / SHELF LIFE</span>
+      <h1>從設定到結算，讀懂食物保存期限。</h1>
+      <p>逐一檢視編輯器的八個子頁，理解基礎時長、溫度、變質倍率、冷鮮與過期結算；再了解物品離開背包後的計時、信任與離線保護。</p>
+      <div class="tags"><span class="tag">八個獨立子頁</span><span class="tag">伺服器結算</span><span class="tag">容器與多人</span><span class="tag">離線帳本</span></div>
+    </section>
+    <div class="notice" role="note"><strong>先分清三種數值：</strong>基礎保存時長是設定，物品目前溫度與剩餘時長是執行狀態。伺服器資料包和玩家持有物品的實際狀態可能不同。</div>
+    <div class="layout">
+      <aside class="toc" data-toc aria-label="本頁目錄"><h2>本頁目錄</h2><ol>
+        <li><a href="#overview">結算路徑</a></li><li><a href="#editor">八個設定子頁</a></li><li><a href="#world">容器與多人</a></li>
+      </ol><div class="toc-note">在遊戲中手持物品輸入 /hdui，進入保存期限編輯器；此網頁僅供閱讀和本機預覽，不修改伺服器設定。</div></aside>
+      <article>
+        <section class="page-section" id="overview">
+          <h2><span class="num">01</span>一次結算經過哪些環節</h2>
+          <p class="lead">先有物品層級基礎時長，再隨物品所在環境改變溫度和變質速度；伺服器負責結算剩餘時間。</p>
+          <div class="flow" aria-label="保存期限結算關係">
+            <div class="flow-node"><b>設定基礎時長</b>依整分鐘儲存</div><div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node"><b>環境改變溫度</b>自然 / 冰箱 / 冷凍室</div><div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node"><b>倍率與冷鮮保護</b>溫度曲線 / 維度 / 保鮮率</div><div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node accent"><b>結算到期</b>消失或替換為產物</div>
+          </div>
+          <p>溫度曲線調節<strong>變質速度</strong>；「效果」子頁調節<strong>吃下食物時</strong>的溫度效果。兩者是獨立清單，不會因為設定了某個效果就自動改變保存期限。</p>
+          <div class="callout"><b>遊戲日與現實天不同：</b>編輯器的 1 遊戲日 = 20 分鐘，1 天 = 1440 分鐘；儲存到 <code>durationMinutes</code> 時取整分鐘。內建物品可能覆蓋設定類的 10℃ 初溫，不要把類別預設值當成所有食物的初溫。</div>
+          <div class="source-note">原始碼依據：<code>ShelfDurationUnit</code>、<code>S2ShelfConfig</code>、<code>ShelfTemperatureCurve.effectiveRate</code>。</div>
+        </section>
+
+        <section class="page-section" id="editor">
+          <h2><span class="num">02</span>編輯器的八個子 Tab</h2>
+          <p class="lead">下列八個標籤與遊戲中「保存期限」編輯器的排列一致。選擇一項可檢視欄位、用途和容易混淆的邊界；網頁不能儲存設定。</p>
+          <div class="shelf-tabbar" role="tablist" aria-label="保存期限編輯器子頁" data-shelf-tabs>
+            <button type="button" role="tab" id="shelf-tab-duration" aria-controls="shelf-panel-duration" aria-selected="true" tabindex="0">保存期限</button>
+            <button type="button" role="tab" id="shelf-tab-basic" aria-controls="shelf-panel-basic" aria-selected="false" tabindex="-1">基礎</button>
+            <button type="button" role="tab" id="shelf-tab-curves" aria-controls="shelf-panel-curves" aria-selected="false" tabindex="-1">溫度曲線</button>
+            <button type="button" role="tab" id="shelf-tab-effects" aria-controls="shelf-panel-effects" aria-selected="false" tabindex="-1">效果</button>
+            <button type="button" role="tab" id="shelf-tab-natural" aria-controls="shelf-panel-natural" aria-selected="false" tabindex="-1">自然環境</button>
+            <button type="button" role="tab" id="shelf-tab-fridge" aria-controls="shelf-panel-fridge" aria-selected="false" tabindex="-1">冰箱</button>
+            <button type="button" role="tab" id="shelf-tab-fresh" aria-controls="shelf-panel-fresh" aria-selected="false" tabindex="-1">冷鮮</button>
+            <button type="button" role="tab" id="shelf-tab-retention" aria-controls="shelf-panel-retention" aria-selected="false" tabindex="-1">保冷度</button>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-duration" aria-labelledby="shelf-tab-duration" tabindex="0">
+            <span class="shelf-kicker">01 / 時間與過期行為</span><h3>保存期限</h3>
+            <p>設定新物品的基礎保存時間和基礎變質倍率。單位按鈕在分鐘、小時、天、遊戲日間切換；輸入可含小數，儲存時換算成整分鐘。沒有針對某維度設定倍率時，該維度保持 1 倍。</p>
+            <div class="table-wrap"><table><thead><tr><th>可編輯項目</th><th>作用</th></tr></thead><tbody>
+              <tr><td>保存期限 / 基礎變質倍率</td><td>分別確定起始時長與變質速率基準；倍率 0 表示基礎衰減為零。</td></tr>
+              <tr><td>過期產物 / 繼承溫度</td><td>到期替換成指定物品；<code>minecraft:air</code> 表示消失。開啟繼承時僅把到期瞬間的溫度傳給產物，產物的保存期限重新計時。</td></tr>
+              <tr><td>過期指令</td><td>持有者手中的物品到期時，以持有者為上下文執行；留空不執行。容器內或掉落物到期不觸發該指令。</td></tr>
+              <tr><td>維度變質倍率</td><td>逐維度依 ID 設定變質倍率，例如地獄可以與主世界不同；<strong>不是溫度偏移</strong>。</td></tr>
+            </tbody></table></div>
+            <div class="source-note">原始碼依據：<code>ItemConfigEditScreenV2.buildShelfEditor</code>、<code>S2ShelfConfig.durationMinutes</code>、<code>ShelfDimensionMultiplier</code>。</div>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-basic" aria-labelledby="shelf-tab-basic" tabindex="0" hidden>
+            <span class="shelf-kicker">02 / 物品溫度的物理邊界</span><h3>基礎</h3>
+            <p>這裡定義物品溫度能達到的上下界、首次開始計時時的溫度，以及允許食用的溫度區間；不會直接改變變質倍率。現有物品的目前溫度不會因為修改初溫而立刻重設。</p>
+            <div class="shelf-field-grid"><div><b>最低溫度 / 最高溫度</b><span>溫度計算的絕對邊界；最高值需至少比最低值高 4℃。</span></div><div><b>初始溫度</b><span>新物品進入保存期限系統時的溫度；設定類初值為 10℃，內建物品可覆蓋。</span></div><div><b>食用最低溫 / 食用最高溫</b><span>低於下限或高於上限時不可食用；兩端必須處於物品總溫度範圍內。</span></div></div>
+            <div class="callout warn"><b>注意：</b>「可食溫度」約束能否吃下，不代表物品在可食區間內就不變質。</div>
+            <div class="source-note">原始碼依據：<code>ItemConfigEditScreenV2.SHELF_COMMON_LABELS</code>、<code>S2ShelfConfig.Common</code>。</div>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-curves" aria-labelledby="shelf-tab-curves" tabindex="0" hidden>
+            <span class="shelf-kicker">03 / 溫度到衰減倍率</span><h3>溫度曲線</h3>
+            <p>每條曲線設定起點/終點溫度與兩端的變質倍率，在區間內依溫度線性變化。可選起點外和終點外緩衝，讓倍率在區間外平滑接回 1 倍；不啟用緩衝且不在區間內時，單條曲線貢獻 1 倍。</p>
+            <div class="shelf-field-grid"><div><b>起訖溫度</b><span>起點必須低於終點；清單可新增、編輯、刪除，最多 16 條。</span></div><div><b>起訖倍率</b><span>大於 1 加快變質，小於 1 減緩；多條命中時倍率相乘。</span></div><div><b>外側緩衝</b><span>填寫緩衝的絕對邊界溫度，而不是額外時長；緩衝過渡與主區間的線性過渡不同。</span></div></div>
+            <div class="callout"><b>不要和「效果」混用：</b><code>temperatureCurves</code> 調節剩餘保存時間的消耗，不設定食用藥水效果。</div>
+            <div class="source-note">原始碼依據：<code>ShelfTemperatureCurve.multiplierAt</code>、<code>multiplier</code>、<code>ItemConfigEditScreenV2.buildShelfCurveRows</code>。</div>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-effects" aria-labelledby="shelf-tab-effects" tabindex="0" hidden>
+            <span class="shelf-kicker">04 / 食用時的溫度附加效果</span><h3>效果</h3>
+            <p>依需求新增自訂溫度區：每條記錄一個效果 ID、作用溫度區間、端點是否包含、起訖等級和時長，以及粒子開關。只有吃下食物且目前溫度命中該區間時，才依端點線性插值決定等級與持續時間。</p>
+            <div class="shelf-field-grid"><div><b>區間與端點</b><span>新建區要求起點低於終點；可選擇包含/排除邊界。區間外不施加。</span></div><div><b>等級 / 時長 / 粒子</b><span>介面等級從 I 開始顯示；時長用秒輸入，必須是 0.05 秒的整數倍，儲存為 tick。</span></div><div><b>清單數量</b><span>未設定時為零條，最多 20 條。刪除後其餘區連續編號；歷史固定四區只作為舊資料遷移輸入。</span></div></div>
+            <div class="callout warn"><b>這不是固定四行效果表：</b>頁面和實際查詢都以 <code>temperatureEffectCurves</code> 統一清單為準；不因冷鮮/常溫等區域名稱自動生成藥水效果。</div>
+            <div class="source-note">原始碼依據：<code>ShelfTemperatureEffectCurve</code>、<code>ShelfTemperatureEffectMigration</code>、<code>ItemConfigEditScreenV2.buildShelfZoneEffectRows</code>。</div>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-natural" aria-labelledby="shelf-tab-natural" tabindex="0" hidden>
+            <span class="shelf-kicker">05 / 自然環境溫變</span><h3>自然環境</h3>
+            <p>物品在自然環境中會向目標環境溫度變化；基礎溫變量與間隔給出基礎速率。環境與物品溫差越大時，可分別依降溫或升溫的步長、每步增量和倍率上限加速，此外還可依溫區附加速度修正。</p>
+            <div class="shelf-field-grid"><div><b>基礎溫變量 / 間隔</b><span>例如 1℃ / 2 分鐘，對應基礎溫變速度；不是保存期限減少 1 分鐘。</span></div><div><b>降溫三項 / 升溫三項</b><span>分別控制每步增量、每步溫差閾值和溫差步倍率上限。</span></div><div><b>四類溫區速度修正</b><span>冷凍、低溫、常溫、高溫各自設定額外的<strong>溫變速度</strong>修正，不是藥水等級。</span></div></div>
+            <p>自然目標溫度還受世界和伺服器環境規則影響；此子頁僅管理該食物的自然溫變參數，不能直接指定目前物品的即時溫度。</p>
+            <div class="source-note">原始碼依據：<code>S2ShelfConfig.NaturalEnvironment</code>、<code>S2Environment</code>、<code>ItemConfigEditScreenV2.SHELF_NATURAL_DISPLAY_FIELDS</code>。</div>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-fridge" aria-labelledby="shelf-tab-fridge" tabindex="0" hidden>
+            <span class="shelf-kicker">06 / 普通冰箱與冷凍室</span><h3>冰箱</h3>
+            <p>普通冰箱和冷凍室各有一組溫變量、溫變間隔；它們決定物品進入對應設施後趨近目標環境溫度的基礎速度。該頁還可為冷凍、低溫、常溫、高溫區分別設定冰箱溫變速度修正。</p>
+            <div class="shelf-field-grid"><div><b>普通冰箱</b><span><code>fridgeTemperatureChangeC</code> 與 <code>fridgeTemperatureChangeMinutes</code>。</span></div><div><b>冷凍室</b><span><code>freezerTemperatureChangeC</code> 與 <code>freezerTemperatureChangeMinutes</code>。</span></div><div><b>四類溫區修正</b><span>作用於冰箱環境的溫變速度，不修改「自然環境」子頁的溫差加速設定。</span></div></div>
+            <div class="callout warn"><b>在冰箱裡不等於完全凍結：</b>是否達到凍結點看物品<strong>目前溫度</strong>，而非容器名稱；這也影響「保冷度」能否回充。</div>
+            <div class="source-note">原始碼依據：<code>S2ShelfConfig.FridgeTemperature</code>、<code>ItemConfigEditScreenV2.SHELF_FRIDGE_DISPLAY_FIELDS</code>。</div>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-fresh" aria-labelledby="shelf-tab-fresh" tabindex="0" hidden>
+            <span class="shelf-kicker">07 / 冷鮮保護與溫區邊界</span><h3>冷鮮</h3>
+            <p>設定凍結點、冷凍點、冷鮮點、高溫點，以及冷鮮度達到 50% 時的保鮮率。溫度低於冷鮮點開始獲得冷鮮度，到冷凍點為 50%，到凍結點及以下為 100%；保護比例隨進度變化。</p>
+            <div class="shelf-field-grid"><div><b>凍結點 → 冷凍點 → 冷鮮點</b><span>三者依次升高，鄰近點之間至少相差 1℃；凍結點必須在物品溫度下界內。</span></div><div><b>高溫點</b><span>常溫區和高溫區的分界，不高於物品溫度上界。</span></div><div><b>保鮮率</b><span>數值在 0–1；冷鮮度 50% 時提供對應比例的變質保護，到完全凍結時保護達到 100%。</span></div></div>
+            <div class="callout"><b>保護與溫變分開：</b>冷鮮點影響變質保護的溫度映射；自然環境與冰箱頁決定溫度如何向環境變化。</div>
+            <div class="source-note">原始碼依據：<code>S2ShelfConfig.Common</code>、<code>protectionFraction</code>、<code>S2Environment.mapNaturalColdFreshProgress</code>。</div>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-retention" aria-labelledby="shelf-tab-retention" tabindex="0" hidden>
+            <span class="shelf-kicker">08 / 凍結回充與永久耗損</span><h3>保冷度</h3>
+            <p>開啟 <code>coldRetention</code> 後，物品溫度處於完全凍結段時停止消耗並依設定速度回充保冷時間；離開完全凍結段後正常消耗。累計損失達到檔位後，可回充上限永久降低，不會因再次凍結自動恢復上限。</p>
+            <div class="shelf-field-grid"><div><b>保冷類型開關</b><span>不是所有食物都會啟用；未啟用時不顯示回充玩法。</span></div><div><b>回充速率</b><span>完全凍結時每分鐘可回充多少分鐘；設為 0 表示凍結僅停止消耗。</span></div><div><b>耗損檔位</b><span>每損失基礎保存時間的一檔百分比，回充上限下降一檔；檔位與即時剩餘時間不是同一數。</span></div></div>
+            <div class="callout warn"><b>不能僅靠冰箱名稱判斷回充：</b>物品必須實際到達設定的完全凍結溫度，且啟用了保冷類型。</div>
+            <div class="source-note">原始碼依據：<code>S2ShelfConfig.coldRetention</code>、<code>coldRecoveryRate</code>、<code>coldDegradationRate</code>、<code>S2Engine</code>。</div>
+          </div>
+        </section>
+
+        <section class="page-section" id="world">
+          <h2><span class="num">03</span>離開背包後的時間與多人保護</h2>
+          <p class="lead">食物在玩家身上、容器裡和地上使用不同的時鐘；伺服器負責結算，用戶端只依伺服器下發的速度顯示。</p>
+
+          <h3>兩套時鐘與伺服器權威</h3>
+          <p>玩家背包、裝備欄、副手和滑鼠上拿著的食物，依<strong>玩家線上遊玩時間</strong>結算，離線期間不走；箱子、冰箱、其他容器、地上的掉落物和放置的方塊食物，依<strong>世界時間</strong>結算，伺服器開著就繼續走。創造模式物品欄和 JEI 裡的食物不計時。</p>
+          <p>腐敗、溫度和冷鮮度都由伺服器計算，用戶端看到的只是伺服器發來的快照。提示裡的數字會依伺服器下發的目前速度逐秒推進，看起來是即時的，但真實數值始終以伺服器為準，修改用戶端不能造出新鮮食物；提示文字和顏色也以伺服器方案檔案為準。</p>
+
+          <h3>換手、上線與切換維度會重新對錶</h3>
+          <p>食物換手時，從新主人拿到的那一刻接著算，不會因為前主人的線上時間更長而一接過來就突然壞掉。玩家上線、切換維度時也會重新對錶；離線期間的時間不會補算進背包物品。</p>
+          <p>背包和地上掉落物大約每 20 秒重新整理一輪；按 <strong>S</strong> 可以立即結算並檢視最新數值。開啟容器、開始吃東西、使用 Tom 儲存終端存取時，也會順帶重新整理一次背包，不必等下一輪。</p>
+
+          <h3>誰算物品的主人</h3>
+          <p>設定了保存期限的食物<strong>放進容器的那一刻</strong>會打上放入者的主人標記。其他玩家開啟箱子時會看到紅框，拿不走；掉在地上的受保護食物也撿不起來。冰箱、Tom 儲存終端等容器遵循同樣的規則。</p>
+          <p>只有「放進容器」才算：野外寶箱裡你拿走一半，剩下的不會因為你碰過就歸你，其他玩家仍可公平拿取。反過來說，<strong>從未放進過容器的食物沒有主人</strong>，剛做好、剛撿到一直帶在身上的食物可以自由送人；標記一旦打上會跟著物品走，從自己的箱子拿回背包後仍然是你的。</p>
+          <p>按住 <strong>S</strong> 檢視詳細資訊，如果主人不是自己，最下面會多出一行「物品主人」。不同主人的同一種食物<strong>不能疊在一起</strong>，會分成兩疊，避免標記被覆蓋。</p>
+
+          <h3>信任名單與所有權流轉</h3>
+          <p>用 <code>/hdtrust</code> 管理自己的保護物品信任名單，無需 OP：</p>
+          <div class="table-wrap"><table><thead><tr><th>指令</th><th>作用</th></tr></thead><tbody>
+            <tr><td><code>/hdtrust add &lt;玩家名&gt;</code></td><td>把線上玩家加入目前白名單，對方可以正常拿取你的受保護食物。</td></tr>
+            <tr><td><code>/hdtrust remove &lt;玩家名&gt;</code></td><td>移出目前白名單，但保留「曾信任」歷史；對方手上已經拿走、尚未歸還的物品會過戶給他。</td></tr>
+            <tr><td><code>/hdtrust forget &lt;玩家名&gt;</code></td><td>同時清除目前白名單和曾信任歷史，之後依從未信任處理。</td></tr>
+            <tr><td><code>/hdtrust list</code></td><td>檢視目前白名單與曾信任名單；點擊名單裡的名字可直接移除或重新信任。</td></tr>
+          </tbody></table></div>
+          <p>信任始終看<strong>最初的主人</strong>：朋友拿走你的食物再放進他的箱子，主人仍然是你，不會被轉手洗掉。你主動把食物扔出去，等於送人，標記會被清掉；朋友拿了你的食物再主動扔出，也一樣算送人。</p>
+          <p>死亡掉落不算送人：原本沒有主人的食物會在你死亡的那一刻補上你的標記，已有標記的保持原主人；陌生人撿不走，你自己和你信任的朋友能撿，復活後可以拿回來。若伺服器開啟 <code>removeOwnerOnDeathDrop</code>(適合 PVP 服)，死亡掉落會強制清空保護標記，任何人都能拾取。</p>
+          <div class="callout warn"><b>被凍住的物品：</b>從未被信任的人透過管道、指令等方式拿到別人的保護食物時，這件物品會被凍住：保存期限不再推進，不能吃、不能喝，也放不進箱子、熔爐或合成格，無法過戶，只會在背包裡佔位置並提示持有者。服主可以開啟 <code>ejectIllegalProtectedItems</code>，把這類物品直接扔到持有者腳下；預設關閉，以免信任檔案異常時誤傷整批物品。</div>
+
+          <h3>全員離線時，容器裡的食物不算腐敗</h3>
+          <p>受保護食物的主人和目前所有受信任玩家<strong>全部不在線</strong>時，箱子、冰箱等容器裡的這段時間不計入腐敗；只要名單裡還有一位有權者線上，就照常結算。</p>
+          <div class="callout"><b>例子：</b>小 A 信任小 B。小 A 在 20:00 離線，小 B 在 22:00 離線，第二天 08:00 小 A 上線開啟箱子：20:00–22:00 小 B 仍在線，照常計算 2 小時；22:00–次日 08:00 兩人都離線，這 10 小時一分鐘都不算。</div>
+          <p>伺服器用離線帳本記錄「全員不在線」的時段，箱子本來只在被開啟時結算，所以等有人回來檢視時才會一次扣除。離線帳本只記錄啟用後的時段，更早以前的離線時間無法補回；<strong>扔在地上的受保護食物不享有</strong>這項保護，仍然會壞。</p>
+
+          <h3>容器、戰利品與掉落物</h3>
+          <p>關著的箱子不會被持續掃描。食物身上記錄著上一次結算的時間，開啟箱子時依上次的溫度一次性補算中間時段；中途天氣變化不會分段重算，結果與持續模擬略有出入，但很接近，也幾乎不佔效能。</p>
+          <p>開啟箱子、在箱子裡點物品或按 S 都會立即結算。箱子裡尚未開始計時的食物——例如被指令或其他模組直接塞入、或老存檔在設定保存期限之前放入的物品——會在開啟箱子或按 S 的那一刻打上標記並開始計時。箱子被挖掉時，會先對好時間、清除冰箱狀態再掉出，不會出現「掉在地上還以為自己在冰箱裡」的情況。漏斗和管道往箱子裡塞物品時也要遵守合併規則，疊在一起時依較差的那份計算。</p>
+          <p>寶箱裡生成的食物、怪物掉落的食物，在<strong>生成的那一刻</strong>就打上保存期限標記，是一份從零開始計時的新鮮食物；女僕、機械動力等直接把收穫塞進自己庫存的也算。自己合成、燒製或機器加工出來的食物不算，要等第一次被玩家或容器看到才開始計時。</p>
+          <p>地上的掉落物依 20 秒一個時段對齊，同一時段掉落的同種食物保存期限資料完全一樣，所以仍能疊在一起；落地後最開始的一小段時間不計入，誤差偏向玩家。區塊卸載後不再計算，重新載入時會一次補上中間時間。</p>
+          <p>放在地上的蛋糕等方塊食物依世界時間結算：區塊載入時結算一次，同一區塊 3 分鐘內只算一次；使用 FTB Chunks 等強制載入的區塊則每分鐘結算一次。壞掉的蛋糕會消失或掉出過期產物；拿著一個已經壞掉的蛋糕放下去，會當場變成過期產物。完整未吃過的蛋糕挖起來還能帶回原保存期限，吃過的挖不回來。</p>
+          <p>安裝 Jade 後，準星指向地上的食物時，HUD 會多一行保存期限，時間精確到秒、百分比保留一位小數，資料同樣來自伺服器；箱子裡和手上的食物仍看物品提示。</p>
+
+          <h3>堆疊與合併閾值</h3>
+          <div class="table-wrap"><table><thead><tr><th>條件</th><th>預設閾值</th></tr></thead><tbody>
+            <tr><td>剩餘保存期限差</td><td>不超過 5 分鐘</td></tr>
+            <tr><td>物品溫度差</td><td>不超過 10℃</td></tr>
+            <tr><td>冷鮮度差</td><td>不超過 20(0–100 刻度)</td></tr>
+          </tbody></table></div>
+          <p>三個條件都滿足才能合併，疊好後依<strong>較差的那份</strong>計算，不能拿新鮮食物去「洗白」快壞的。閾值可在 <code>config/healthy_diet/server.json</code> 的 <code>shelfMerge</code> 段中調整。地上的掉落物要求保存期限資料完全相同才能疊；保冷上限不同的兩份也不能疊。</p>
+
+          <h3>過期指令與產物</h3>
+          <p>過期指令只在食物於玩家身上壞掉，或咬一口已經放壞的蛋糕時執行；在容器裡或地上自行壞掉不會執行。過期產物是一件全新物品，不攜帶原來的 NBT，數量保留；放不下時塞回背包，背包也滿則掉在地上。</p>
+
+          <div class="source-note">原始碼依據：<code>S2Engine</code>、<code>S2Handler</code>、<code>S2OfflineLedger</code>、<code>S2StackMerge</code>、<code>TrustManager</code>、<code>HDTrustCommand</code>、<code>PlacedFoodRefresh</code>。</div>
+          <div class="demo-card"><div><b>接著了解顯示</b><span>普通物品提示和 S 詳情中的保存期限行，由 Tooltip 的版面與顯示規則控制。</span></div><a href="tooltip.html">檢視 Tooltip →</a></div>
+        </section>
+        <footer class="page-footer"><span>Healthy Diet · 保存期限</span><a href="index.html">返回章節地圖</a></footer>
+      </article>
+    </div>
+  </main>
+  <script src="assets/guide.js"></script>
+</body>
+</html>

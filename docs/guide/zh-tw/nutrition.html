@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>營養值 · Healthy Diet 功能指南</title>
+  <link rel="stylesheet" href="assets/guide.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到正文</a>
+
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <span>Healthy Diet<small>FEATURE GUIDE</small></span>
+      </a>
+      <nav class="topnav" data-nav aria-label="章節導航">
+        <a href="index.html">總覽</a>
+        <a href="nutrition.html" aria-current="page">營養值</a>
+      </nav>
+      <span class="lang-badge">繁體中文</span>
+      <button class="menu-btn" type="button" data-menu aria-expanded="false" aria-label="開啟章節導航">☰</button>
+    </div>
+  </header>
+
+  <main class="wrap" id="main">
+    <section class="hero">
+      <span class="eyebrow">01 / NUTRITION</span>
+      <h1>營養值：數值、階段與條件規則。</h1>
+      <p>本頁按結算順序說明營養組、衰減、階段、加成與條件規則。介面和數字均為示意，實際規則由伺服器設定決定。</p>
+      <div class="tags">
+        <span class="tag">範圍 0–100</span>
+        <span class="tag">支援小數</span>
+        <span class="tag">階段按整數判定</span>
+        <span class="tag">伺服器可設定</span>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="toc" data-toc aria-label="本頁目錄">
+        <h2>本頁目錄</h2>
+        <ol>
+          <li><a href="#overview">機制概覽</a></li>
+          <li><a href="#values">增加與衰減</a></li>
+          <li><a href="#stages">階段</a></li>
+          <li><a href="#bonuses">加成與連動</a></li>
+          <li><a href="#conditions">條件規則</a></li>
+          <li><a href="#items">編輯器與變體</a></li>
+          <li><a href="#admin">管理與指令</a></li>
+          <li><a href="#summary">要點回顧</a></li>
+        </ol>
+        <div class="toc-note">常見預設設定包含六組：乳製品、水果、穀物、蛋白質、糖分、蔬菜。伺服器可增刪、改名或調整順序。</div>
+      </aside>
+
+      <article>
+        <section class="page-section" id="overview" aria-labelledby="overview-title">
+          <h2 id="overview-title"><span class="num">01</span>機制概覽</h2>
+          <p class="lead">每個營養組是一條獨立的 0–100 數值軸。食物可同時影響多個組；飽食度下降時，各組按設定的衰減率減少。</p>
+          <p>同一份食物對不同組的貢獻可以不同。例如蘋果同時增加水果和糖分；食物之間的差異構成飲食結構。</p>
+
+          <div class="figure">
+            <div class="food-demo">
+              <div class="food-card">
+                <span class="food-icon" aria-hidden="true">蘋</span>
+                <b>蘋果</b>
+                <span>範例食物</span>
+              </div>
+              <div class="food-arrow" aria-hidden="true">→</div>
+              <div class="mini-bars" aria-label="蘋果對兩個營養組的範例影響">
+                <div class="mini-bar" style="--c:#fab387">
+                  <span class="name">水果</span>
+                  <span class="track"><span class="fill" style="width:54%"></span></span>
+                  <span class="num">+26</span>
+                </div>
+                <div class="mini-bar" style="--c:#f38ba8">
+                  <span class="name">糖分</span>
+                  <span class="track"><span class="fill" style="width:21%"></span></span>
+                  <span class="num">+12</span>
+                </div>
+              </div>
+            </div>
+            <div class="figure-caption">範例：單份食物可影響多個組。進度條為結算後的示意值，不代表伺服器預設設定。</div>
+          </div>
+
+          <h3>營養面板示意</h3>
+          <p>按 H 開啟營養面板。組名、配色和階段範圍取自 Forge 主線內置 JSON；懸停或鍵盤聚焦每個階段，檢視其實際設定的加成預覽。預設階段沒有手寫名稱或描述，因此提示僅顯示區間、設定的加成與必要的點擊指令提示。</p>
+
+          <div class="figure">
+            <div class="mock-panel" aria-label="以 Forge 主線內置設定為依據的營養面板示意">
+              <div class="mock-head"><b>營養狀態 · 設定示意</b><span>按 H 開啟</span></div>
+              <div class="mock-rows" id="mock-rows"></div>
+              <div class="mock-actions"><button id="mock-check" type="button" aria-describedby="mock-bonus-tip">檢查完畢</button><div class="mock-bonus-tip" id="mock-bonus-tip" role="tooltip"></div></div>
+            </div>
+            <div class="figure-caption">HTML 模擬介面，不是遊戲截圖。六個色塊不代替物品圖示；展示數值為範例玩家狀態，並非預設初始值。將滑鼠移到階段分區或使用 Tab 聚焦，檢視該段的實際預設加成；懸停「檢查完畢」可檢視這組範例值當前激活的加成。這裡不會實際執行遊戲指令。</div>
+          </div>
+          <div class="source-note">
+            <b>設定來源</b>：<code>nutrition_groups.json</code> 與預設資料包中的 <code>nutrition_stages/*.json</code>、<code>nutrition_bonuses/*.json</code>；配色來自 <code>color_schemes.json</code>。例如預設蔬菜組的 <code>initialValue</code> 為 42、<code>decayRate</code> 為 6；圖中 55% 只為展示 46–60 區間的加成。加成懸浮依據 <code>HealthyDietScreen</code> 與 <code>BonusTooltipUtil</code>，不是把任意描述寫進預設設定。
+          </div>
+
+          <div class="callout good">
+            <b>數值體系：</b>飽食度與營養值相互獨立；飽食度用於飢餓與進食，營養值用於長期飲食結構。
+          </div>
+        </section>
+
+        <section class="page-section" id="values" aria-labelledby="values-title">
+          <h2 id="values-title"><span class="num">02</span>增加與衰減</h2>
+          <p class="lead">進食增加與飽食度衰減是兩條獨立結算路徑。</p>
+          <p>進食增加量約為：<b>食物基礎值 × 該組取得倍率</b>；存在終身厭食時再乘以衰減係數。結算後按 0–100 夾取。管理員指令、自然衰減和初始值不經過取得倍率。</p>
+
+          <div class="calc" aria-label="衰減計算示意">
+            <div class="calc-row">
+              <label for="decay-rate">衰減率</label>
+              <input id="decay-rate" type="range" min="1" max="10" step="0.5" value="4">
+              <output id="decay-rate-out">4</output>
+            </div>
+            <div class="calc-row">
+              <label for="hunger-used">消耗飽食度</label>
+              <input id="hunger-used" type="range" min="0" max="20" step="1" value="20">
+              <output id="hunger-used-out">20</output>
+            </div>
+            <div class="calc-result">
+              <span>營養值下降 <strong id="decay-loss">5.0</strong> 點</span>
+              <small>公式：飽食度 ÷ 衰減率；僅計算飽食度，不計算飽和度</small>
+            </div>
+            <div class="mini-bars">
+              <div class="mini-bar" style="--c:#a6e3a1">
+                <span class="name">剩餘</span>
+                <span class="track"><span class="fill" id="decay-fill" style="width:95%"></span></span>
+                <span class="num" id="decay-remain">95.0</span>
+              </div>
+            </div>
+          </div>
+          <div class="figure-caption">滑塊用於示範衰減公式；計算從 100 起算，不代表實際初始值。</div>
+
+          <ul class="rules">
+            <li><span class="n">1</span><span><b>範圍固定為 0–100。</b>營養值可保留小數，結算後按上下限夾取。</span></li>
+            <li><span class="n">2</span><span><b>階段判定使用整數。</b>當前值四捨五入後匹配階段，例如 59.6 按 60 處理。</span></li>
+            <li><span class="n">3</span><span><b>死亡不會清空營養值。</b>重生時資料隨玩家能力複製。</span></li>
+          </ul>
+
+          <div class="callout warn">
+            <b>範例與設定：</b>衰減率、初始值和取得倍率均可由伺服器調整。實際數值以 <code>/headiet</code> 面板和伺服器設定為準。
+          </div>
+        </section>
+
+        <section class="page-section" id="stages" aria-labelledby="stages-title">
+          <h2 id="stages-title"><span class="num">03</span>階段</h2>
+          <p class="lead">階段是營養值區間及其關聯行為；階段標題、描述和點擊指令在階段頁編輯，跨組的持續效果與屬性加成在獨立效果頁按區間條件設定。</p>
+          <p>階段邊界使用整數。編輯器會校驗相鄰區間，避免數值落在階段之間的空檔；判定時先四捨五入，再匹配區間。</p>
+
+          <div class="stage-demo" aria-label="階段判定示意">
+            <div class="stage-ladder" aria-hidden="true">
+              <div class="stage-seg low">低 0–29</div>
+              <div class="stage-seg mid">中 30–69</div>
+              <div class="stage-seg high">高 70–100</div>
+              <span class="stage-marker" id="stage-marker" style="left:59.6%"></span>
+            </div>
+            <label class="slider-label" for="stage-range"><span>範例數值</span><b id="stage-value">59.6</b></label>
+            <input id="stage-range" type="range" min="0" max="100" step="0.1" value="59.6" aria-label="範例營養值">
+            <div class="stage-readout">
+              <span>按整數判定：<b id="stage-rounded">60</b></span>
+              <span>當前範例階段：<b id="stage-name">中段</b></span>
+            </div>
+          </div>
+          <div class="figure-caption">階段名稱與 0–29 / 30–69 / 70–100 僅為範例；伺服器可設定更多階段或不同邊界。</div>
+
+          <h3>階段可設定項</h3>
+          <div class="grid-3">
+            <div class="mini-card">
+              <b>名稱與描述</b>
+              <span>標識階段並說明當前狀態；描述顯示在營養面板的懸浮提示中。</span>
+            </div>
+            <div class="mini-card">
+              <b>點擊指令</b>
+              <span>玩家點擊階段時執行；以管理員權限執行，輸出被抑制。</span>
+            </div>
+            <div class="mini-card">
+              <b>自動加成預覽</b>
+              <span>將階段設定的屬性與效果自動加入提示；可關閉以避免重複顯示。</span>
+            </div>
+          </div>
+
+          <div class="callout">
+            <b>點擊冷卻：</b>階段指令的同一玩家點擊間隔為 <b>1.5 秒</b>，伺服器端會再次校驗。指令由服主設定；請勿點擊來源不明的階段指令。
+          </div>
+          <h3>遊戲內 <code>/hdui stage</code>：階段／指令／描述</h3>
+          <p>需要 OP4；左側只列啟用的營養組。以下三張圖分別固定展示一個 Tab 的結構；圖中的標籤連結可跳轉到對應圖，圖中按鈕和輸入框是唯讀示意，不能替遊戲儲存。</p>
+          <figure class="guide-ui" id="stage-editor"><figcaption><strong>階段 Tab</strong> · 依據源碼繪製的唯讀 HTML 示意，不是遊戲截圖/即時伺服器數值；區間均為範例。</figcaption>
+            <div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">階段管理 · /hdui stage (OP4)</div><div class="guide-ui-columns"><div class="guide-ui-list"><span>啟用組列表</span><span class="selected">範例組 (非實值)</span></div><div class="guide-ui-content">
+              <div class="guide-ui-tabs"><a href="#stage-editor" aria-current="location">階段</a><a href="#stage-command">指令</a><a href="#stage-description">描述</a><a href="#effect-editor" class="guide-ui-button green">效果 ↗</a></div>
+              <div class="guide-ui-group">階段區間 · 點擊進度條選段</div><div class="guide-ui-bar"><span>0–29</span><span>30–69</span><span>70–100</span></div><div class="guide-ui-row"><span>當前選取</span><span class="guide-ui-field">範例：30–69 (未讀取伺服器)</span></div><span class="guide-ui-hint">相鄰邊界須連續；增加、刪除與分割寫入本組待儲存草稿。</span>
+            </div></div><div class="guide-ui-actions"><span class="guide-ui-button">+ 增加階段</span><span class="guide-ui-button">− 刪除階段</span><span class="guide-ui-button">分割階段</span><span class="guide-ui-button">儲存</span></div></div></div>
+            <div class="guide-ui-note">點選已設定色塊後才可刪除/分割；右上綠色「效果」會跳獨立遊戲頁面，不是第四個 Tab。</div></figure>
+          <figure class="guide-ui" id="stage-command"><figcaption><strong>指令 Tab</strong> · 依據源碼繪製的唯讀 HTML 示意，不是遊戲截圖/即時伺服器數值。</figcaption>
+            <div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">階段管理 · 點擊指令</div><div class="guide-ui-columns"><div class="guide-ui-list"><span>啟用組列表</span><span class="selected">範例組 (非實值)</span></div><div class="guide-ui-content"><div class="guide-ui-tabs"><a href="#stage-editor">階段</a><a href="#stage-command" aria-current="location">指令</a><a href="#stage-description">描述</a><a href="#effect-editor" class="guide-ui-button green">效果 ↗</a></div><div class="guide-ui-group">先在進度條選中已設定階段</div><div class="guide-ui-bar"><span>0–29</span><span>30–69</span><span>70–100</span></div><div class="guide-ui-row"><span>點擊觸發指令</span><span class="guide-ui-field">範例：此處填寫指令</span></div><span class="guide-ui-hint">玩家在 /headiet 手動點擊階段才觸發，不因數值進入區間自動執行。</span></div></div><div class="guide-ui-actions"><span class="guide-ui-button">+ 新增指令</span><span class="guide-ui-button">儲存</span></div></div></div>
+            <div class="guide-ui-note">指令與階段劃分、描述共用本組總儲存；此處不編輯營養連動效果。</div></figure>
+          <figure class="guide-ui" id="stage-description"><figcaption><strong>描述 Tab</strong> · 依據源碼繪製的唯讀 HTML 示意，不是遊戲截圖/即時伺服器數值。</figcaption>
+            <div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">階段管理 · 懸浮描述</div><div class="guide-ui-columns"><div class="guide-ui-list"><span>啟用組列表</span><span class="selected">範例組 (非實值)</span></div><div class="guide-ui-content"><div class="guide-ui-tabs"><a href="#stage-editor">階段</a><a href="#stage-command">指令</a><a href="#stage-description" aria-current="location">描述</a><a href="#effect-editor" class="guide-ui-button green">效果 ↗</a></div><div class="guide-ui-group">先在進度條選中已設定階段</div><div class="guide-ui-bar"><span>0–29</span><span>30–69</span><span>70–100</span></div><div class="guide-ui-row"><span>階段標題</span><span class="guide-ui-field">範例：可選標題</span></div><div class="guide-ui-row"><span>描述文字</span><span class="guide-ui-field">範例：懸浮提示文字 (可逐行新增)</span></div></div></div><div class="guide-ui-actions"><span class="guide-ui-button">+ 新增描述</span><span class="guide-ui-button">自動Tooltip資訊 當前:顯示</span><span class="guide-ui-button">儲存</span></div></div></div>
+            <div class="guide-ui-note">階段、指令、描述三 Tab 的草稿一次儲存；切組、離開或轉到效果頁時如有未儲存修改，會提示儲存/捨棄/關閉。「自動Tooltip資訊」是立即單獨提交的組級開關，不屬於該草稿。</div></figure>
+          <div class="source-note">介面依據：<code>StageManageScreen.buildContentTabs/buildEffectButton/buildStageBottomButtons</code>、<code>buildCommandRows/buildDescriptionRows</code> 與當前 <code>zh_cn</code> 標籤。</div>
+        </section>
+
+        <section class="page-section" id="bonuses" aria-labelledby="bonuses-title">
+          <h2 id="bonuses-title"><span class="num">04</span>加成與連動</h2>
+          <p class="lead">獨立效果頁可為一個或多個營養組的區間組合設定持續屬性修飾器和藥水效果；全部條件滿足時觸發連動加成。它不是食物吃下後的一次性藥水效果編輯頁。</p>
+          <div class="grid-3">
+            <div class="mini-card">
+              <b>屬性加成</b>
+              <span>例如最大生命、移動速度；預設約每 5 秒評估一次，伺服器可調整。</span>
+            </div>
+            <div class="mini-card">
+              <b>藥水效果</b>
+              <span>例如生命恢復、抗性提升；預設約每 10 秒重新整理。預設節奏下，效果時長應長於 10 秒以避免斷檔。</span>
+            </div>
+            <div class="mini-card">
+              <b>連動加成</b>
+              <span>多個組的區間條件寫入同一設定，全部滿足後生效。</span>
+            </div>
+          </div>
+
+          <div class="figure">
+            <div class="flow" aria-label="連動加成示意">
+              <div class="flow-node"><b>水果</b>30–69</div>
+              <div class="flow-arrow" aria-hidden="true">+</div>
+              <div class="flow-node"><b>蔬菜</b>30–69</div>
+              <div class="flow-arrow" aria-hidden="true">+</div>
+              <div class="flow-node"><b>穀物</b>30–69</div>
+              <div class="flow-arrow" aria-hidden="true">+</div>
+              <div class="flow-node"><b>蛋白質</b>30–69</div>
+              <div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node accent"><b>全部滿足</b>才給額外效果</div>
+            </div>
+            <div class="figure-caption">連動條件為 AND 關係；任一組離開區間即不成立。</div>
+          </div>
+
+          <div class="callout">
+            <b>離開階段後：</b>加成不再維持，由重新整理周期更新。屬性修飾器會被回收；藥水效果按剩餘時長結束，因此時長需與重新整理節奏匹配。
+          </div>
+          <h3>獨立效果與屬性加成頁</h3><p>從 <a href="#stage-editor">階段頁的綠色「效果」入口</a>進入；僅展示啟用組。點擊某組進度條的階段可填起止，手工輸入後需點「自選」才提交範圍。Shift 點擊可追加/取消選中階段；同時選取多個組時，對每個選中區間組合分別儲存到 <code>nutrition_bonuses</code>，不能將這些條件理解為一張單組階段表。</p>
+          <figure class="guide-ui" id="effect-editor"><figcaption><strong>營養效果頁 (獨立頁面)</strong> · 依據源碼繪製的唯讀 HTML 示意，不是遊戲截圖/即時伺服器數值；區間與組名僅作範例。</figcaption>
+            <div class="guide-ui-stage"><div class="guide-ui-window effect"><div class="guide-ui-title">營養效果與屬性加成 · /hdui stage → 效果</div><div class="guide-ui-content"><div class="guide-ui-group">選取啟用的營養組和範圍 (跨組可組合)</div>
+              <div class="guide-ui-row"><span>範例組 A</span><span class="guide-ui-field">進度條 [0–29 | 30–69 | 70–100]　起點 [30]　終點 [69]　自選</span></div>
+              <div class="guide-ui-row"><span>範例組 B</span><span class="guide-ui-field">進度條 [0–29 | 30–69 | 70–100]　起點 [70]　終點 [100]　自選</span></div>
+              <span class="guide-ui-hint">Shift 點擊進度條可多選；點「自選」可提交手輸區間，即使與已有階段不一致。</span><div class="guide-ui-group">選中組合的內容</div>
+              <div class="guide-ui-row"><span>藥水效果</span><span class="guide-ui-field">選中組合後新增；不等於單次食用效果</span></div><div class="guide-ui-row"><span>屬性加成</span><span class="guide-ui-field">選中組合後新增</span></div>
+              <div class="guide-ui-row"><span>當前檔案</span><span class="guide-ui-field">無 (新組合尚未儲存)</span></div></div>
+              <div class="guide-ui-actions"><span class="guide-ui-button">+ 新增藥水效果</span><span class="guide-ui-button">+ 新增屬性加成</span><span class="guide-ui-button">導出效果</span><span class="guide-ui-button">導出屬性</span><span class="guide-ui-button">查詢檔案</span><span class="guide-ui-button">儲存</span><span class="guide-ui-button red">取消</span><span class="guide-ui-button disabled">刪除檔案</span></div></div></div>
+            <div class="guide-ui-note">儲存會先彈備註輸入框，取消備註即放棄本次儲存；「取消」恢復未儲存的效果/屬性編輯。只有正在編輯已存在檔案時，「刪除檔案」才可用。導出分別更新藥水/屬性列表，查詢檔案開啟瀏覽/搜索窗口；圖中按鈕不執行這些操作。</div></figure>
+          <div class="source-note">介面依據：<code>EffectManageScreen.buildGroupRangeControls/buildBottomButtons/saveEffectRows</code> 與當前 <code>zh_cn</code> 標籤。物品單次食用效果另見 <a href="titlepro.html#effects">食用藥水效果</a>。</div>
+        </section>
+
+        <section class="page-section" id="conditions" aria-labelledby="conditions-title">
+          <h2 id="conditions-title"><span class="num">05</span>條件規則</h2>
+          <p class="lead">普通營養結算在進食時直接執行；條件規則在普通結算之後，根據營養區間決定額外變化或指令。</p>
+          <p>條件規則可同時檢查多個營養組，全部滿足後對任意組執行加減、執行指令，或同時執行兩者。條件組與目標組可以不同。</p>
+
+          <div class="figure">
+            <div class="flow" aria-label="條件規則執行順序">
+              <div class="flow-node"><b>吃下食物</b>先結算普通營養值</div>
+              <div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node"><b>檢查條件</b>多個區間必須全部滿足</div>
+              <div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node accent"><b>執行結果</b>營養變化 / 指令</div>
+              <div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node"><b>夾到 0–100</b>按邊界夾取</div>
+            </div>
+            <div class="figure-caption">條件規則在普通營養結算之後執行；同一食物對同一組同時設定普通值與條件變化時，兩段會依次結算。</div>
+          </div>
+
+          <div class="rule-mock" aria-label="條件規則示意">
+            <h4>一條條件規則 · 示意</h4>
+            <div class="rule-line">
+              <span class="rule-and">觸發條件</span>
+              <span class="rule-chip cond">肉類 0–86</span>
+              <span class="rule-and">AND</span>
+              <span class="rule-chip cond">水果 30–100</span>
+            </div>
+            <div class="rule-line">
+              <span class="rule-and">營養變化</span>
+              <span class="rule-chip target">肉類 +20</span>
+              <span class="rule-chip target">糖分 -5</span>
+            </div>
+            <div class="rule-line">
+              <span class="rule-and">可選</span>
+              <span class="rule-chip cmd">執行指令</span>
+              <span class="rule-chip">顯示提示</span>
+              <span class="rule-chip">取得倍率</span>
+            </div>
+          </div>
+
+          <h3>兩種常見設定</h3>
+          <div class="example">
+            <span class="label">限制上限</span>
+            <p><b>條件：</b>肉類在 <code>0–86</code>。<b>目標：</b>肉類 <code>+20</code>。</p>
+            <p>當前 80 時進食，最多到 86；當前 90 時條件不成立，不增加。</p>
+          </div>
+          <div class="example">
+            <span class="label">回落修正</span>
+            <p><b>條件：</b>肉類在 <code>86–100</code>。<b>目標：</b>肉類 <code>-30</code>。</p>
+            <p>當前 95 時進食，降至 86 附近即停止，不會繼續落入低值區。</p>
+          </div>
+
+          <div class="callout warn">
+            <b>同一組的重複結算：</b>若同一食物對同一組同時設定普通營養值與條件變化，兩段會依次執行。通常只保留一種表達方式，避免重複結算。
+          </div>
+        </section>
+
+        <section class="page-section" id="items" aria-labelledby="items-title">
+          <h2 id="items-title"><span class="num">06</span>編輯器與變體</h2>
+          <p class="lead">手持物品輸入 <code>/hdui</code>，開啟該物品的設定入口。</p>
+          <p>編輯器集成營養、厭倦、口渴、飽食度、堆疊、品質、保存期限、效果、指令、條件與清除效果。下圖為布局示意，並非實際截圖。</p>
+
+          <div class="editor-mock" aria-label="物品編輯器示意">
+            <div class="editor-head"><b>物品編輯器 · 示意</b><span>手持物品 /hdui</span></div>
+            <div class="editor-tabs" role="tablist" aria-label="物品編輯器頁籤">
+              <button type="button" class="editor-tab active" role="tab" aria-selected="true" aria-controls="editor-panel" data-tab="nutrition">營養值</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="fatigue">食物厭倦</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="thirst">口渴值</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="hunger">飽食度</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="stack">堆疊上限</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="quality">品質綁定</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="shelf">保存期限</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="effects">藥水效果</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="commands">指令</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="conditions">條件</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="suppress">清除效果</button>
+            </div>
+            <div class="editor-body" id="editor-panel" role="tabpanel" aria-live="polite"></div>
+          </div>
+
+          <h3>另一個入口：<code>/hdui create</code> 的營養值 Tab</h3>
+          <p><code>/hdui create</code> 要求 OP4，建立/修改的是營養組<strong>定義</strong>，並非修改某位玩家當前數值。品質和品級位於同一編輯器的另外兩個 Tab；<a href="quality.html#quality-editor">品質圖</a>、<a href="quality.html#rarity-editor">品級圖</a>可直接跳轉。</p>
+          <figure class="guide-ui" id="group-editor"><figcaption><strong>建立頁 · 營養值 Tab</strong> · 依據源碼繪製的唯讀 HTML 示意，不是遊戲截圖/即時伺服器數值；新建狀態不展示伺服器現有條目。</figcaption>
+            <div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">HD 建立　　[建立] [刪除] [新增] [☼]</div><div class="guide-ui-columns"><div class="guide-ui-list"><span class="selected">+ 新建條目</span><span>伺服器已有營養組 (此處不列實值)</span></div><div class="guide-ui-content"><div class="guide-ui-tabs"><a href="#group-editor" aria-current="location">營養值</a><a href="quality.html#quality-editor">品質</a><a href="quality.html#rarity-editor">品級</a></div>
+              <div class="guide-ui-row"><span>ID</span><span class="guide-ui-field">新建時填寫；已有條目的 ID 唯讀</span></div><div class="guide-ui-row"><span>名稱</span><span class="guide-ui-field">名稱輸入　[顏色 → 純色/漸層]</span></div>
+              <div class="guide-ui-row"><span>圖示</span><span class="guide-ui-field">物品 ID　[圖示預覽] [手持]</span></div><div class="guide-ui-row"><span>衰減率</span><span class="guide-ui-field">正數</span></div><div class="guide-ui-row"><span>初值</span><span class="guide-ui-field">0–100；新建組時線上玩家獲得初值</span></div>
+              <div class="guide-ui-row"><span>取得倍率</span><span class="guide-ui-field">不小於 0</span></div><div class="guide-ui-row"><span>Tag判定</span><span class="guide-ui-field">可選：玩家標籤</span></div><div class="guide-ui-row"><span>Mod判定</span><span class="guide-ui-field">可選：已載入 modid</span></div>
+              <div class="guide-ui-row"><span>排序</span><span class="guide-ui-field">整數</span></div><div class="guide-ui-row"><span>開關</span><span class="guide-ui-field">啟用中 / 禁用中</span></div><div class="guide-ui-row"><span>提示顏色</span><span class="guide-ui-field">設定四色 → 獨立顏色介面</span></div><span class="guide-ui-hint">無效 ID、圖示或數值會出現校驗提示並禁用建立/儲存。</span>
+            </div></div></div></div><div class="guide-ui-note">標題欄「新增」清空進入新建；「建立/儲存」寫定義，「刪除」僅對已有條目可用；☼ 是預設營養組名稱的本機語言化確認操作，會修改伺服器端顯示名，並非用戶端私有翻譯。建立營養組不等於註冊獨立新物品。</div></figure>
+          <div class="source-note">介面依據：<code>HdCreateScreen.buildGroupForm/buildHeaderButtons/groupErrors</code>；註冊新物品另見 <a href="quality.html#registry">註冊管理器</a>。</div>
+
+          <h3>NBT 變體：同名物品的獨立設定</h3>
+          <p>同一物品可按 NBT 劃分為多個變體，每個變體儲存獨立設定；進食時使用命中變體的設定。例如同一藥水的不同 NBT 可設定不同營養。</p>
+
+          <div class="variant-grid">
+            <div class="variant-card">
+              <span class="tag">變體 A</span>
+              <b>治療藥水</b>
+              <div class="mini-bar" style="--c:#fab387">
+                <span class="name">水果</span>
+                <span class="track"><span class="fill" style="width:20%"></span></span>
+                <span class="num">+8</span>
+              </div>
+              <div class="mini-bar" style="--c:#f38ba8">
+                <span class="name">糖分</span>
+                <span class="track"><span class="fill" style="width:12%"></span></span>
+                <span class="num">+4</span>
+              </div>
+            </div>
+            <div class="variant-card">
+              <span class="tag">變體 B</span>
+              <b>迅捷藥水</b>
+              <div class="mini-bar" style="--c:#cba6f7">
+                <span class="name">蛋白質</span>
+                <span class="track"><span class="fill" style="width:16%"></span></span>
+                <span class="num">+6</span>
+              </div>
+              <div class="mini-bar" style="--c:#a6e3a1">
+                <span class="name">蔬菜</span>
+                <span class="track"><span class="fill" style="width:10%"></span></span>
+                <span class="num">+3</span>
+              </div>
+            </div>
+          </div>
+          <div class="figure-caption">變體數值為示意。每個變體儲存獨立設定，不自動繼承通用條。</div>
+
+          <div class="callout">
+            <b>堆疊上限為物品級屬性：</b>同一物品的不同變體不能設定不同堆疊數。口渴值等物品級設定同理。
+          </div>
+
+          <h3>常用入口</h3>
+          <ul>
+            <li><code>/hdui create</code> (OP4)：建立/修改營養組、品質、品級定義；組 ID 建立後不可隨意改，不註冊獨立物品。</li>
+            <li><code>/hdui stage</code> (OP4)：開啟<a href="#stage-editor">階段/指令/描述</a>編輯，綠色「效果」通往<a href="#effect-editor">獨立加成頁</a>。</li>
+            <li><code>/hdui groups [玩家]</code> (OP4)：執行者開啟自己或指定玩家的<strong>數值管理屏</strong>，不是普通營養面板，也不建立組定義。</li>
+            <li><code>/hdui registry</code> (OP4)：開啟註冊管理器檢視、重新整理和刪除註冊項；新物品 ID 按啟動流程生效。</li>
+            <li><code>/hdui tooltip</code> (OP4)：手持物品的 Tooltip 編輯入口；詳見<a href="tooltip.html#edit">Tooltip 編輯</a>。</li>
+          </ul>
+          <p>營養組定義由資料包承載；編輯器中的建立或修改會寫入設定覆蓋層。舊 <code>/hdgroups</code> 已刪除。</p>
+        </section>
+
+        <section class="page-section" id="admin" aria-labelledby="admin-title">
+          <h2 id="admin-title"><span class="num">07</span>管理與指令</h2>
+          <p class="lead">普通玩家可檢視自身面板；修改其他玩家數值或暫停營養組需要相應權限。</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>指令</th><th>權限 / 用途與對象</th></tr></thead>
+              <tbody>
+                <tr><td><code>/headiet</code> 或 <code>/headiet open</code></td><td>玩家本人，無 OP 要求：把營養面板發給自己。</td></tr>
+                <tr><td><code>/headiet open &lt;玩家&gt;</code></td><td>OP2：把營養面板發給<strong>指定玩家</strong>，不是執行者檢視該玩家的面板。</td></tr>
+                <tr><td><code>/headiet add &lt;玩家&gt; &lt;組&gt; &lt;數值&gt;</code></td><td>OP4：增加目標玩家對應組數值；輸入 0–100，可帶小數。</td></tr>
+                <tr><td><code>/headiet subtract &lt;玩家&gt; &lt;組&gt; &lt;數值&gt;</code></td><td>OP4：減少目標玩家對應組數值；輸入 0–100，可帶小數。</td></tr>
+                <tr><td><code>/headiet set &lt;玩家&gt; &lt;組&gt; &lt;數值&gt;</code></td><td>OP4：把目標玩家對應組設為指定值；輸入 0–100，可帶小數。</td></tr>
+                <tr><td><code>/hdui groups [玩家]</code></td><td>OP4：執行者開啟自己或指定玩家的營養<strong>管理屏</strong>，可調數值或暫停組；並非組定義編輯。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout good">
+            <b>暫停組：</b>暫停期間該組不隨進食增加，也不自然衰減；適用於劇情、新手保護或限時活動。恢復後按正常規則繼續。
+          </div>
+        </section>
+
+        <section class="page-section" id="summary" aria-labelledby="summary-title">
+          <h2 id="summary-title"><span class="num">08</span>要點回顧</h2>
+          <ol class="summary-list">
+            <li><b>數值範圍為 0–100。</b>小數保留，階段判定時四捨五入。</li>
+            <li><b>營養值隨飽食度消耗按衰減率下降。</b>飽和度不參與；死亡不清空。</li>
+            <li><b>階段控制持續狀態，條件規則控制單次進食結算。</b>實際組、閾值與效果以伺服器設定為準。</li>
+          </ol>
+        </section>
+
+        <footer class="page-footer">
+          <span>Healthy Diet · 營養值</span>
+          <span>基於當前源碼整理 · 具體規則以伺服器設定為準</span>
+        </footer>
+      </article>
+    </div>
+  </main>
+
+  <script src="assets/guide.js"></script>
+  <script>
+    (() => {
+      // 內置設定快照：nutrition_groups.json、nutrition_stages/*.json、nutrition_bonuses/*.json 與 color_schemes.json。
+      const groups = [
+        { key: "vegetables", name: "Vegetables", value: 55, initial: 42, decay: 6, colors: ["#FDFC47", "#3DF750"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]] },
+        { key: "fruits", name: "Fruits", value: 55, initial: 42, decay: 6, colors: ["#f4c4f3", "#fc67fa"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]], command: "81-100" },
+        { key: "meat", name: "Protein", value: 65, initial: 42, decay: 6, colors: ["#ff6a6e", "#ffc371"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]] },
+        { key: "grains", name: "Grains", value: 65, initial: 42, decay: 6, colors: ["#78350F", "#B45309", "#D97706", "#FDE68A"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]] },
+        { key: "sugar", name: "Sugar", value: 88, initial: 48, decay: 5, colors: ["#b3ffab", "#12fff7"], stages: [[0, 10], [11, 50], [51, 85], [86, 92], [93, 100]], command: "93-100" },
+        { key: "dairy", name: "Dairy", value: 88, initial: 48, decay: 5, colors: ["#8e9eab", "#eef2f3"], stages: [[0, 10], [11, 50], [51, 85], [86, 92], [93, 100]] }
+      ];
+      const rules = [
+        [{ vegetables: [0, 10] }, [["forge:block_reach", -1]], []],
+        [{ vegetables: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ vegetables: [61, 70] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor_toughness", 2]], []],
+        [{ vegetables: [71, 80] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor_toughness", 4]], []],
+        [{ vegetables: [81, 100] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor_toughness", 4]], []],
+        [{ fruits: [0, 10] }, [], [["minecraft:slowness", 0]]],
+        [{ fruits: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ fruits: [61, 70] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.attack_speed", 0.05]], []],
+        [{ fruits: [71, 80] }, [["minecraft:generic.max_health", 4], ["minecraft:generic.attack_speed", 0.1]], []],
+        [{ fruits: [81, 100] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.attack_speed", 0.2]], []],
+        [{ meat: [0, 10] }, [], [["minecraft:weakness", 0]]],
+        [{ meat: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ meat: [61, 70] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor", 1]], []],
+        [{ meat: [71, 80] }, [["minecraft:generic.max_health", 4], ["minecraft:generic.armor", 2]], []],
+        [{ meat: [81, 100] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.armor", 4]], []],
+        [{ grains: [0, 10] }, [], [["minecraft:slowness", 0]]],
+        [{ grains: [46, 60] }, [["minecraft:generic.attack_knockback", 0.5]], []],
+        [{ grains: [61, 70] }, [["minecraft:generic.max_health", 4]], []],
+        [{ grains: [71, 80] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.attack_damage", 0.5]], []],
+        [{ grains: [81, 100] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.attack_damage", 1]], []],
+        [{ sugar: [0, 10] }, [["minecraft:generic.attack_knockback", -0.2]], []],
+        [{ sugar: [51, 85] }, [], [["minecraft:speed", 0]]],
+        [{ sugar: [86, 92] }, [], [["minecraft:speed", 1]]],
+        [{ sugar: [93, 100] }, [], [["minecraft:speed", 1]]],
+        [{ dairy: [0, 10] }, [["forge:entity_reach", -0.3]], []],
+        [{ dairy: [51, 85] }, [["forge:step_height_addition", 0.2], ["forge:swim_speed", 0.2]], []],
+        [{ dairy: [86, 92] }, [["forge:swim_speed", 0.3], ["forge:step_height_addition", 0.52]], []],
+        [{ dairy: [93, 100] }, [["forge:swim_speed", 0.4], ["forge:step_height_addition", 0.6]], []],
+        [{ vegetables: [46, 60], fruits: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ vegetables: [81, 100], fruits: [81, 100] }, [["forge:block_reach", 1.5]], []],
+        [{ grains: [81, 100], meat: [81, 100] }, [["minecraft:generic.attack_speed", 0.5]], [["minecraft:resistance", 0]]],
+        [{ grains: [46, 60], meat: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ dairy: [93, 100], sugar: [93, 100] }, [["minecraft:generic.luck", -3]], [["minecraft:hunger", 0], ["minecraft:haste", 2], ["minecraft:slowness", 0]]],
+        [{ dairy: [86, 92], sugar: [86, 92] }, [], [["minecraft:haste", 1]]]
+      ];
+      const names = {
+        "forge:block_reach": "方塊觸及距離", "forge:entity_reach": "實體觸及距離",
+        "forge:step_height_addition": "跨越高度", "forge:swim_speed": "遊泳速度",
+        "minecraft:generic.max_health": "最大生命值", "minecraft:generic.armor_toughness": "盔甲韌性",
+        "minecraft:generic.armor": "盔甲", "minecraft:generic.attack_speed": "攻擊速度",
+        "minecraft:generic.attack_damage": "攻擊傷害", "minecraft:generic.attack_knockback": "攻擊擊退",
+        "minecraft:generic.luck": "幸運", "minecraft:slowness": "緩慢", "minecraft:weakness": "虛弱",
+        "minecraft:speed": "速度", "minecraft:resistance": "抗性提升", "minecraft:hunger": "飢餓", "minecraft:haste": "急迫"
+      };
+      const appendLine = (parent, text, style) => {
+        const line = document.createElement("span");
+        line.className = style;
+        line.textContent = text;
+        parent.append(line);
+      };
+      const rows = document.getElementById("mock-rows");
+      if (rows) {
+        for (const group of groups) {
+          const row = document.createElement("div");
+          row.className = "mock-row";
+          row.style.setProperty("--c", group.colors[0]);
+          row.style.setProperty("--text-color", group.colors[group.colors.length - 1]);
+          row.style.setProperty("--gradient", `linear-gradient(90deg, ${group.colors.join(", ")})`);
+          const icon = document.createElement("span");
+          icon.className = "mock-icon";
+          icon.setAttribute("aria-hidden", "true");
+          const name = document.createElement("span");
+          name.className = "mock-name";
+          name.textContent = group.name;
+          const track = document.createElement("div");
+          track.className = "mock-track";
+          const fill = document.createElement("span");
+          fill.className = "mock-fill";
+          fill.style.width = group.value + "%";
+          track.append(fill);
+          const tip = document.createElement("div");
+          tip.className = "mock-tip";
+          tip.setAttribute("role", "tooltip");
+          for (let i = 0; i < group.stages.length; i++) {
+            const [min, max] = group.stages[i];
+            const nextMin = group.stages[i + 1]?.[0] ?? 100;
+            const segment = document.createElement("button");
+            segment.type = "button";
+            segment.className = "mock-seg";
+            segment.style.left = min + "%";
+            segment.style.width = (nextMin - min) + "%";
+            const matches = rules.filter(([conditions]) => {
+              const bound = conditions[group.key];
+              return bound && bound[0] === min && bound[1] === max;
+            });
+            const other = conditions => Object.entries(conditions)
+              .filter(([key]) => key !== group.key)
+              .map(([key, bounds]) => `${groups.find(g => g.key === key).name} ${bounds[0]}~${bounds[1]}`)
+              .join(", ");
+            const details = [`${min}~${max}`];
+            for (const [conditions, attributes, effects] of matches) {
+              const suffix = other(conditions);
+              for (const [id, value] of attributes) details.push(`${value >= 0 ? "+" : ""}${value} ${names[id]}${suffix ? ` (${suffix})` : ""}`);
+              for (const [id, level] of effects) details.push(`${names[id]} Lv.${level + 1}${suffix ? ` (${suffix})` : ""}`);
+            }
+            if (group.command === `${min}-${max}`) details.push("點擊執行說明指令");
+            segment.setAttribute("aria-label", `${group.name} 階段 ${details.join("；")}`);
+            const showTip = () => {
+              tip.replaceChildren();
+              appendLine(tip, `${min}~${max}`, "tip-range");
+              for (const [conditions, attributes, effects] of matches) {
+                const suffix = other(conditions);
+                for (const [id, value] of attributes) appendLine(tip, `  ${value >= 0 ? "+" : ""}${value} ${names[id]}${suffix ? ` (${suffix})` : ""}`, value >= 0 ? "tip-attribute" : "tip-negative");
+                for (const [id, level] of effects) appendLine(tip, `  ${names[id]} Lv.${level + 1}${suffix ? ` (${suffix})` : ""}`, "tip-effect");
+              }
+              if (group.command === `${min}-${max}`) appendLine(tip, "點擊執行說明指令", "tip-command");
+            };
+            segment.addEventListener("mouseenter", showTip);
+            segment.addEventListener("focus", showTip);
+            track.append(segment);
+            if (group.value >= min && group.value <= max) showTip();
+          }
+          track.append(tip);
+          const pct = document.createElement("span");
+          pct.className = "mock-pct";
+          pct.textContent = group.value.toFixed(1) + "%";
+          row.append(icon, name, track, pct);
+          rows.append(row);
+        }
+        const active = document.getElementById("mock-bonus-tip");
+        const attrTotals = new Map();
+        const effectLevels = new Map();
+        for (const [conditions, attributes, effects] of rules) {
+          if (!Object.entries(conditions).every(([key, [min, max]]) => {
+            const current = Math.round(groups.find(g => g.key === key).value);
+            return current >= min && current <= max;
+          })) continue;
+          for (const [id, value] of attributes) attrTotals.set(id, (attrTotals.get(id) ?? 0) + value);
+          for (const [id, level] of effects) effectLevels.set(id, Math.max(effectLevels.get(id) ?? 0, level));
+        }
+        appendLine(active, "當前激活的加成:", "tip-title");
+        for (const [id, value] of attrTotals) appendLine(active, `  ${value >= 0 ? "+" : ""}${value} ${names[id]}`, value >= 0 ? "tip-attribute" : "tip-negative");
+        for (const [id, level] of effectLevels) appendLine(active, `  ${names[id]} Lv.${level + 1}`, "tip-effect");
+      }
+
+      const stageRange = document.getElementById("stage-range");
+      const stageMarker = document.getElementById("stage-marker");
+      const stageValue = document.getElementById("stage-value");
+      const stageRounded = document.getElementById("stage-rounded");
+      const stageName = document.getElementById("stage-name");
+
+      const updateStage = () => {
+        const value = Number(stageRange.value);
+        const rounded = Math.round(value);
+        const name = rounded < 30 ? "低段" : rounded < 70 ? "中段" : "高段";
+        stageMarker.style.left = value + "%";
+        stageValue.textContent = value.toFixed(1);
+        stageRounded.textContent = String(rounded);
+        stageName.textContent = name;
+      };
+      stageRange.addEventListener("input", updateStage);
+      updateStage();
+
+      const rate = document.getElementById("decay-rate");
+      const hunger = document.getElementById("hunger-used");
+      const rateOut = document.getElementById("decay-rate-out");
+      const hungerOut = document.getElementById("hunger-used-out");
+      const lossOut = document.getElementById("decay-loss");
+      const remainOut = document.getElementById("decay-remain");
+      const remainFill = document.getElementById("decay-fill");
+
+      const updateDecay = () => {
+        const r = Number(rate.value);
+        const h = Number(hunger.value);
+        const loss = h / r;
+        const remain = Math.max(0, 100 - loss);
+        rateOut.textContent = String(r);
+        hungerOut.textContent = String(h);
+        lossOut.textContent = loss.toFixed(1);
+        remainOut.textContent = remain.toFixed(1);
+        remainFill.style.width = remain + "%";
+      };
+      rate.addEventListener("input", updateDecay);
+      hunger.addEventListener("input", updateDecay);
+      updateDecay();
+
+      const editorData = {
+        nutrition: {
+          fields: [["水果", "+26"], ["糖分", "+12"], ["條件規則", "1 條 · 點擊編輯"]],
+          note: "範例欄位；實際頁籤與儲存行為以遊戲內介面為準。"
+        },
+        fatigue: {
+          fields: [["最大連續食用次數", "3"], ["冷卻所需其他食物數", "2"], ["自然冷卻時間", "10 分鐘"], ["厭倦時恢復飽食度", "0"]],
+          note: "範例欄位；實際數值由物品設定決定。"
+        },
+        thirst: {
+          fields: [["飲水值", "+6"], ["連動", "傳說生存(LSO)"]],
+          note: "口渴值走 LSO 連動；未安裝對應模組時不生效。"
+        },
+        hunger: {
+          fields: [["飽食度", "+5"], ["飽和度", "+6.0"]],
+          note: "範例欄位；與原版食物屬性分別計算。"
+        },
+        stack: {
+          fields: [["堆疊上限", "16"], ["作用範圍", "物品級，變體共用"]],
+          note: "堆疊上限是 Item 級屬性，不隨 NBT 變體變化。"
+        },
+        quality: {
+          fields: [["品質綁定", "good"], ["作用範圍", "可按 NBT 變體綁定"]],
+          note: "品質負責顯示與綁定，不直接增加營養或屬性。"
+        },
+        shelf: {
+          fields: [["保存期限", "60 分鐘"], ["基礎腐敗倍率", "1.0"], ["過期產物", "minecraft:rotten_flesh"]],
+          note: "範例欄位；完整保存期限參數見保存期限章節。"
+        },
+        effects: {
+          fields: [["生命恢復", "I · 5 秒 · 100%"], ["抗性提升", "I · 10 秒 · 50%"]],
+          note: "範例效果；等級、時長、概率與粒子均可單獨設定。"
+        },
+        commands: {
+          fields: [["食用指令", "say 範例"], ["執行權限", "管理員(4)"], ["輸出", "抑制"]],
+          note: "範例指令；實際指令由物品設定決定。"
+        },
+        conditions: {
+          fields: [["規則數量", "1 條"], ["觸發條件", "肉類 0–86"], ["營養變化", "肉類 +20"]],
+          note: "條件規則可同時設定多個條件、目標與指令。"
+        },
+        suppress: {
+          fields: [["清除效果", "生命恢復"], ["說明", "食用時移除指定效果"]],
+          note: "範例欄位；清除效果在食用時執行。"
+        }
+      };
+
+      const editorTabs = [...document.querySelectorAll(".editor-tab")];
+      const editorPanel = document.getElementById("editor-panel");
+
+      const renderEditor = key => {
+        const data = editorData[key];
+        if (!data || !editorPanel) return;
+        editorPanel.replaceChildren();
+        for (const [label, value] of data.fields) {
+          const row = document.createElement("div");
+          row.className = "editor-field";
+          const name = document.createElement("span");
+          name.textContent = label;
+          const field = document.createElement("span");
+          field.className = "editor-input";
+          field.textContent = value;
+          row.append(name, field);
+          editorPanel.append(row);
+        }
+        const note = document.createElement("div");
+        note.className = "editor-note";
+        note.textContent = data.note;
+        editorPanel.append(note);
+      };
+
+      const selectEditorTab = key => {
+        editorTabs.forEach(tab => {
+          const active = tab.dataset.tab === key;
+          tab.classList.toggle("active", active);
+          tab.setAttribute("aria-selected", String(active));
+          tab.tabIndex = active ? 0 : -1;
+        });
+        renderEditor(key);
+      };
+
+      editorTabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => selectEditorTab(tab.dataset.tab));
+        tab.addEventListener("keydown", event => {
+          if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+          event.preventDefault();
+          const offset = event.key === "ArrowRight" ? 1 : -1;
+          const next = editorTabs[(index + offset + editorTabs.length) % editorTabs.length];
+          next.focus();
+          next.click();
+        });
+      });
+      selectEditorTab("nutrition");
+    })();
+  </script>
+</body>
+</html>

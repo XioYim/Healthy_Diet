@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><title>設定項詳解 · Healthy Diet 功能指南</title><link rel="stylesheet" href="assets/guide.css">
+<style>
+/* 僅本頁：按遊戲內 Screen 的面板尺寸、行高和色值繪製唯讀示意。 */
+.ui-preview { margin: 18px 0 10px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #11111b; }
+.ui-preview figcaption { margin: 0 0 10px; color: var(--muted); font-size: 12px; }
+.ui-preview figcaption strong { color: var(--ink); }
+.ui-stage { max-width: 100%; overflow-x: auto; padding: 14px; background: linear-gradient(145deg,#302d3a,#101018); border-radius: 8px; }
+.ui-window { width: 360px; margin: 0 auto; border: 1px solid #555; background: #1c1c1c; box-shadow: 0 12px 28px #0009; color: #fff; font: 11px/1.4 "Cascadia Code", "Microsoft YaHei", sans-serif; }
+.ui-window.wide { width: 440px; }
+.ui-window.biome { width: 480px; }
+.ui-window.dimension { width: 290px; }
+.ui-window.menu { min-height: 225px; border: 0; background: linear-gradient(135deg,#26382f,#20232d); box-shadow: none; }
+.ui-window.menu .ui-title { padding-top: 18px; background: transparent; }
+.ui-title { min-height: 24px; padding: 5px 8px; text-align: center; background: #181818; font-weight: 700; }
+.ui-window.biome .ui-title { color: #ffd24a; background: #252525; }
+.ui-viewport { height: 312px; margin: 4px; overflow-y: auto; background: #141414; scrollbar-color: #777 #2a2a2a; scrollbar-width: thin; }
+.ui-group { display: grid; place-items: center; min-height: 26px; color: #ffd24a; text-decoration: underline; text-underline-offset: 3px; }
+.ui-row { display: flex; align-items: center; min-height: 26px; gap: 4px; padding: 2px 8px; }
+.ui-row + .ui-row { border-top: 1px solid #ffffff08; }
+.ui-row .ui-name { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.ui-value { display: inline-block; min-width: 58px; padding: 3px 5px; border: 1px solid #a0a0a0; background: #000; text-align: right; white-space: nowrap; }
+.ui-value.number { min-width: 105px; text-align: left; }
+.ui-value.short { min-width: 46px; text-align: center; }
+.ui-value.long { flex: 1; min-width: 0; text-align: left; }
+.ui-value.readonly { border-color: #777; color: #ffff55; }
+.ui-button { display: inline-block; min-width: 34px; padding: 2px 5px; border: 1px solid #aaa; box-shadow: inset 1px 1px #ffffff30, inset -1px -1px #0008; background: linear-gradient(#727272,#555); color: #fff; text-align: center; white-space: nowrap; }
+.ui-button.reset { min-width: 16px; padding: 1px; }
+.ui-button.danger { color: #ff7979; }
+.ui-button.disabled { border-color: #555; background: #3b3b3b; color: #888; }
+.ui-footer { display: flex; justify-content: center; gap: 4px; padding: 5px 8px; }
+.ui-footer .ui-button { flex: 1; }
+.ui-footer[hidden] { display: none; }
+.ui-menu { padding: 20px 65px; display: grid; gap: 6px; }
+.ui-menu .ui-button { min-height: 20px; }
+.ui-tabbar { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 4px; padding: 3px 4px 5px; }
+.ui-tabbar button { min-height: 20px; padding: 0 3px; font: inherit; cursor: pointer; }
+.ui-tabbar button[aria-selected="true"] { border-color: #ffd24a; background: linear-gradient(#909090,#666); }
+.ui-tab-panel[hidden] { display: none; }
+.ui-window.wide .ui-viewport { height: 260px; }
+.ui-window.wide .ui-value.number { min-width: 100px; }
+.ui-window .ui-two { display: inline-flex; align-items: center; gap: 3px; }
+.ui-window .ui-two .ui-value { min-width: 40px; }
+.ui-window .ui-two small { color: #ccc; }
+.ui-biome-body { height: 212px; overflow-y: auto; padding: 5px; background: #141414; }
+.ui-biome-body .ui-row { min-height: 22px; }
+.ui-biome-body .ui-name { flex: 0 0 106px; color: #ffd24a; }
+.ui-biome-body .ui-value { min-width: 42px; }
+.ui-biome-body .ui-value.long { min-width: 0; }
+.ui-biome-body .ui-button { min-width: 66px; }
+.ui-help { display: grid; grid-template-columns: minmax(170px,35%) minmax(0,1fr); margin: 12px 0 22px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; font-size: 12.5px; }
+.ui-help dt, .ui-help dd { margin: 0; padding: 9px 12px; border-bottom: 1px solid var(--line-soft); overflow-wrap: anywhere; }
+.ui-help dt { background: #31324466; color: var(--ink); font-weight: 650; }
+.ui-help dd { color: var(--muted); }
+.ui-help dt:last-of-type, .ui-help dd:last-of-type { border-bottom: 0; }
+.ui-note { color: var(--faint); font-size: 12px; }
+.ui-dimension-rows { padding: 9px 10px; }
+.ui-dimension-rows .ui-name { display: block; margin: 5px 0 2px; }
+.ui-dimension-rows .ui-value { width: 100%; }
+.ui-dimension-rows .ui-row { padding: 3px 0; }
+.ui-dimension-rows .ui-row .ui-value { flex: 1; width: auto; min-width: 0; }
+@media (max-width: 620px) { .ui-preview { padding: 9px; } .ui-stage { padding: 8px; } .ui-help { grid-template-columns: 1fr; } .ui-help dt { border-bottom: 0; padding-bottom: 2px; } .ui-help dd { padding-top: 2px; } }
+</style></head>
+<body><a class="skip-link" href="#main">跳到正文</a><header class="topbar"><div class="wrap topbar-inner"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✦</span><span>Healthy Diet<small>FEATURE GUIDE</small></span></a><nav class="topnav" data-nav aria-label="章節導航"><a href="index.html">總覽</a><a href="nutrition.html">營養值</a><a href="configuration.html" aria-current="page">設定項</a></nav><span class="lang-badge">繁體中文</span><button class="menu-btn" type="button" data-menu aria-expanded="false" aria-label="開啟章節導航">☰</button></div></header>
+<main class="wrap" id="main"><section class="hero"><span class="eyebrow">REFERENCE / CONFIGURATION</span><h1>設定項詳解：檔案欄位與遊戲內介面。</h1><p>按檔案定位伺服器玩法與用戶端顯示設定，再用遊戲內介面預覽核對每個可見選項的作用、儲存範圍和重新整理方式。</p><div class="tags"><span class="tag">server.json</span><span class="tag">display.json</span><span class="tag">遊戲內介面預覽</span><span class="tag">重新整理邊界</span></div></section>
+<div class="notice" role="note"><strong>預設值與預覽邊界：</strong>表中的「預設」指代碼或新建設定的初始值，不表示你的伺服器正在使用該值。下方仿遊戲 UI 是唯讀 HTML 示意，不連接遊戲、不顯示即時設定，也不能儲存；實際行數、語言、第三方模組與權限可能不同。帶 <code>_note_</code> 前綴的欄位只是唯讀說明，修改不會生效。</div>
+<div class="layout"><aside class="toc" data-toc aria-label="本頁目錄"><h2>本頁目錄</h2><ol><li><a href="#files">檔案地圖</a></li><li><a href="#server">server.json</a></li><li><a href="#display">display.json</a></li><li><a href="#nutrition">營養資料包</a></li><li><a href="#items">物品與方塊</a></li><li><a href="#shelf">保存期限與環境</a></li><li><a href="#appearance">外觀與小工具</a></li><li><a href="#ui">遊戲內 UI 逐項圖解</a></li><li><a href="#refresh">儲存與重新整理</a></li></ol></aside><article>
+
+<section class="page-section" id="files"><h2><span class="num">01</span>設定放在哪，歸誰管</h2><p class="lead">所有路徑都相對於實例的 <code>config/healthy_diet/</code>；資料包路徑另見 <code>data/&lt;命名空間&gt;/healthy_diet/</code>。先看「作用域」，再看「典型重新整理方式」。</p>
+<label class="shelf-search-label" for="config-filter">按檔案名、路徑或欄位過濾</label><input class="shelf-search" id="config-filter" type="search" autocomplete="off" placeholder="例如 server.json、temperature、quality_registry、重新整理" data-config-filter>
+<p class="shelf-search-status" role="status" data-config-status>共 18 個設定入口；輸入檔案名、路徑或欄位名過濾。</p>
+<div class="table-wrap"><table data-config-table><thead><tr><th>檔案 / 目錄</th><th>作用域</th><th>負責內容</th><th>典型重新整理</th></tr></thead><tbody>
+<tr data-search="server.json gameplay privacy shelfMerge 伺服器端 玩法 隱私 堆疊 合併"><td><code>server.json</code><br><small>gameplay / privacy / shelfMerge</small></td><td>伺服器端權威</td><td>保存期限總開關、連動開關、屬性/效果重新整理間隔、保護物品、測試日誌、階段指令隱私、堆疊合併門檻</td><td>OP 頁儲存或編輯後 <code>/hdreload</code></td></tr>
+<tr data-search="display.json 用戶端 本機 提示 溫度 單位 布局 預設顯示"><td><code>display.json</code></td><td>用戶端本機</td><td>Tooltip 每行營養數、TitlePro 換行寬度、D 頁寬度、溫度單位、預設顯示模式</td><td>用戶端顯示設定儲存；手改後重進用戶端</td></tr>
+<tr data-search="colors color_schemes.json 漸層 方案 顏色"><td><code>colors/color_schemes.json</code></td><td>兩端外觀</td><td>命名漸層方案，供品質、營養組、提示行和保存期限方案引用</td><td>伺服器端 <code>/hdreload</code>；用戶端本機檔案按各端讀取</td></tr>
+<tr data-search="colors solid_colors.json 純色 色板 取色"><td><code>colors/solid_colors.json</code></td><td>兩端外觀</td><td>編輯器純色取色盤的色卡數組</td><td>伺服器端 <code>/hdreload</code>；用戶端本機檔案按各端讀取</td></tr>
+<tr data-search="fatigue fatigue_gradient.json 厭倦 漸層 配色"><td><code>fatigue/fatigue_gradient.json</code></td><td>顯示外觀</td><td>厭倦等級行、恢復進度行的方案與動畫參數</td><td><code>/hdreload</code></td></tr>
+<tr data-search="fatigue fatigue_exempt.json 厭倦 豁免 恢復計數"><td><code>fatigue/fatigue_exempt.json</code></td><td>伺服器端玩法</td><td>吃下後不推進其他冷卻食物恢復計數的物品 ID 列表</td><td><code>/hdreload</code></td></tr>
+<tr data-search="shelf_life seasons.json 季節 倍率 保存期限"><td><code>shelf_life/seasons.json</code></td><td>伺服器端玩法</td><td>季節/節氣保存期限倍率、未載入 EC 時的回退倍率、顯示名</td><td><code>/hdreload</code></td></tr>
+<tr data-search="shelf_life schemes 保存期限 方案 文案 顏色 範本"><td><code>shelf_life/schemes/*.json</code></td><td>兩端顯示</td><td>保存期限提示的文案範本、狀態配色、符號、季節顯示名</td><td><code>/hdreload</code> 並下發方案</td></tr>
+<tr data-search="temperature block_heat.json 方塊 熱源 溫度"><td><code>temperature/block_heat.json</code></td><td>伺服器端玩法</td><td>非 LSO 分支的方塊熱源表：方塊、狀態條件、貢獻溫度</td><td><code>/hdreload</code> 或溫度設定頁儲存</td></tr>
+<tr data-search="temperature weather_offsets.json 雨 雪 雷暴 溫變"><td><code>temperature/weather_offsets.json</code></td><td>伺服器端玩法</td><td>24 節氣降雨/雷暴的溫變偏移</td><td><code>/hdreload</code> 或溫度設定頁儲存</td></tr>
+<tr data-search="temperature day_night_offsets.json 晝夜 正午 午夜 溫變"><td><code>temperature/day_night_offsets.json</code></td><td>伺服器端玩法</td><td>24 節氣的正午/午夜溫變幅度</td><td><code>/hdreload</code> 或溫度設定頁儲存</td></tr>
+<tr data-search="temperature season_temperature.json 節氣 環境 溫度 偏移"><td><code>temperature/season_temperature.json</code></td><td>伺服器端玩法</td><td>24 節氣附加環境溫度(疊加在 EC 氣候上)</td><td><code>/hdreload</code> 或溫度設定頁儲存</td></tr>
+<tr data-search="bottle_fills.json 瓶子 裝水 右鍵 液體 源方塊"><td><code>bottle_fills.json</code></td><td>伺服器端玩法</td><td>手持物品右鍵液體源方塊後的消耗與產物規則</td><td><code>/hdreload</code></td></tr>
+<tr data-search="fog_effects.json 霧 水下 巖漿 夜視 用戶端"><td><code>fog_effects.json</code></td><td>用戶端本機</td><td>擁有指定效果時的水下/巖漿霧距離</td><td>各用戶端讀取本機檔案；伺服器重載不代改</td></tr>
+<tr data-search="item_rarities.json 物品 品級 稀有度 指定"><td><code>item_rarities.json</code></td><td>伺服器端/同步</td><td>物品 ID → 品級 ID 的物品級兜底指定</td><td><code>/hdreload</code>；<code>/hdset rarity</code> 會寫它</td></tr>
+<tr data-search="tooltip_templates.json 提示 範本 編輯器"><td><code>tooltip_templates.json</code></td><td>編輯器本機</td><td>[範本] 按鈕使用的提示行範本數組</td><td>編輯器讀寫本實例檔案；不當作跨用戶端同步內容</td></tr>
+<tr data-search="quality_registry 註冊 新物品 啟動 品質"><td><code>quality_registry/*.json</code></td><td>啟動期註冊</td><td>新增獨立品質物品的來源、註冊名、品質、食用與堆疊屬性</td><td>啟動時生效；<code>/hdreload</code> 只重讀待生效列表</td></tr>
+<tr data-search="datapack data healthy_diet items tooltips blocks nutrition quality rarities effect_lines 資料包 覆蓋層"><td><code>datapack/data/&lt;ns&gt;/healthy_diet/</code><br><small>HD 覆蓋層；世界資料包為 <code>data/&lt;ns&gt;/healthy_diet/</code></small><br><small>items / tooltips / blocks / nutrition_* / quality_levels / rarities / effect_lines</small></td><td>資料包(世界 + HD 覆蓋層)</td><td>物品、提示、方塊、營養、品質、品級和效果行定義；HD 覆蓋層優先級最高</td><td>世界資料包用 <code>/reload</code>；HD 覆蓋層用 <code>/hdreload</code></td></tr>
+</tbody></table></div>
+<div class="callout"><b>三個層次不要混：</b>設定檔(<code>config/healthy_diet/*.json</code>)、資料包(<code>data/.../healthy_diet/</code>)和啟動期註冊(<code>quality_registry/</code>)的生效方式不同。把資料包檔案複製到 <code>config/healthy_diet/items/</code> 不會生成可由遊戲讀取的物品設定。</div>
+<div class="source-note">源碼依據：<code>ConfigManager</code> 的路徑常量與 <code>loadAll</code>、<code>ServerConfigFile.migrate</code>、<code>QualityRegistryLoader</code>。</div></section>
+
+<section class="page-section" id="server"><h2><span class="num">02</span><code>server.json</code>：伺服器端權威分節</h2><p class="lead">一個檔案三個分節：<code>gameplay</code>、<code>privacy</code>、<code>shelfMerge</code>。舊版分離檔案會在載入時遷入本檔案，原檔案移入 <code>migration_backup/</code>。</p>
+<div class="example"><span class="label">結構示意(省略唯讀 _note_ 欄位)</span><pre style="overflow:auto;background:#181825;border:1px solid var(--line);border-radius:10px;padding:14px;font-size:12px;line-height:1.6">{
+  "gameplay": {
+    "shelfTemperatureEnabled": false,
+    "lsoIntegrationEnabled": true,
+    "ecIntegrationEnabled": true,
+    "proxyHeatstrokeEffect": true,
+    "bonusUpdateTicks": 100,
+    "effectUpdateTicks": 200,
+    "ejectIllegalProtectedItems": false,
+    "removeOwnerOnDeathDrop": false,
+    "debugLogs": false
+  },
+  "privacy": { "sendCommandTextToAllPlayers": false },
+  "shelfMerge": {
+    "mergeRemainingMinutes": 5,
+    "mergeTempThreshold": 10.0,
+    "mergeColdFreshThreshold": 20.0
+  }
+}</pre></div>
+<h3>gameplay：玩法與重新整理間隔</h3>
+<div class="table-wrap"><table><thead><tr><th>欄位</th><th>類型 / 預設</th><th>作用與邊界</th></tr></thead><tbody>
+<tr><td><code>shelfTemperatureEnabled</code></td><td>boolean / <code>false</code></td><td>保存期限與溫度系統總開關。關閉時暫停衰減、溫度/冷鮮推進、過期產物與過期指令、溫度拒食、溫區效果和相關提示；已有物品資料保留，關閉時段從下次結算中扣除，不追溯補算。</td></tr>
+<tr><td><code>lsoIntegrationEnabled</code></td><td>boolean / <code>true</code></td><td>是否允許 <code>hd:shelf</code> 使用 LSO 的完整世界環境；不關閉其他 LSO 相容。</td></tr>
+<tr><td><code>ecIntegrationEnabled</code></td><td>boolean / <code>true</code></td><td>是否允許 <code>hd:shelf</code> 直接使用 EC 氣候和 HD 的 EC 季節倍率；不修改 EC 已由 LSO 提供的內容。</td></tr>
+<tr><td><code>proxyHeatstrokeEffect</code></td><td>boolean / <code>true</code></td><td>把 LSO 中暑鏡像為 EC 中暑(伺服器端每 5 秒檢查，僅藉助 EC 的模糊效果)；無 LSO 中暑或帶免疫時移除 EC 中暑。</td></tr>
+<tr><td><code>bonusUpdateTicks</code></td><td>int / <code>100</code></td><td>屬性加成結算間隔，單位 tick；限制在 1–1728000。預設約 5 秒。</td></tr>
+<tr><td><code>effectUpdateTicks</code></td><td>int / <code>200</code></td><td>藥水效果加成重新整理間隔，單位 tick；限制在 1–1728000。預設約 10 秒。</td></tr>
+<tr><td><code>ejectIllegalProtectedItems</code></td><td>boolean / <code>false</code></td><td>玩家持有從未被信任的保護物品時：<code>true</code> 丟到腳下；<code>false</code> 留在原位凍結並警告。預設關閉以免誤判造成掉落消失。</td></tr>
+<tr><td><code>removeOwnerOnDeathDrop</code></td><td>boolean / <code>false</code></td><td>死亡掉落：<code>true</code> 清除所有掉落物的保護資料；<code>false</code> 只給原本無主的掉落寫入死者 UUID，已有主人的掉落保持原主人。</td></tr>
+<tr><td><code>debugLogs</code></td><td>boolean / <code>false</code></td><td>伺服器端測試日誌開關；開啟後輸出方塊右鍵與放置食物/分口食物的詳細日誌。<code>/hdreload</code> 應用。</td></tr>
+</tbody></table></div>
+<h3>privacy：階段指令文字</h3>
+<div class="table-wrap"><table><thead><tr><th>欄位</th><th>類型 / 預設</th><th>作用與邊界</th></tr></thead><tbody><tr><td><code>sendCommandTextToAllPlayers</code></td><td>boolean / <code>false</code></td><td>預設只向權限 4 的玩家下發階段指令文字；<code>true</code> 時非 OP 也收到完整階段設定，可用於公開玩法說明。它不改變指令執行權限。</td></tr></tbody></table></div>
+<h3>shelfMerge：堆疊合併門檻</h3>
+<div class="table-wrap"><table><thead><tr><th>欄位</th><th>類型 / 預設</th><th>作用與邊界</th></tr></thead><tbody>
+<tr><td><code>mergeRemainingMinutes</code></td><td>int / <code>5</code></td><td>兩堆剩餘保存期限的最大差(分鐘)仍可合併；限制在 1–1440。</td></tr>
+<tr><td><code>mergeTempThreshold</code></td><td>float / <code>10.0</code></td><td>兩堆物品溫度的最大差(°C)仍可合併；限制在 0–100，NaN 差值忽略。</td></tr>
+<tr><td><code>mergeColdFreshThreshold</code></td><td>float / <code>20.0</code></td><td>兩堆冷鮮進度(0–100)的最大差仍可合併；限制在 0–100。</td></tr>
+</tbody></table></div>
+<div class="callout warn"><b>儲存邊界：</b>OP 設定頁的「伺服器端顯示」當前往返的是 <code>gameplay</code> 分節；<code>privacy</code> 與 <code>shelfMerge</code> 需要編輯 <code>server.json</code> 後執行 <code>/hdreload</code>。檔案唯讀時設定頁儲存失敗，不會改內存中的權威值。</div>
+<div class="source-note">源碼依據：<code>ServerGameplayConfig</code>、<code>ServerPrivacyConfig</code>、<code>ShelfMergeConfig</code>、<code>ServerConfigFile</code>、<code>ConfigManager.saveServerGameplayConfig</code>。</div></section>
+
+<section class="page-section" id="display"><h2><span class="num">03</span><code>display.json</code>：用戶端本機偏好</h2><p class="lead">這份檔案只影響當前用戶端的外觀與編輯預設值，不參與伺服器玩法同步。伺服器端下的玩法開關在 <code>server.json</code> 的 <code>gameplay</code>，不要寫回這裡。</p>
+<div class="table-wrap"><table><thead><tr><th>欄位</th><th>類型 / 預設</th><th>作用與邊界</th></tr></thead><tbody>
+<tr><td><code>nutritionPerLine</code></td><td>int / <code>6</code></td><td>普通 Tooltip 營養與條件條目的顯示上限；超過上限截斷並附省略號。設為 1 只顯示第一條，不是每組單獨換行；編輯器範圍 1–100。</td></tr>
+<tr><td><code>titleproWrapWidth</code></td><td>int / <code>1000</code></td><td>TitlePro 標題換行寬度(像素)；編輯器範圍 1–100000。</td></tr>
+<tr><td><code>defaultConditionalGainEnabled</code></td><td>boolean / <code>true</code></td><td>新建條件營養規則時「實際增益」的預設開關；只初始化草稿，不是已儲存規則的執行開關。</td></tr>
+<tr><td><code>infoGapWidth</code></td><td>int / <code>20</code></td><td>D 模式右對齊提示行左右內容的固定間距；編輯器範圍 0–100000。</td></tr>
+<tr><td><code>maxInfoWidth</code></td><td>int / <code>320</code></td><td>D 模式資訊面板的最大寬度(像素)，超出換行；S 模式不受此上限限制。編輯器範圍 0–100000。</td></tr>
+<tr><td><code>showUnifiedPotionStyle</code></td><td>boolean / <code>false</code></td><td>統一藥水樣式總開關；關閉時繞過所有物品和預設的「強制統一」選取。</td></tr>
+<tr><td><code>enableEnchantmentInfo</code></td><td>boolean / <code>true</code></td><td>D 模式自動顯示附魔書說明(按 Enchantment Descriptions 約定讀取語言鍵)。</td></tr>
+<tr><td><code>enablePotionInfo</code></td><td>boolean / <code>true</code></td><td>D 模式藥水/效果資訊總開關。關閉後 D 頁不顯示原版藥水說明、HD 效果行、外部模組效果行、屬性統一段和 LSO 口渴行；普通模式緊湊效果行、溫區效果行、JEI/手寫 D 文字和附魔說明不受影響。</td></tr>
+<tr><td><code>hideSystemPrefixes</code></td><td>boolean / <code>false</code></td><td>只隱藏 HD 自動新增的行首符號及其間距；不隱藏玩家手寫名稱、行內分隔符或分段文字。</td></tr>
+<tr><td><code>temperatureUnit</code></td><td>string / <code>celsius</code></td><td><code>celsius</code> 或 <code>fahrenheit</code>；只影響本用戶端提示/HUD，設定檔和編輯器仍用攝氏。非法值回落攝氏。</td></tr>
+<tr><td><code>temperatureUnitChosen</code></td><td>boolean / <code>false</code></td><td>本用戶端是否已明確選取溫度單位；用於首次提示，不上傳同步。</td></tr>
+<tr><td><code>groupLocalizePrompted</code></td><td>boolean / <code>false</code></td><td>OP 的營養組名稱本機化提示是否已在本用戶端顯示或回答；僅本機記錄。</td></tr>
+<tr><td><code>defaultEffectsShiftOnly</code></td><td>boolean / <code>false</code></td><td>新建藥水效果行的預設顯示模式：<code>false</code> 常顯，<code>true</code> 僅按住 Shift；已儲存的行保留自己的設定。</td></tr>
+<tr><td><code>defaultForceUnify</code></td><td>boolean / <code>false</code></td><td>新建效果行時「強制統一」的預設值；只對已有 Tooltip 設定/資料包條目的物品生效。</td></tr>
+<tr><td><code>defaultFoodBarDisplayMode</code></td><td>string / <code>always</code></td><td><code>always</code> 常顯、<code>shift</code> 僅 Shift、<code>info</code> 僅 D 頁、<code>off</code> 整體停用並退回原版飲食值行；只影響沒有自身提示設定的物品和新建行。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>已移除的舊鍵：</b>面板寬度/偏移、文字陰影等舊外觀欄位不再由 <code>display.json</code> 控制；不要按舊教程寫回。檔案以 <code>_note_</code> 開頭的說明欄位唯讀。手改本檔案後需要重進用戶端；在「用戶端顯示設定」中儲存會立即寫回。</div>
+<div class="source-note">源碼依據：<code>DisplayConfig</code>、<code>HdDisplayConfigScreen</code>、<code>ConfigManager.loadDisplayConfig</code>。</div></section>
+
+<section class="page-section" id="nutrition"><h2><span class="num">04</span>營養資料包：組、階段、加成</h2><p class="lead">三類檔案都在 <code>data/&lt;命名空間&gt;/healthy_diet/</code> 下，以營養組 ID 關聯；HD 覆蓋層寫在 <code>config/healthy_diet/datapack/</code>。檔案名就是組 ID，最多 64 個組。</p>
+<div class="table-wrap"><table><thead><tr><th>類型</th><th>路徑</th><th>檔案內容</th></tr></thead><tbody>
+<tr><td>營養組</td><td><code>nutrition_groups/&lt;組id&gt;.json</code></td><td>一個 <code>GroupDefinition</code> 對象：名稱、符號、排序、顏色、衰減、初始值、取得倍率和可用條件。</td></tr>
+<tr><td>階段</td><td><code>nutrition_stages/&lt;組id&gt;.json</code></td><td><code>stages</code> 數組與 <code>hideAutoBonus</code>；檔案鍵是所屬營養組。</td></tr>
+<tr><td>加成</td><td><code>nutrition_bonuses/&lt;組id&gt;.json</code></td><td><code>remark</code> 與 <code>bonuses</code> 數組；每條含條件、屬性加成和效果加成。</td></tr>
+</tbody></table></div>
+<h3>營養組欄位</h3>
+<div class="table-wrap"><table><thead><tr><th>欄位</th><th>預設</th><th>說明</th></tr></thead><tbody>
+<tr><td><code>displayName</code></td><td><code>Group</code></td><td>介面和提示中的組名；實際預設組由內置資料包提供中文名。</td></tr>
+<tr><td><code>nutritionSymbol</code></td><td><code>Ψ </code></td><td>營養行前綴符號；空白會回落到預設符號並補一個空格。</td></tr>
+<tr><td><code>order</code></td><td><code>0</code></td><td>營養介面排序，升序；相同序號按組 ID 字母序。</td></tr>
+<tr><td><code>color</code></td><td><code>#FFFFFF</code></td><td><code>#RRGGBB</code> 為純色；其他字元串按 <code>color_schemes.json</code> 的方案鍵處理。</td></tr>
+<tr><td><code>colorStyle</code></td><td><code>null</code></td><td>方案鍵配色時的動畫參數：<code>dynamic</code>、<code>nameStyle</code>、<code>speed</code>、<code>steps</code>、<code>waveStep</code>、<code>pulseDelay</code>、兩個反轉開關及 <code>bold</code>/<code>italic</code>/<code>underlined</code>。純色時忽略。</td></tr>
+<tr><td><code>decayRate</code></td><td><code>6.0</code></td><td>自然衰減速率：每消耗 1 點飽食度降低 <code>1/decayRate</code> 營養值；小於等於 0 視為不衰減。</td></tr>
+<tr><td><code>icon</code></td><td><code>""</code></td><td>可選圖示資源名；留空使用介面預設顯示。</td></tr>
+<tr><td><code>initialValue</code></td><td><code>0</code></td><td>新玩家或新增該組時的初始營養值，0–100。</td></tr>
+<tr><td><code>gainMultiplier</code></td><td><code>1</code></td><td>食物對該組的正負變化都乘此倍率；允許 0，負數/NaN/Infinity 視為非法並回落 1。最終值仍夾在 0–100。</td></tr>
+<tr><td><code>enabled</code></td><td><code>true</code></td><td>組總開關。關閉後該組對所有玩家隱藏、凍結、停止衰減與條件/加成；恢復後繼續。</td></tr>
+<tr><td><code>requiredPlayerTag</code></td><td><code>""</code></td><td>要求玩家擁有的計分板標籤，精確匹配；空 = 不限制。不是物品/方塊標籤。</td></tr>
+<tr><td><code>requiredModId</code></td><td><code>""</code></td><td>要求伺服器端已載入的 modid；空 = 不限制。未安裝時該組對該玩家禁用，可用於整合包預置可選連動。</td></tr>
+<tr><td><code>nutritionTipColors</code></td><td>自動生成</td><td>四個獨立提示顏色槽(普通/條件 × 增益/損失)；<code>nutritionTipColorsCustomized</code> 決定增益槽是否跟隨組名顏色。手改前建議先用編輯器。</td></tr>
+</tbody></table></div>
+<div class="example"><span class="label">營養組範例(檔案名即組 ID)</span><pre style="overflow:auto;background:#181825;border:1px solid var(--line);border-radius:10px;padding:14px;font-size:12px;line-height:1.6">{
+  "displayName": "水果",
+  "nutritionSymbol": "Ψ ",
+  "order": 2,
+  "color": "a",
+  "decayRate": 6.0,
+  "initialValue": 0,
+  "gainMultiplier": 1.0,
+  "enabled": true
+}</pre><p>這裡的 <code>"a"</code> 是方案鍵範例，不是要求所有組都用它。</p></div>
+<h3>階段欄位</h3>
+<div class="table-wrap"><table><thead><tr><th>欄位</th><th>預設</th><th>說明</th></tr></thead><tbody>
+<tr><td><code>stages[].min</code> / <code>max</code></td><td><code>0</code> / <code>100</code></td><td>閉區間邊界；實際判定先把營養值四捨五入到整數。相鄰階段應連續，編輯器會拒絕重疊和空檔。</td></tr>
+<tr><td><code>stages[].label</code></td><td><code>""</code></td><td>階段名稱。</td></tr>
+<tr><td><code>stages[].tooltip</code></td><td><code>[]</code></td><td>該階段的附加提示文字行。</td></tr>
+<tr><td><code>stages[].commands</code></td><td><code>[]</code></td><td>進入/處於該階段時按伺服器端規則執行的指令；文字只向 OP4 或開啟隱私開關的伺服器下發。</td></tr>
+<tr><td><code>hideAutoBonus</code></td><td><code>false</code></td><td>檔案級開關；<code>true</code> 時該組所有階段懸停不再自動追加範圍標題和加成預覽。</td></tr>
+</tbody></table></div>
+<h3>加成欄位</h3>
+<div class="table-wrap"><table><thead><tr><th>欄位</th><th>預設</th><th>說明</th></tr></thead><tbody>
+<tr><td><code>remark</code></td><td><code>""</code></td><td>編輯器列表中的備註名，不參與結算；留空顯示檔案名。</td></tr>
+<tr><td><code>bonuses[].conditions</code></td><td><code>{}</code></td><td>組 ID → <code>{min,max}</code> 的映射；同一加成內多個條件按「且」判斷。</td></tr>
+<tr><td><code>bonuses[].attributeBonuses[]</code></td><td><code>[]</code></td><td><code>attribute</code>(預設 <code>minecraft:generic.max_health</code>)、<code>operation</code>(<code>add</code>/<code>multiply_base</code>/<code>multiply_total</code>，預設 <code>add</code>)、<code>value</code>。</td></tr>
+<tr><td><code>bonuses[].effectBonuses[]</code></td><td><code>[]</code></td><td><code>effect</code>、<code>level</code>(0 = I 級)、<code>duration</code>(tick，預設 200)、<code>showParticles</code>(預設 false)。</td></tr>
+</tbody></table></div>
+<div class="source-note">源碼依據：<code>GroupDefinition</code>、<code>StageConfig</code>、<code>GroupBonusConfig</code>、<code>ConfigManager.loadGroupsFromPacksChecked</code>、<code>loadStageConfigsFromPacksChecked</code>、<code>loadGroupBonusesFromPacksChecked</code>。</div></section>
+
+<section class="page-section" id="items"><h2><span class="num">05</span>物品、提示、方塊與品質</h2><p class="lead">這些類型的欄位較多，下面只給欄位組和入口；具體玩法解釋分別放在營養、保存期限、Tooltip 和品質章節，避免同一欄位在三處寫出不同含義。</p>
+<div class="table-wrap"><table><thead><tr><th>資料包類型</th><th>路徑</th><th>主要欄位 / 說明</th><th>相關章節</th></tr></thead><tbody>
+<tr><td>物品</td><td><code>items/&lt;物品路徑&gt;.json</code></td><td>營養、效果、厭倦、保存期限、指令、條件規則、堆疊、品質、品級、NBT 變體</td><td><a href="nutrition.html">營養</a> · <a href="fatigue.html">厭倦</a> · <a href="shelf-life.html">保存期限</a></td></tr>
+<tr><td>Tooltip</td><td><code>tooltips/&lt;物品路徑&gt;.json</code></td><td>名稱覆蓋、附加行、顯隱開關、NBT 變體</td><td><a href="tooltip.html">Tooltip</a> · <a href="appearance.html">顯示美化</a></td></tr>
+<tr><td>方塊</td><td><code>blocks/&lt;方塊路徑&gt;.json</code></td><td>狀態/主手/潛行條件、營養、效果、指令、冷卻、取消原版交互</td><td><a href="misc.html#blocks">小功能</a></td></tr>
+<tr><td>品質</td><td><code>quality_levels/&lt;id&gt;.json</code></td><td>字元串 ID、名稱、純色/方案、分段、覆蓋層</td><td><a href="quality.html">品質</a></td></tr>
+<tr><td>品級</td><td><code>rarities/&lt;id&gt;.json</code></td><td>品級 ID、分段、色表或方案、動畫參數</td><td><a href="appearance.html">顯示美化</a></td></tr>
+<tr><td>效果行</td><td><code>effect_lines/&lt;效果id&gt;.json</code></td><td>按效果 ID 固定的提示行配色與修飾；僅在物品效果行「強制統一」時壓過物品設定</td><td><a href="tooltip.html">Tooltip</a></td></tr>
+</tbody></table></div>
+<h3>物品設定的欄位組</h3>
+<div class="table-wrap"><table><thead><tr><th>欄位組</th><th>說明</th><th>詳見</th></tr></thead><tbody>
+<tr><td><code>nutrition</code></td><td>組 ID → 營養變化量；正負都乘組取得倍率，再與終身衰減和分口份數結算。</td><td><a href="nutrition.html">營養值</a></td></tr>
+<tr><td><code>effects</code></td><td>食用後藥水效果，含等級、tick 時長、概率、粒子與新鮮度曲線。</td><td><a href="titlepro.html#effects">TitlePro 與效果</a></td></tr>
+<tr><td><code>foodCooldown</code></td><td>短期厭倦：<code>maxUses</code>、<code>cooldownCount</code>、<code>cooldownMinutes</code>、<code>restoreHunger</code>。</td><td><a href="fatigue.html">食物厭倦</a></td></tr>
+<tr><td><code>foodFatigue</code></td><td>終身衰減：<code>lossStart</code>、<code>aversionCount</code>；兩者都設定才啟用線性衰減。</td><td><a href="fatigue.html">食物厭倦</a></td></tr>
+<tr><td><code>shelf</code></td><td>基礎時長、溫度曲線、維度倍率、冷鮮/保冷、環境溫變、食用溫度效果。</td><td><a href="shelf-life.html">保存期限</a></td></tr>
+<tr><td><code>onEatCommands</code> / <code>suppressEffects</code></td><td>進食指令與清除物品自帶效果；分別有獨立延遲。</td><td><a href="titlepro.html#feedback">進食反饋</a></td></tr>
+<tr><td><code>conditionalRules</code></td><td>營養條件 → 目標營養變化/指令/提示；一條規則整體儲存。</td><td><a href="nutrition.html#conditions">條件規則</a></td></tr>
+<tr><td><code>stackSize</code></td><td>物品級堆疊上限，0 = 原版預設；重啟生效。NBT 變體不能擁有獨立堆疊上限。</td><td><a href="admin.html#clients">服主手冊</a></td></tr>
+<tr><td><code>quality</code> / <code>rarity</code></td><td>綁定品質 ID 與品級 ID；品級按「命中變體 → 通用條 → item_rarities.json → 原版」的優先級取。</td><td><a href="quality.html">品質與品級</a></td></tr>
+<tr><td><code>nbtLock</code> / <code>variantName</code></td><td>NBT 變體鎖與備註；空 <code>nbtLock</code> 是通用條，非空是變體。</td><td><a href="nutrition.html">NBT 變體</a></td></tr>
+</tbody></table></div>
+<h3>方塊右鍵變體欄位</h3>
+<div class="table-wrap"><table><thead><tr><th>欄位</th><th>預設</th><th>說明</th></tr></thead><tbody>
+<tr><td><code>state</code></td><td><code>{}</code></td><td>方塊狀態屬性子集；空 = 匹配該方塊任意狀態。狀態屬性越多，匹配優先級越高。</td></tr>
+<tr><td><code>hand</code></td><td><code>any</code></td><td><code>any</code>、<code>empty</code>(主手為空)或 <code>item</code>(主手物品需命中 <code>items</code>)。</td></tr>
+<tr><td><code>items</code></td><td><code>[]</code></td><td>物品 ID 或 <code>#標籤</code> 列表；僅 <code>hand=item</code> 時參與匹配。</td></tr>
+<tr><td><code>consumeItem</code></td><td><code>0</code></td><td>觸發時消耗主手數量；創造模式不消耗，數量不足視為條件不滿足。</td></tr>
+<tr><td><code>sneak</code></td><td><code>any</code></td><td><code>any</code>、<code>require</code> 或 <code>forbid</code>。</td></tr>
+<tr><td><code>cooldownTicks</code></td><td><code>20</code></td><td>同一變體的觸發冷卻，0–72000 tick；0 = 不寫冷卻。</td></tr>
+<tr><td><code>cancelVanilla</code></td><td><code>false</code></td><td>匹配後是否取消原版方塊交互；為 true 時長按會去重，為 false 時每次原版重發都要結算。</td></tr>
+<tr><td><code>nutrition</code></td><td><code>{}</code></td><td>組 ID → 變化量；受組取得倍率影響，但沒有終身衰減和分口。</td></tr>
+<tr><td><code>effects</code> / <code>effectDelay</code></td><td><code>[]</code> / <code>0</code></td><td>效果列表與施加延遲(tick)；方塊交互沒有物品保存期限，曲線效果不生效。</td></tr>
+<tr><td><code>commands</code> / <code>commandsAtBlock</code></td><td><code>[]</code> / <code>false</code></td><td>指令可寫 <code>{x}</code> <code>{y}</code> <code>{z}</code>；<code>true</code> 時執行位置改為方塊中心。</td></tr>
+<tr><td><code>titles</code> / <code>commandDelay</code></td><td><code>[]</code> / <code>0</code></td><td>TitlePro 標題與指令共用延遲(tick)。</td></tr>
+</tbody></table></div>
+<div class="callout warn"><b>禁用與變體：</b><code>items</code> 與 <code>tooltips</code> 支援 <code>.json.disabled</code> 禁用約定；<code>blocks</code> 沒有這種約定。NBT 變體可以覆蓋食物/提示欄位，但 <code>stackSize</code> 是物品單例屬性，變體中會被強制為 0。</div>
+<div class="source-note">源碼依據：<code>ItemConfig</code>、<code>ItemTooltipConfig</code>、<code>BlockConfig</code>、<code>QualityLevelConfig</code>、<code>RarityConfig</code>、<code>EffectLineConfig</code>、<code>ConfigManager.findBlockVariant</code> 與資料包載入器。</div></section>
+
+<section class="page-section" id="shelf"><h2><span class="num">06</span>保存期限與溫度環境欄位</h2><p class="lead">物品的 <code>shelf</code> 欄位控制單件食物；<code>shelf_life/</code> 與 <code>temperature/</code> 下的檔案控制季節、環境溫變和顯示方案。欄位預設值適合新建，實際物品常在預設資料包中覆蓋。</p>
+<h3>物品 <code>shelf</code> 頂層欄位</h3>
+<div class="table-wrap"><table><thead><tr><th>欄位</th><th>預設</th><th>說明</th></tr></thead><tbody>
+<tr><td><code>durationMinutes</code></td><td><code>60</code></td><td>基礎保質時長，按分鐘存儲，1–99999。編輯器的 <code>durationUnit</code> 只是顯示單位，不改變存儲。</td></tr>
+<tr><td><code>durationUnit</code></td><td><code>minutes</code></td><td><code>minutes</code>、<code>hours</code>、<code>days</code>(現實日，1440 分鐘)或 <code>game_days</code>(20 分鐘)。非法值回落 <code>minutes</code>。</td></tr>
+<tr><td><code>resultItem</code></td><td><code>minecraft:air</code></td><td>過期後替換成的物品；空氣表示消失。</td></tr>
+<tr><td><code>inheritTemperatureOnExpire</code></td><td><code>true</code></td><td>替換時讓產物繼承過期瞬間溫度；只繼承溫度，產物保存期限仍從 0 開始。</td></tr>
+<tr><td><code>expireCommand</code></td><td><code>""</code></td><td>玩家持有物品過期時以持有者為上下文執行的指令；掉落物/容器內過期不觸發，不寫入物品 NBT。</td></tr>
+<tr><td><code>baseDecayMultiplier</code></td><td><code>1.0</code></td><td>基礎變質倍率，非負。</td></tr>
+<tr><td><code>temperatureCurves</code></td><td><code>[]</code></td><td>溫度 → 變質倍率曲線，最多 16 條；欄位見下。</td></tr>
+<tr><td><code>dimensionDecayMultipliers</code></td><td><code>{}</code></td><td>維度 ID → 倍率；未列出的維度為 1。</td></tr>
+<tr><td><code>scheme</code></td><td><code>hd:shelf_en</code></td><td>保存期限顯示方案 ID；舊 <code>hd:shelf</code> 會規範化到現行方案，不要繼續寫舊值。</td></tr>
+<tr><td><code>coldRetention</code></td><td><code>false</code></td><td>是否啟用保冷：完全凍結時回充已消耗時間，非凍結時正常消耗並永久降低回充上限。</td></tr>
+<tr><td><code>coldRecoveryRate</code></td><td><code>1.0</code></td><td>完全凍結時每分鐘回充的保冷分鐘數，0–100。</td></tr>
+<tr><td><code>coldDegradationRate</code></td><td><code>15.0</code></td><td>每損失基礎保質時間的該百分比，回充上限永久下降一檔，1–100。</td></tr>
+<tr><td><code>temperatureEffectCurves</code></td><td><code>[]</code></td><td>食用時的溫度區間效果，最多 20 條；欄位見下。</td></tr>
+</tbody></table></div>
+<h3>溫度曲線與食用溫度效果</h3>
+<div class="table-wrap"><table><thead><tr><th>對象</th><th>欄位</th><th>說明</th></tr></thead><tbody>
+<tr><td rowspan="4"><code>temperatureCurves[]</code></td><td><code>startTemperatureC</code> / <code>endTemperatureC</code></td><td>主區間端點，要求起點小於終點。</td></tr>
+<tr><td><code>startMultiplier</code> / <code>endMultiplier</code></td><td>端點倍率，0–100，按端點線性過渡。</td></tr>
+<tr><td><code>startBufferTemperatureC</code> / <code>endBufferTemperatureC</code></td><td>可選外緩衝端點；不填則主區間外不生效。舊 <code>startBufferC</code>/<code>endBufferC</code> 唯讀遷移。</td></tr>
+<tr><td>數量</td><td>最多 16 條；區間外倍率為 1。</td></tr>
+<tr><td rowspan="6"><code>temperatureEffectCurves[]</code></td><td><code>effectId</code></td><td>效果註冊名；普通藥水按常規施加，LSO 四個食用溫度效果保留冷熱語義。</td></tr>
+<tr><td><code>startTemperatureC</code> / <code>endTemperatureC</code></td><td>絕對攝氏度區間；普通新建要求起點小於終點。</td></tr>
+<tr><td><code>includeStart</code> / <code>includeEnd</code></td><td>端點是否包含，預設都包含。舊固定溫區遷移可能生成單點區。</td></tr>
+<tr><td><code>startLevel</code> / <code>endLevel</code></td><td>0 = I 級，範圍 0–127；區間內線性過渡。</td></tr>
+<tr><td><code>startDuration</code> / <code>endDuration</code></td><td>tick，範圍 1–72000；20 tick = 1 秒。</td></tr>
+<tr><td><code>particles</code></td><td>是否顯示粒子，預設 true；數量最多 20 條。</td></tr>
+</tbody></table></div>
+<h3><code>common</code> 與溫變子對象</h3>
+<div class="table-wrap"><table><thead><tr><th>對象 / 欄位</th><th>預設</th><th>說明</th></tr></thead><tbody>
+<tr><td><code>common.minTemperatureC</code> / <code>maxTemperatureC</code></td><td><code>-30</code> / <code>100</code></td><td>物品可存在的溫度範圍。</td></tr>
+<tr><td><code>common.initialTemperatureC</code></td><td><code>10</code></td><td>新物品初始溫度。</td></tr>
+<tr><td><code>common.eatableMinTemperatureC</code> / <code>eatableMaxTemperatureC</code></td><td><code>-5</code> / <code>35</code></td><td>可食用溫度區間；超出時按伺服器端規則拒絕食用。</td></tr>
+<tr><td><code>common.coldFreshStartC</code> / <code>freezingStartC</code> / <code>fullyFrozenC</code></td><td><code>3</code> / <code>-5</code> / <code>-20</code></td><td>冷鮮點、冷凍點、完全凍結點；用於冷鮮進度與保冷判定。</td></tr>
+<tr><td><code>common.highTemperatureC</code> / <code>preservationRate</code></td><td><code>30</code> / <code>0.8</code></td><td>高溫區起點、保鮮率；保鮮率參與變質倍率。</td></tr>
+<tr><td><code>naturalEnvironment.temperatureChangeC</code> / <code>temperatureChangeMinutes</code></td><td><code>1</code> / <code>2</code></td><td>自然環境基礎溫變：每 2 分鐘 1°C。</td></tr>
+<tr><td><code>naturalEnvironment.lowSpeed*</code> / <code>highSpeed*</code></td><td><code>0.3</code> / <code>5</code> / <code>5</code>；<code>1</code> / <code>5</code> / <code>5</code></td><td>溫差加速：每 5°C 增加的倍率步長與上限；升溫/降溫分開設定。</td></tr>
+<tr><td><code>naturalEnvironment.*SpeedMultiplierBonus</code></td><td><code>0</code></td><td>冷凍區、低溫區、常溫區、高溫區的額外加速倍率。</td></tr>
+<tr><td><code>fridgeTemperature.*ChangeC</code> / <code>*Minutes</code></td><td>冰箱 <code>5</code> / <code>2</code>；冷凍室 <code>10</code> / <code>2</code></td><td>冰箱/冷凍櫃的基礎溫變速度。</td></tr>
+<tr><td><code>fridgeTemperature.*SpeedMultiplierBonus</code></td><td><code>0</code></td><td>冰箱內四個溫區的額外加速倍率。</td></tr>
+<tr><td><code>temperatureZoneEffects</code></td><td><code>null</code></td><td>舊固定四溫區輸入，唯讀相容；首次歸一化時轉換為 <code>temperatureEffectCurves</code> 並清空。新設定不要再寫。</td></tr>
+</tbody></table></div>
+<h3><code>shelf_life/</code> 與 <code>temperature/</code></h3>
+<div class="table-wrap"><table><thead><tr><th>檔案</th><th>結構 / 欄位</th><th>說明</th></tr></thead><tbody>
+<tr><td><code>shelf_life/seasons.json</code></td><td><code>fallbackMultipliers.shelfLifeMultiplier</code>(預設 1.0)；<code>seasons[]</code> 含 <code>id</code>、<code>range</code>(EC 節氣 0–23)、<code>shelfLifeMultiplier</code>(0–100)、<code>displayName</code></td><td>未載入 EC 時使用回退倍率；舊 6 季節檔案照讀照存，不強制遷移。</td></tr>
+<tr><td><code>temperature/season_temperature.json</code></td><td><code>terms[]</code> 含 <code>term</code>(0–23)與 <code>offset</code>(-100–100)</td><td>附加環境溫度，疊加在 EC 氣候上，不替換 EC 氣候。</td></tr>
+<tr><td><code>temperature/weather_offsets.json</code></td><td><code>terms[]</code> 含 <code>term</code>、<code>rain</code>(預設 -1)、<code>thunder</code>(預設 -2)</td><td>雨雪/雷暴溫變偏移；無降水不查表；範圍 -100–100。</td></tr>
+<tr><td><code>temperature/day_night_offsets.json</code></td><td><code>terms[]</code> 含 <code>term</code>、<code>noon</code>、<code>night</code>(預設 0)</td><td>正午/午夜溫變幅度；日內按餘弦過渡，節氣間平滑插值；全 0 等同關閉。</td></tr>
+<tr><td><code>temperature/block_heat.json</code></td><td><code>entries[]</code> 含 <code>block</code> 與 <code>rules[]</code>；規則含 <code>temperature</code>(-1000–1000)與 <code>properties</code></td><td>只在非 LSO 分支生效；同一方塊按規則順序匹配，第一條屬性全命中的生效，空屬性為兜底。</td></tr>
+</tbody></table></div>
+<div class="source-note">源碼依據：<code>S2ShelfConfig</code>、<code>ShelfTemperatureCurve</code>、<code>ShelfTemperatureEffectCurve</code>、<code>ShelfDurationUnit</code>、<code>SeasonConfig</code>、<code>SeasonTemperatureConfig</code>、<code>WeatherOffsetsConfig</code>、<code>DayNightOffsetsConfig</code>、<code>BlockHeatConfig</code>。</div></section>
+
+<section class="page-section" id="appearance"><h2><span class="num">07</span>外觀方案與小工具</h2><p class="lead">這些檔案多數是共享外觀或本機小工具，不改變營養/保存期限結算。改配色前先確認目標行引用的是哪個方案鍵。</p>
+<div class="table-wrap"><table><thead><tr><th>檔案</th><th>結構與關鍵欄位</th><th>邊界</th></tr></thead><tbody>
+<tr><td><code>colors/color_schemes.json</code></td><td>方案 ID → <code>{ "colors": ["#RRGGBB", ...] }</code>；方案 ID 被營養組、品質、提示行、品級和保存期限方案引用</td><td>單個顏色可用，但兩個以上才形成可見漸層；改共享方案會影響所有引用位置。</td></tr>
+<tr><td><code>colors/solid_colors.json</code></td><td><code>["#RRGGBB", ...]</code> 色卡數組</td><td>供編輯器純色選取；非法項被忽略，不會生成顏色。</td></tr>
+<tr><td><code>fatigue/fatigue_gradient.json</code></td><td><code>enableGradient</code>；<code>fatigueLevelGradient</code> 與 <code>fatigueRecoveryGradient</code>，各含 <code>scheme</code>、<code>stars</code>、<code>dynamic</code>、<code>speed</code>、<code>steps</code>、<code>nameStyle</code>、<code>waveStep</code>、<code>pulseDelay</code>、兩個反轉開關和修飾</td><td>只影響厭倦提示的顏色與動畫，不改變冷卻/厭食閾值。</td></tr>
+<tr><td><code>fatigue/fatigue_exempt.json</code></td><td>物品 ID 字元串數組；預設含腐肉、藥水、蜘蛛眼、牛奶桶</td><td>吃下這些物品不會推進其他冷卻食物的恢復計數；不是「吃它永不厭倦」的設定。</td></tr>
+<tr><td><code>tooltip_templates.json</code></td><td>範本數組：<code>text</code>、<code>scheme</code>、<code>stars</code>、<code>shiftOnly</code>、<code>dynamic</code>、<code>nameStyle</code>、<code>speed</code>、<code>steps</code>、<code>waveStep</code>、<code>pulseDelay</code>、兩個反轉開關</td><td>編輯器 [範本] 按鈕讀取；屬於本實例編輯輔助，不把它當作跨用戶端下發內容。</td></tr>
+<tr><td><code>item_rarities.json</code></td><td>物品 ID → 品級 ID 的映射</td><td>物品級兜底；命中 NBT 變體的品級在物品設定條目中，優先級更高。<code>/hdset rarity clear &lt;物品ID&gt;</code> 刪這裡。</td></tr>
+<tr><td><code>bottle_fills.json</code></td><td><code>{ item, fluid, result, resultNbt }</code> 數組</td><td>只匹配液體源方塊；創造模式不消耗也不產出；<code>resultNbt</code> 解析失敗仍給結果物品，僅不帶 NBT。</td></tr>
+<tr><td><code>fog_effects.json</code></td><td><code>effects</code>(預設夜視)、<code>waterFogStart</code> 80、<code>waterFogEnd</code> 160、<code>lavaFogEnd</code> 6</td><td>用戶端本機；改變霧距離而非霧顏色；效果結束前平滑回退；伺服器重載不代改本機檔案。</td></tr>
+<tr><td><code>effect_lines/&lt;效果id&gt;.json</code></td><td><code>id</code>、<code>scheme</code>、<code>dynamic</code>、<code>nameStyle</code>、<code>speed</code>、<code>steps</code>、<code>waveStep</code>、<code>pulseDelay</code>、兩個反轉開關和修飾</td><td>只在物品藥水效果行開啟「強制統一」時壓過物品自身設定；文字固定為效果名。</td></tr>
+</tbody></table></div>
+<div class="example"><span class="label">顏色方案結構</span><pre style="overflow:auto;background:#181825;border:1px solid var(--line);border-radius:10px;padding:14px;font-size:12px;line-height:1.6">{
+  "silver_mist": { "colors": ["#8e9eab", "#eef2f3"] },
+  "warm_example": { "colors": ["#f7971e", "#ffd200"] }
+}</pre><p>方案鍵只是顏色來源，不決定某條提示是否顯示；顯隱仍由 Tooltip 設定和可見性開關控制。</p></div>
+<div class="source-note">源碼依據：<code>RaritySchemeConfig</code>、<code>RarityColors</code>、<code>FatigueGradientConfig</code>、<code>TooltipTemplateConfig</code>、<code>BottleFillConfig</code>、<code>FogEffectConfig</code>、<code>EffectLineConfig</code>。</div></section>
+
+<section class="page-section" id="ui"><h2><span class="num">08</span>遊戲內設定 UI：逐項圖解</h2><p class="lead">下面按實際介面的入口和行順序繪製 HTML 示意。深灰面板、黃色分組標題、輸入框、♻、底部按鈕參考遊戲內介面；窄屏可在預覽框內左右滑動。此處的按鈕和數值不連伺服器，只有溫度預覽頁籤可切換說明。</p>
+<h3>入口：<code>/hdconfig</code> 的四個設定按鈕</h3>
+<p><code>/hdconfig</code> 是用戶端本機指令，<strong>執行指令本身會檢查 OP4</strong>；非 OP 玩家可從其他遊戲介面進入本機「用戶端外觀設定」，不等於可以直接執行該指令。下列預覽為 OP 視角，並不表示網頁或伺服器控制臺可以開啟本機介面。</p>
+<figure class="ui-preview"><figcaption><strong>菜單預覽 · OP 視角</strong>(普通玩家從其他介面進入此菜單時，僅「用戶端外觀設定」可用，後三項置灰)</figcaption><div class="ui-stage"><div class="ui-window menu"><div class="ui-title">Healthy Diet — Mod 設定</div><div class="ui-menu"><span class="ui-button">用戶端外觀設定</span><span class="ui-button">伺服器端玩法設定</span><span class="ui-button">溫度系統連動設定</span><span class="ui-button">群系溫度</span><span class="ui-button">關閉</span></div></div></div></figure>
+<dl class="ui-help"><dt>用戶端外觀設定</dt><dd>每位玩家都能進入；只改變本機 <code>display.json</code>，不會調整伺服器玩法。</dd><dt>伺服器端玩法設定</dt><dd>需要 OP 4；從伺服器端讀取 <code>server.json → gameplay</code>，儲存後等伺服器端回執並同步給線上玩家。</dd><dt>溫度系統連動設定</dt><dd>需要 OP 4；讀取季節倍率、方塊熱量、雨雪、晝夜、季節溫變五組伺服器端表；另有 LSO 世界溫度獨立入口。</dd><dt>群系溫度</dt><dd>需要 OP 4；按具體群系編輯其晝夜/天氣溫差，有 EC 時還可編輯 24 節氣溫度與降水。</dd><dt>關閉</dt><dd>回到開啟此菜單前的遊戲頁面；不會自動儲存子頁尚未提交的草稿。</dd></dl>
+<h3>用戶端外觀設定：12 個可編輯項</h3>
+<p>行內數值是 <code>DisplayConfig</code> 新建時的預設值，不是你當前 <code>display.json</code> 的值。遊戲中列表最多顯示 12 行，可滾輪檢視；每行的 ♻ 僅把該行草稿還原為預設值，仍需點擊底部「儲存」。</p>
+<figure class="ui-preview"><figcaption><strong>用戶端頁預覽</strong> · 向下滾動框內列表可見後 3 項(預覽本身唯讀)</figcaption><div class="ui-stage"><div class="ui-window"><div class="ui-title">用戶端外觀設定</div><div class="ui-viewport">
+<div class="ui-group">用戶端布局</div>
+<div class="ui-row"><span class="ui-name" title="營養行最大條目數">營養行最大條目數</span><span class="ui-button reset">♻</span><span class="ui-value number">6</span></div>
+<div class="ui-row"><span class="ui-name" title="標題自動換行寬度(像素)">標題自動換行寬度(像素)</span><span class="ui-button reset">♻</span><span class="ui-value number">1000</span></div>
+<div class="ui-row"><span class="ui-name" title="資訊右對齊間隙(像素)">資訊右對齊間隙(像素)</span><span class="ui-button reset">♻</span><span class="ui-value number">20</span></div>
+<div class="ui-row"><span class="ui-name" title="D 模式資訊面板最大寬度(像素)">D 模式資訊面板最大寬度(像素)</span><span class="ui-button reset">♻</span><span class="ui-value number">320</span></div>
+<div class="ui-row"><span class="ui-name">顯示強制統一藥水樣式</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">關</span></div>
+<div class="ui-row"><span class="ui-name">自動顯示附魔資訊</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">開</span></div>
+<div class="ui-row"><span class="ui-name">自動顯示藥水資訊</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">開</span></div>
+<div class="ui-row"><span class="ui-name">隱藏前綴</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">關</span></div>
+<div class="ui-row"><span class="ui-name">溫度單位</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">攝氏</span></div>
+<div class="ui-group">Tooltip 可見性預設值</div>
+<div class="ui-row"><span class="ui-name">預設效果行僅 Shift 顯示</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">關</span></div>
+<div class="ui-row"><span class="ui-name" title="預設強制統一藥水效果樣式">預設強制統一藥水效果樣式</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">關</span></div>
+<div class="ui-row"><span class="ui-name">飲食值行預設顯示方式</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">常顯</span></div>
+</div><div class="ui-footer"><span class="ui-button">儲存</span><span class="ui-button">返回</span></div></div></div></figure>
+<dl class="ui-help"><dt>營養行最大條目數 · 6</dt><dd>普通 Tooltip 營養與條件條目的顯示上限；超出截斷為「…」而不是另起行。1 只保留第一條；可設 1–100。</dd><dt>標題自動換行寬度 · 1000 px</dt><dd>TitlePro 標題文字超過指定像素寬度才換行；可設 1–100000。</dd><dt>資訊右對齊間隙 · 20 px</dt><dd>D 資訊模式中左側文字與右對齊內容之間的固定空隙；可設 0–100000。</dd><dt>D 模式資訊面板最大寬度 · 320 px</dt><dd>限制 D 資訊面板寬度，超出時內容換行；S 保存期限模式按自然寬度，不受此項限制。</dd><dt>顯示強制統一藥水樣式 · 關</dt><dd>總開關。關閉時，即使物品行或下面「預設強制統一」開啟，也不使用 HD 的統一效果樣式。</dd><dt>自動顯示附魔資訊 · 開</dt><dd>在 D 資訊模式自動顯示附魔書說明，前提是有對應翻譯文字；不影響附魔本身。</dd><dt>自動顯示藥水資訊 · 開</dt><dd>控制 D 模式中的藥水/效果資訊塊；關閉不影響普通緊湊效果行、溫區效果行、手寫說明或附魔說明。</dd><dt>隱藏前綴 · 關</dt><dd>僅隱藏 HD 自動加在行首的符號及間距；手寫名稱、行內分隔符仍保留。</dd><dt>溫度單位 · 攝氏</dt><dd>點擊在攝氏/華氏之間循環；只換本用戶端 Tooltip 和 HUD 的顯示，編輯介面與儲存的設定仍用攝氏。</dd><dt>預設效果行僅 Shift 顯示 · 關</dt><dd>新建效果行及未設定物品的預設可見方式；關=常顯，開=按住 Shift 才顯示，已儲存行不改。</dd><dt>預設強制統一藥水效果樣式 · 關</dt><dd>新建效果行的強制統一初始值；先要開啟上面的統一樣式總開關，已儲存行保留自己的選取。</dd><dt>飲食值行預設顯示方式 · 常顯</dt><dd>循環「常顯 → Shift → 資訊(D) → 關閉」；關閉退回原版/相關模組飲食值行。只影響未單獨設定的物品及新建行。</dd><dt>儲存 / 返回 / ♻</dt><dd>儲存寫當前用戶端的 <code>display.json</code> 並立即應用；返回不儲存草稿；♻ 只重置當前一行，不是全局恢復。</dd></dl>
+<div class="callout"><b>檔案中有、介面裡沒有：</b><code>defaultConditionalGainEnabled</code>、<code>temperatureUnitChosen</code>、<code>groupLocalizePrompted</code> 是本機偏好/提示狀態；不在這 12 個可編輯行裡。<code>_note_*</code> 唯讀，完整欄位見上方 <a href="#display">display.json 表</a>。</div>
+<h3>伺服器端玩法設定：9 項與重置動作</h3>
+<p>此頁只儲存 <code>server.json → gameplay</code>；<code>privacy</code>、<code>shelfMerge</code> 沒有對應的遊戲內行。下列為新建預設值，伺服器實值要以 OP 開啟時收到的回包為準。</p>
+<figure class="ui-preview"><figcaption><strong>伺服器端頁預覽</strong> · 在框內滾動檢視末尾「測試與調試」和「重置」</figcaption><div class="ui-stage"><div class="ui-window"><div class="ui-title">伺服器端玩法設定</div><div class="ui-viewport">
+<div class="ui-group">伺服器端保存期限玩法</div>
+<div class="ui-row"><span class="ui-name">保存期限與控溫系統</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">關</span></div>
+<div class="ui-row"><span class="ui-name">啟用 LSO 連動</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">開</span></div>
+<div class="ui-row"><span class="ui-name">啟用 EC 連動</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">開</span></div>
+<div class="ui-row"><span class="ui-name">代理中暑效果</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">開</span></div>
+<div class="ui-group">伺服器端營養玩法</div>
+<div class="ui-row"><span class="ui-name">屬性加成重新整理間隔(tick)</span><span class="ui-button reset">♻</span><span class="ui-value number">100</span></div>
+<div class="ui-row"><span class="ui-name">藥水效果重新整理間隔(tick)</span><span class="ui-button reset">♻</span><span class="ui-value number">200</span></div>
+<div class="ui-group">物品所有權保護</div>
+<div class="ui-row"><span class="ui-name">非法持有時掉落到腳下</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">關</span></div>
+<div class="ui-row"><span class="ui-name">死亡掉落移除主人標記</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">關</span></div>
+<div class="ui-group">測試與調試</div>
+<div class="ui-row"><span class="ui-name">測試日誌</span><span class="ui-button reset">♻</span><span class="ui-button ui-value short">關</span></div>
+<div class="ui-group">重置</div>
+<div class="ui-row"><span class="ui-name">重置預設定義</span><span class="ui-button danger">重置</span></div>
+</div><div class="ui-footer"><span class="ui-button">儲存</span><span class="ui-button">返回</span></div></div></div></figure>
+<dl class="ui-help"><dt>保存期限與控溫系統 · 關</dt><dd>保存期限、溫度、冷鮮的總開關；關閉期間暫停推進與相關效果，已有資料保留，重新開啟不追補關閉時段。</dd><dt>啟用 LSO 連動 · 開</dt><dd>允許食物保存期限讀取 LSO 的世界環境；關閉不等於關閉其他 LSO 功能。</dd><dt>啟用 EC 連動 · 開</dt><dd>允許食物直接使用 EC 氣候與 HD 季節變質倍率；不修改 LSO 自帶的季節影響。</dd><dt>代理中暑效果 · 開</dt><dd>伺服器端把 LSO 中暑鏡像為 EC 中暑以顯示模糊效果；不代替玩家體溫規則，是否生效還取決於連動和免疫狀態。</dd><dt>屬性加成重新整理間隔 · 100 tick</dt><dd>營養組的屬性獎勵重新計算周期，預設約 5 秒；允許 1–1728000 tick。</dd><dt>藥水效果重新整理間隔 · 200 tick</dt><dd>營養組的藥水效果獎勵重新整理周期，預設約 10 秒；允許 1–1728000 tick。</dd><dt>非法持有時掉落到腳下 · 關</dt><dd>從未被信任的玩家持有受保護物品時，開=丟到腳下，關=留在原位凍結並警告；預設關可減少誤判丟失風險。</dd><dt>死亡掉落移除主人標記 · 關</dt><dd>開=所有死亡掉落物清除已有主人，關=僅為原本無主的掉落標註死者，已有主人的保持不變。</dd><dt>測試日誌 · 關</dt><dd>開啟後伺服器端輸出方塊右鍵和放置/分口食物的診斷明細；所有玩家都會記，排查後建議關閉。</dd><dt>重置預設定義 · 重置</dt><dd>不是重置這 9 個開關！點此後還要確認，會把營養組、階段、加成、品質、品級五類<strong>預設定義</strong>寫回 HD 覆蓋層，同名覆蓋、缺失補齊、自建 ID 保留，並立即重載；不可撤銷，操作前備份。</dd><dt>儲存 / 返回 / ♻</dt><dd>儲存發送伺服器端並等待成功回執；失敗不當作成功。返回放棄未儲存草稿；♻ 只改當前行的待儲存值。</dd></dl>
+<div class="callout warn"><b>特別注意「重置」：</b>紅色操作鈕和每行的 ♻ 是兩種完全不同的動作；前者經確認後立即改伺服器端資料包，即使沒點底部「儲存」也會執行。</div>
+<h3>溫度系統連動設定：五個表頁 + LSO 世界溫度入口</h3>
+<p>六個入口按遊戲內的兩行三列排列。前五個是同一頁籤組，切換頁籤會保留未儲存的輸入；點擊其中任一「儲存」會校驗並一起提交五張表。第六個「LSO 世界溫度」會開啟獨立頁面，不走五表合併儲存。預覽頁籤只切換下方說明，不修改檔案。</p>
+<figure class="ui-preview"><figcaption><strong>溫度頁預覽</strong> · 點擊頁籤切換示意(資料行範例，真實條目來自伺服器端)</figcaption><div class="ui-stage"><div class="ui-window wide" data-ui-preview><div class="ui-title">溫度系統連動設定</div><div class="ui-tabbar" role="tablist" aria-label="溫度設定預覽頁籤">
+<button class="ui-button" type="button" role="tab" id="ui-tab-multiplier" aria-controls="ui-pane-multiplier" aria-selected="true" tabindex="0" data-ui-tab="multiplier">變質倍率</button>
+<button class="ui-button" type="button" role="tab" id="ui-tab-block" aria-controls="ui-pane-block" aria-selected="false" tabindex="-1" data-ui-tab="block">方塊溫變</button>
+<button class="ui-button" type="button" role="tab" id="ui-tab-daynight" aria-controls="ui-pane-daynight" aria-selected="false" tabindex="-1" data-ui-tab="daynight">晝夜溫變</button>
+<button class="ui-button" type="button" role="tab" id="ui-tab-season" aria-controls="ui-pane-season" aria-selected="false" tabindex="-1" data-ui-tab="season">季節溫變</button>
+<button class="ui-button" type="button" role="tab" id="ui-tab-weather" aria-controls="ui-pane-weather" aria-selected="false" tabindex="-1" data-ui-tab="weather">雨雪溫變</button>
+<button class="ui-button" type="button" role="tab" id="ui-tab-dimension" aria-controls="ui-pane-dimension" aria-selected="false" tabindex="-1" data-ui-tab="dimension">LSO 世界溫度</button>
+</div><div class="ui-viewport">
+<div class="ui-tab-panel" role="tabpanel" id="ui-pane-multiplier" aria-labelledby="ui-tab-multiplier" data-ui-pane="multiplier"><div class="ui-group">季節保存期限倍率</div><div class="ui-row"><span class="ui-name">立春</span><span class="ui-button reset">♻</span><span class="ui-value number">1</span></div><div class="ui-row"><span class="ui-name">雨水</span><span class="ui-button reset">♻</span><span class="ui-value number">1</span></div><div class="ui-row"><span class="ui-name">… 後續按伺服器端季節表排列</span></div></div>
+<div class="ui-tab-panel" role="tabpanel" id="ui-pane-block" aria-labelledby="ui-tab-block" data-ui-pane="block" hidden><div class="ui-row"><span class="ui-value long" style="color:#888">搜索中文名 / 英文名 / ID / 語言鍵</span></div><div class="ui-group">方塊溫變</div><div class="ui-row"><span class="ui-name">營火 [lit=true]</span><span class="ui-button reset">♻</span><span class="ui-value number">設定值</span></div><div class="ui-row"><span class="ui-name">… 方塊/狀態由伺服器端設定決定</span></div></div>
+<div class="ui-tab-panel" role="tabpanel" id="ui-pane-daynight" aria-labelledby="ui-tab-daynight" data-ui-pane="daynight" hidden><div class="ui-group">晝夜溫變</div><div class="ui-row"><span class="ui-name">立春</span><span class="ui-two"><span class="ui-button reset">♻</span><small>正午</small><span class="ui-value">0</span><span class="ui-button reset">♻</span><small>午夜</small><span class="ui-value">0</span></span></div><div class="ui-row"><span class="ui-name">雨水</span><span class="ui-two"><span class="ui-button reset">♻</span><small>正午</small><span class="ui-value">0</span><span class="ui-button reset">♻</span><small>午夜</small><span class="ui-value">0</span></span></div><div class="ui-row"><span class="ui-name">… 同樣格式共 24 節氣</span></div></div>
+<div class="ui-tab-panel" role="tabpanel" id="ui-pane-season" aria-labelledby="ui-tab-season" data-ui-pane="season" hidden><div class="ui-group">季節溫變</div><div class="ui-row"><span class="ui-name">立春</span><span class="ui-button reset">♻</span><span class="ui-value number">0</span></div><div class="ui-row"><span class="ui-name">雨水</span><span class="ui-button reset">♻</span><span class="ui-value number">0</span></div><div class="ui-row"><span class="ui-name">… 同樣格式共 24 節氣</span></div></div>
+<div class="ui-tab-panel" role="tabpanel" id="ui-pane-weather" aria-labelledby="ui-tab-weather" data-ui-pane="weather" hidden><div class="ui-group">雨雪溫變</div><div class="ui-row"><span class="ui-name">立春</span><span class="ui-two"><span class="ui-button reset">♻</span><small>雨/雪</small><span class="ui-value">-1</span><span class="ui-button reset">♻</span><small>雷雨/雪</small><span class="ui-value">-2</span></span></div><div class="ui-row"><span class="ui-name">雨水</span><span class="ui-two"><span class="ui-button reset">♻</span><small>雨/雪</small><span class="ui-value">-1</span><span class="ui-button reset">♻</span><small>雷雨/雪</small><span class="ui-value">-2</span></span></div><div class="ui-row"><span class="ui-name">… 同樣格式共 24 節氣</span></div></div>
+<div class="ui-tab-panel" role="tabpanel" id="ui-pane-dimension" aria-labelledby="ui-tab-dimension" data-ui-pane="dimension" hidden><div class="ui-group">單獨開啟 LSO 世界溫度表單</div><div class="ui-row"><span class="ui-name">維度 ID · 基礎溫度 · 海拔影響 · 海平面高度</span></div><div class="ui-row"><span class="ui-name">詳情見下面的獨立頁面預覽。</span></div></div>
+</div><div class="ui-footer" data-ui-footer><span class="ui-button">儲存</span><span class="ui-button">返回</span></div></div></div></figure>
+<dl class="ui-help"><dt>變質倍率 · 伺服器端季節表</dt><dd>每行一個實際存在的季節/節氣 ID，<code>0–100</code>，預設復位為 1；大於 1 加速變質，小於 1 減慢。需 EC 有效節氣及伺服器端「啟用 EC 連動」，不改變氣溫；舊六季節檔案仍按六條顯示。</dd><dt>方塊溫變 · 搜索框</dt><dd>按中文名、英文名、方塊 ID 或語言鍵過濾；清空恢復全部。搜索不丟棄已改卻未儲存的溫度。</dd><dt>方塊溫變 · 每個方塊/狀態行</dt><dd>正數加熱、負數降溫，範圍 -1000 至 1000；同一方塊不同狀態會分行，距離和遮擋影響實際貢獻。♻ 還原開啟頁面時的該行數值；「新增方塊」從背包選取可放置方塊並進入確認流程。HD 自有熱量表用於 HD/EC 回退分支；LSO 的世界熱量讀取走其來源，不能把兩者當同一張表。</dd><dt>晝夜溫變 · 每節氣雙框</dt><dd>左「正午」、右「午夜」，各為 -100 至 100°C，預設 0；一天內平滑過渡。若群系另填對應端點，群系值優先。</dd><dt>季節溫變 · 每節氣單框</dt><dd>每節氣額外加算的攝氏溫差，-100 至 100°C，預設 0；有 EC 時按當前節氣，沒有則取立春；不是覆蓋 EC 的既有溫度。</dd><dt>雨雪溫變 · 每節氣雙框</dt><dd>左「雨/雪」預設 -1°C，右「雷雨/雪」預設 -2°C；各可設 -100 至 100°C。無降水時不施加；群系單獨覆蓋優先，雷暴不再疊加普通雨雪值。</dd><dt>儲存 / 返回 / ♻</dt><dd>五個表頁共用一次伺服器端儲存，切頁不會丟草稿；儲存前校驗全部頁。每個 ♻ 僅復位對應輸入框，返回放棄未儲存值。方塊頁底部另有「新增方塊」。</dd><dt>LSO 世界溫度</dt><dd>第六個按鈕開啟獨立表單(見下)，不是五表頁籤；僅在 LSO 連動環境中有實際作用，儲存後須按 LSO 資料包機制執行 <code>/reload</code>。</dd></dl>
+<p class="ui-note">24 節氣行順序：立春、雨水、驚蟄、春分、清明、穀雨、立夏、小滿、芒種、夏至、小暑、大暑、立秋、處暑、白露、秋分、寒露、霜降、立冬、小雪、大雪、冬至、小寒、大寒。預覽只顯示前兩行，不代表其餘 22 行缺失。</p>
+<h3>LSO 世界溫度：獨立維度表單</h3>
+<figure class="ui-preview"><figcaption><strong>獨立頁預覽</strong> · 新建草稿示意；不代表當前世界、LSO 檔案或伺服器端的真實值</figcaption><div class="ui-stage"><div class="ui-window dimension"><div class="ui-title">LSO 世界溫度</div><div style="text-align:center;color:#ffffaa">新增草稿(確認後才寫入)</div><div class="ui-dimension-rows"><span class="ui-name">維度 ID</span><span class="ui-value long">(新建時輸入維度 ID)</span><span class="ui-name">基礎溫度</span><span class="ui-value long">20</span><span class="ui-name">海平面高度 / 海拔影響</span><div class="ui-row"><span class="ui-value">64</span><span class="ui-button">海拔影響: 開</span></div><div style="min-height:19px;color:#ff7979">&nbsp;</div></div><div class="ui-footer"><span class="ui-button">查詢當前維度</span><span class="ui-button">檔案列表</span><span class="ui-button">儲存</span><span class="ui-button">關閉</span></div></div></div></figure>
+<dl class="ui-help"><dt>維度 ID</dt><dd>新建時填完整維度 ID(如 <code>minecraft:the_nether</code>)；載入現有檔案後唯讀，不能借改 ID 覆蓋另一維度。</dd><dt>基礎溫度</dt><dd>LSO 世界溫度的絕對量綱，不是 °C；可設 -1000 至 1000 的有限數字。</dd><dt>海平面高度 / 海拔影響</dt><dd><code>sea_level_height</code> 為整數，初始草稿 64；<code>has_altitude</code> 控制高度影響，開啟時高處更冷。</dd><dt>查詢當前維度</dt><dd>從伺服器端請求玩家當前維度的世界溫度快照；不儲存。</dd><dt>檔案列表</dt><dd>可搜索、載入或新增維度；「刪除」只對 HD 覆蓋層檔案開放，原生/世界資料包檔案唯讀，刪覆蓋後回落下一層。</dd><dt>儲存 / 關閉</dt><dd>儲存寫入 HD 設定資料包(已有條目編輯，原生條目建立覆蓋)，成功後仍須手動 <code>/reload</code>；關閉不儲存草稿。舊「晝夜循環刻數」欄位不在當前表單中。</dd></dl>
+<h3>群系溫度：按群系的覆蓋與 24 節氣</h3>
+<figure class="ui-preview"><figcaption><strong>群系頁預覽</strong> · 範例群系僅用於排版；「基溫:?」 表示此離線示意沒有遊戲內讀數</figcaption><div class="ui-stage"><div class="ui-window biome"><div class="ui-title">設定群系基礎溫度</div><div class="ui-biome-body">
+<div class="ui-row"><span class="ui-name">群系(基溫:?)</span><span class="ui-value long">minecraft:plains</span><span class="ui-button">查詢其他群系</span></div>
+<div class="ui-row"><span class="ui-name">晝夜溫差</span><span class="ui-value long" style="color:#55ffff">正午 · 留空繼承</span><span class="ui-value long" style="color:#55ffff">午夜 · 留空繼承</span><span class="ui-button">平均溫度</span></div>
+<div class="ui-row"><span class="ui-name">雨雪/雷雨溫差</span><span class="ui-value long" style="color:#55ffff">雨雪 · 留空繼承</span><span class="ui-value long" style="color:#55ffff">雷雨 · 留空繼承</span><span class="ui-button">平均降水</span></div>
+<div class="ui-row"><span class="ui-name" style="color:#ccc">立春</span><span class="ui-value readonly">額外 0</span><span class="ui-value">EC 偏移</span><span class="ui-value">降水值</span><span class="ui-value">預計 °C</span><span class="ui-button disabled">自動分配</span></div>
+<div class="ui-row"><span class="ui-name" style="color:#ccc">雨水</span><span class="ui-value readonly">額外 0</span><span class="ui-value">EC 偏移</span><span class="ui-value">降水值</span><span class="ui-value">預計 °C</span><span class="ui-button disabled">自動分配</span></div>
+<div class="ui-row"><span class="ui-name" style="color:#ccc">… 其餘節氣同結構</span></div>
+</div><div class="ui-footer"><span class="ui-button">查詢所在群系</span><span class="ui-button">重新整理</span><span class="ui-button">儲存</span><span class="ui-button">刪除覆蓋</span><span class="ui-button">關閉</span></div></div></div></figure>
+<dl class="ui-help"><dt>群系(基溫:…)/ 查詢其他群系</dt><dd>一次編輯一個群系。基溫來自原版群系、唯讀且不是攝氏度；輸入群系 ID 或從列表選取，右側按鈕僅在 EC 可用時顯示。</dd><dt>晝夜溫差 · 正午 / 午夜</dt><dd>此群系的兩個獨立覆蓋值(°C)：留空繼承全局同名端點，填 0 表示顯式覆蓋成零而非繼承；不會與全局值相加。</dd><dt>雨雪/雷雨溫差 · 兩個輸入框</dt><dd>同樣留空繼承全局，填數值覆蓋；只影響溫度，雷雨時用雷雨框，不再加普通雨雪框。與晝夜覆蓋均屬於 HD 自有設定。</dd><dt>平均溫度 / 平均降水</dt><dd>EC 環境才出現；批量調整各節氣的預計 °C 或最終降水值，屬於草稿，仍需儲存。</dd><dt>24 節氣 · 黃色額外溫差</dt><dd>唯讀展示「季節溫變」頁同一節氣的值；想修改須回溫度系統的「季節溫變」頁；不包含在右側的 EC 預計氣溫內。</dd><dt>24 節氣 · EC 偏移 / 最終降水</dt><dd>有 EC 時可編輯；EC 偏移不是 °C，最終降水是基礎值加節氣偏移，不等於完整降雨概率。留空沿用原有設定。</dd><dt>24 節氣 · 預計氣溫 / 自動分配</dt><dd>預計氣溫按攝氏展示 EC 氣候估算，不含方塊、天氣、晝夜額外值，不能代表玩家/食物最終溫度。改預計值後點該行「自動分配」反推 EC 偏移，再點儲存。</dd><dt>查詢所在群系 / 重新整理</dt><dd>前者選玩家腳下的群系並請求設定；後者重算預計值、空白預設值和當前伺服器端溫度詳情，不寫盤。</dd><dt>儲存 / 刪除覆蓋 / 關閉</dt><dd>儲存提交 EC 氣候(有 EC 時)及 HD 群系覆蓋；EC 氣候改動需按 EC 資源重載機制執行 <code>/reload</code>。刪除覆蓋僅刪除此群系 HD 晝夜/天氣覆蓋以恢復繼承，不是刪除 EC 或原版群系；關閉不儲存草稿。</dd></dl>
+<div class="callout warn"><b>無 EC 時的介面差異：</b>不顯示 24 條 EC 節氣編輯行，也沒有「查詢其他群系/平均溫度/平均降水」；群系晝夜與雨雪四個覆蓋框仍可用。舊的獨立「LSO 群系溫度」和「LSO 方塊溫變」按鈕不在當前溫度頁的六個有效入口裡，別按舊截圖尋找。</div>
+<div class="source-note">源碼依據：<code>HdModConfigScreen.init</code>、<code>HdPanelConfigScreen.render</code>、<code>HdDisplayConfigScreen.buildClientRows/buildServerRows/onSave</code>、<code>HdTempIntegrationScreen.init/onSave</code>、<code>LsoDimensionTempScreen.init</code>、<code>LsoDimensionFileListScreen.init</code>、<code>HdBiomeClimateScreen.init/save</code>、<code>CPacketResetDefaults.handle</code>。</div></section>
+
+<section class="page-section" id="refresh"><h2><span class="num">09</span>儲存與重新整理方式</h2><p class="lead">同一個「儲存」在不同位置含義不同：用戶端本機檔案、伺服器端權威分節和啟動期註冊不能互相替代。</p>
+<h3>遊戲內設定菜單</h3>
+<div class="table-wrap"><table><thead><tr><th>入口</th><th>覆蓋內容</th><th>權限 / 生效</th></tr></thead><tbody>
+<tr><td>用戶端外觀設定</td><td><code>display.json</code>：Tooltip 布局、溫度單位、預設顯示模式</td><td>所有玩家；儲存寫本機檔案，立即應用</td></tr>
+<tr><td>伺服器端玩法設定</td><td><code>server.json</code> 的 <code>gameplay</code>：保存期限總開關、連動、重新整理間隔、保護物品、測試日誌</td><td>OP4；伺服器端儲存並回執，線上玩家收到投影</td></tr>
+<tr><td>溫度系統連動設定</td><td>季節倍率、方塊熱量、雨雪/晝夜/節氣溫度及 LSO 世界溫度入口</td><td>OP4；五個主表頁同批儲存，LSO 世界溫度另存</td></tr>
+<tr><td>群系溫度</td><td>按群系的晝夜/天氣溫差；有 EC 時還可調節氣溫度與降水</td><td>OP4；EC 欄位儲存後按其資源機制重載</td></tr>
+</tbody></table></div>
+<h3>改完之後做什麼</h3>
+<div class="grid-2"><div class="mini-card"><b>只改伺服器端規則</b><span>例如 <code>server.json</code>、營養組/階段/加成、物品、方塊、品級、顏色和保存期限方案：儲存或編輯後執行 <code>/hdreload</code>，讓本模組重新讀盤並向線上玩家重發權威內容。</span></div><div class="mini-card"><b>只改本機外觀</b><span>例如 <code>display.json</code>、用戶端 <code>fog_effects.json</code>、本機提示範本：在各用戶端處理；伺服器執行 <code>/hdreload</code> 不會替你改這些本機檔案。</span></div></div>
+<div class="table-wrap"><table><thead><tr><th>修改內容</th><th>推薦動作</th><th>為什麼</th></tr></thead><tbody>
+<tr><td><code>server.json</code> gameplay / privacy / shelfMerge</td><td>gameplay 用 OP 頁儲存；privacy、shelfMerge 手改後 <code>/hdreload</code></td><td>遊戲內頁只往返 gameplay；另兩節沒有該頁編輯行。</td></tr>
+<tr><td><code>display.json</code>、本機霧效、本機範本</td><td>在對應用戶端儲存；手改後重進用戶端</td><td>不參與伺服器端同步，<code>/hdreload</code> 不遠端重寫本機檔案。</td></tr>
+<tr><td>營養組 / 階段 / 加成、物品、提示、方塊、品質、品級、效果行</td><td>儲存後 <code>/hdreload</code>；世界資料包改動可用原版 <code>/reload</code></td><td>HD 覆蓋層由 <code>/hdreload</code> 以磁碟為準重建；世界資料包由資源管理器重新整理。</td></tr>
+<tr><td>新增/刪除 <code>quality_registry/</code> 條目</td><td>兩端同步定義後重啟</td><td>物品註冊只發生在啟動階段；<code>/hdreload</code> 只重算待生效列表。</td></tr>
+<tr><td>物品 <code>stackSize</code></td><td>重啟</td><td>堆疊上限是物品單例屬性；NBT 變體不能各自覆蓋。</td></tr>
+<tr><td>共享用戶端資源(貼圖、字體等)</td><td>分發到各用戶端</td><td>伺服器端設定只能描述引用，不能把資源推送到用戶端。</td></tr>
+</tbody></table></div>
+<div class="callout warn"><b>不要把 <code>/hdreload</code> 當成原版 <code>/reload</code>：</b>它只重載 Healthy Diet 自身可重載的設定和 HD 覆蓋層；原版資料包/資源包、其他模組的資源以及用戶端本機檔案仍按各自流程處理。</div>
+<div class="demo-card"><div><b>需要確認具體物品欄位？</b><span>營養、厭倦、保存期限、Tooltip 和品質章節分別解釋欄位的玩法含義；本頁負責「欄位在哪、遊戲內選項是什麼、改完怎麼生效」。</span></div><a href="admin.html">檢視服主手冊 →</a></div>
+<div class="source-note">源碼依據：<code>HdModConfigScreen</code>、<code>HdDisplayConfigScreen</code>、<code>HdTempIntegrationScreen</code>、<code>HDReloadCommand.reloadAll</code>、<code>QualityRegistryLoader</code>。</div></section>
+
+<footer class="page-footer"><span>Healthy Diet · 設定項詳解</span><a href="index.html">返回章節地圖</a></footer></article></div></main>
+<script src="assets/guide.js"></script>
+<script>
+(() => {
+  const input = document.querySelector('[data-config-filter]');
+  if (!input) return;
+  const rows = [...document.querySelectorAll('[data-config-table] tbody tr')];
+  const status = document.querySelector('[data-config-status]');
+  const update = () => {
+    const query = input.value.trim().toLowerCase();
+    let shown = 0;
+    for (const row of rows) {
+      const hit = !query || (row.dataset.search || row.textContent).toLowerCase().includes(query);
+      row.hidden = !hit;
+      if (hit) shown++;
+    }
+    if (status) status.textContent = query ? `匹配 ${shown} / ${rows.length} 個設定入口` : `共 ${rows.length} 個設定入口；輸入檔案名、路徑或欄位名過濾。`;
+  };
+  input.addEventListener('input', update);
+  update();
+
+  const preview = document.querySelector('[data-ui-preview]');
+  const tabs = [...preview.querySelectorAll('[data-ui-tab]')];
+  const panes = [...preview.querySelectorAll('[data-ui-pane]')];
+  const selectTab = (tab) => {
+    for (const item of tabs) {
+      const selected = item === tab;
+      item.setAttribute('aria-selected', String(selected));
+      item.tabIndex = selected ? 0 : -1;
+    }
+    for (const pane of panes) pane.hidden = pane.dataset.uiPane !== tab.dataset.uiTab;
+    preview.querySelector('[data-ui-footer]').hidden = tab.dataset.uiTab === 'dimension';
+    preview.querySelector('.ui-viewport').scrollTop = 0;
+  };
+  for (const tab of tabs) {
+    tab.addEventListener('click', () => selectTab(tab));
+    tab.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+      event.preventDefault();
+      const next = tabs[(tabs.indexOf(tab) + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+      selectTab(next);
+      next.focus();
+    });
+  }
+})();
+</script>
+</body></html>

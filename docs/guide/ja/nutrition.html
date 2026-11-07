@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>栄養値 · Healthy Diet 機能ガイド</title>
+  <link rel="stylesheet" href="assets/guide.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へスキップ</a>
+
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <span>Healthy Diet<small>FEATURE GUIDE</small></span>
+      </a>
+      <nav class="topnav" data-nav aria-label="章ナビゲーション">
+        <a href="index.html">概要</a>
+        <a href="nutrition.html" aria-current="page">栄養値</a>
+      </nav>
+      <span class="lang-badge">日本語</span>
+      <button class="menu-btn" type="button" data-menu aria-expanded="false" aria-label="章ナビゲーションを開く">☰</button>
+    </div>
+  </header>
+
+  <main class="wrap" id="main">
+    <section class="hero">
+      <span class="eyebrow">01 / NUTRITION</span>
+      <h1>栄養値：数値、ステージ、条件ルール。</h1>
+      <p>このページでは計算順に栄養グループ、減少、ステージ、ボーナス、条件ルールを説明します。画面と数値は例であり、実際のルールはサーバー設定で決まります。</p>
+      <div class="tags">
+        <span class="tag">範囲 0–100</span>
+        <span class="tag">小数対応</span>
+        <span class="tag">ステージは整数判定</span>
+        <span class="tag">サーバー設定可能</span>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="toc" data-toc aria-label="このページの目次">
+        <h2>このページの目次</h2>
+        <ol>
+          <li><a href="#overview">仕組みの概要</a></li>
+          <li><a href="#values">増加と減少</a></li>
+          <li><a href="#stages">ステージ</a></li>
+          <li><a href="#bonuses">ボーナスと連動</a></li>
+          <li><a href="#conditions">条件ルール</a></li>
+          <li><a href="#items">エディターとバリアント</a></li>
+          <li><a href="#admin">管理とコマンド</a></li>
+          <li><a href="#summary">要点の振り返り</a></li>
+        </ol>
+        <div class="toc-note">一般的な既定設定には6グループあります：乳製品、果物、穀物、タンパク質、糖分、野菜。サーバーは追加・削除・改名・順序変更ができます。</div>
+      </aside>
+
+      <article>
+        <section class="page-section" id="overview" aria-labelledby="overview-title">
+          <h2 id="overview-title"><span class="num">01</span>仕組みの概要</h2>
+          <p class="lead">各栄養グループは独立した0–100の数値軸です。食べ物は複数グループに同時に影響でき、満腹度が減ると各グループが設定された減少率で減ります。</p>
+          <p>同じ食べ物でもグループごとの寄与は異なります。たとえばリンゴは果物と糖分を同時に増やします。食べ物ごとの違いが食生活の構造を作ります。</p>
+
+          <div class="figure">
+            <div class="food-demo">
+              <div class="food-card">
+                <span class="food-icon" aria-hidden="true">林</span>
+                <b>リンゴ</b>
+                <span>例の食べ物</span>
+              </div>
+              <div class="food-arrow" aria-hidden="true">→</div>
+              <div class="mini-bars" aria-label="リンゴが2つの栄養グループに与える影響の例">
+                <div class="mini-bar" style="--c:#fab387">
+                  <span class="name">果物</span>
+                  <span class="track"><span class="fill" style="width:54%"></span></span>
+                  <span class="num">+26</span>
+                </div>
+                <div class="mini-bar" style="--c:#f38ba8">
+                  <span class="name">糖分</span>
+                  <span class="track"><span class="fill" style="width:21%"></span></span>
+                  <span class="num">+12</span>
+                </div>
+              </div>
+            </div>
+            <div class="figure-caption">例：1つの食べ物が複数グループに影響できます。バーは計算後の例であり、サーバーの既定設定ではありません。</div>
+          </div>
+
+          <h3>栄養パネルの例</h3>
+          <p>H を押すと栄養パネルが開きます。グループ名、配色、ステージ範囲は Forge メインライン内蔵 JSON から取得しています。各ステージにホバーまたはキーボードフォーカスすると、実際に設定されたボーナスプレビューを確認できます。既定ステージには手書きの名前や説明がないため、ツールチップには範囲、設定されたボーナス、必要なクリックコマンド案内だけが表示されます。</p>
+
+          <div class="figure">
+            <div class="mock-panel" aria-label="Forge メインライン内蔵設定に基づく栄養パネルの例">
+              <div class="mock-head"><b>栄養状態 · 設定例</b><span>H で開く</span></div>
+              <div class="mock-rows" id="mock-rows"></div>
+              <div class="mock-actions"><button id="mock-check" type="button" aria-describedby="mock-bonus-tip">確認完了</button><div class="mock-bonus-tip" id="mock-bonus-tip" role="tooltip"></div></div>
+            </div>
+            <div class="figure-caption">HTML による模擬画面で、ゲームのスクリーンショットではありません。6つの色ブロックはアイテムアイコンを置き換えるものではありません。表示値は例のプレイヤー状態で、既定の初期値ではありません。ステージ区画にマウスを合わせるか Tab でフォーカスすると、その区間の実際の既定ボーナスを確認できます。「確認完了」にホバーすると、この例の値で現在有効なボーナスを確認できます。ここでゲームコマンドが実際に実行されることはありません。</div>
+          </div>
+          <div class="source-note">
+            <b>設定ソース</b>：<code>nutrition_groups.json</code> と既定データパックの <code>nutrition_stages/*.json</code>、<code>nutrition_bonuses/*.json</code>。配色は <code>color_schemes.json</code> から取得します。たとえば既定の野菜グループは <code>initialValue</code> が42、<code>decayRate</code> が6です。図の55%は46–60区間のボーナスを示すための例です。ボーナスのツールチップは <code>HealthyDietScreen</code> と <code>BonusTooltipUtil</code> に基づき、任意の説明を既定設定に書き込むものではありません。
+          </div>
+
+          <div class="callout good">
+            <b>数値体系：</b>満腹度と栄養値は互いに独立しています。満腹度は空腹と摂取に、栄養値は長期的な食生活構造に使います。
+          </div>
+        </section>
+
+        <section class="page-section" id="values" aria-labelledby="values-title">
+          <h2 id="values-title"><span class="num">02</span>増加と減少</h2>
+          <p class="lead">摂取による増加と満腹度による減少は、2つの独立した計算経路です。</p>
+          <p>摂取による増加量はおおよそ <b>食べ物の基本値 × そのグループの取得倍率</b> です。生涯食物嫌悪がある場合はさらに減少係数を掛けます。計算後は0–100にクランプされます。管理者コマンド、自然減少、初期値は取得倍率を通りません。</p>
+
+          <div class="calc" aria-label="減少計算の例">
+            <div class="calc-row">
+              <label for="decay-rate">減少率</label>
+              <input id="decay-rate" type="range" min="1" max="10" step="0.5" value="4">
+              <output id="decay-rate-out">4</output>
+            </div>
+            <div class="calc-row">
+              <label for="hunger-used">消費満腹度</label>
+              <input id="hunger-used" type="range" min="0" max="20" step="1" value="20">
+              <output id="hunger-used-out">20</output>
+            </div>
+            <div class="calc-result">
+              <span>栄養値の減少 <strong id="decay-loss">5.0</strong> ポイント</span>
+              <small>式：満腹度 ÷ 減少率。満腹度のみを計算し、隠し満腹度は計算しません</small>
+            </div>
+            <div class="mini-bars">
+              <div class="mini-bar" style="--c:#a6e3a1">
+                <span class="name">残り</span>
+                <span class="track"><span class="fill" id="decay-fill" style="width:95%"></span></span>
+                <span class="num" id="decay-remain">95.0</span>
+              </div>
+            </div>
+          </div>
+          <div class="figure-caption">スライダーは減少式のデモです。計算は100から始まり、実際の初期値を示すものではありません。</div>
+
+          <ul class="rules">
+            <li><span class="n">1</span><span><b>範囲は常に0–100。</b>栄養値は小数を保持でき、計算後に上下限でクランプされます。</span></li>
+            <li><span class="n">2</span><span><b>ステージ判定は整数。</b>現在値を四捨五入してからステージに一致させます。たとえば59.6は60として扱います。</span></li>
+            <li><span class="n">3</span><span><b>死亡しても栄養値は消えません。</b>リスポーン時にデータはプレイヤー能力としてコピーされます。</span></li>
+          </ul>
+
+          <div class="callout warn">
+            <b>例と設定：</b>減少率、初期値、取得倍率はサーバーが調整できます。実際の値は <code>/headiet</code> パネルとサーバー設定に準拠します。
+          </div>
+        </section>
+
+        <section class="page-section" id="stages" aria-labelledby="stages-title">
+          <h2 id="stages-title"><span class="num">03</span>ステージ</h2>
+          <p class="lead">ステージは栄養値の区間と関連動作です。ステージのタイトル、説明、クリックコマンドはステージページで編集し、グループ横断の継続効果と属性ボーナスは独立した効果ページで区間条件ごとに設定します。</p>
+          <p>ステージ境界は整数を使います。エディターは隣接区間を検証し、値がステージ間の空白に入らないようにします。判定時は先に四捨五入し、その後で区間に一致させます。</p>
+
+          <div class="stage-demo" aria-label="ステージ判定の例">
+            <div class="stage-ladder" aria-hidden="true">
+              <div class="stage-seg low">低 0–29</div>
+              <div class="stage-seg mid">中 30–69</div>
+              <div class="stage-seg high">高 70–100</div>
+              <span class="stage-marker" id="stage-marker" style="left:59.6%"></span>
+            </div>
+            <label class="slider-label" for="stage-range"><span>例の数値</span><b id="stage-value">59.6</b></label>
+            <input id="stage-range" type="range" min="0" max="100" step="0.1" value="59.6" aria-label="例の栄養値">
+            <div class="stage-readout">
+              <span>整数判定：<b id="stage-rounded">60</b></span>
+              <span>現在の例のステージ：<b id="stage-name">中</b></span>
+            </div>
+          </div>
+          <div class="figure-caption">ステージ名と 0–29 / 30–69 / 70–100 は例です。サーバーはより多くのステージや異なる境界を設定できます。</div>
+
+          <h3>ステージの設定項目</h3>
+          <div class="grid-3">
+            <div class="mini-card">
+              <b>名前と説明</b>
+              <span>ステージを識別し、現在の状態を説明します。説明は栄養パネルのツールチップに表示されます。</span>
+            </div>
+            <div class="mini-card">
+              <b>クリックコマンド</b>
+              <span>プレイヤーがステージをクリックしたときに実行します。管理者権限で動作し、出力は抑制されます。</span>
+            </div>
+            <div class="mini-card">
+              <b>自動ボーナスプレビュー</b>
+              <span>ステージに設定された属性と効果をツールチップへ自動追加します。重複表示を避けたい場合は無効にできます。</span>
+            </div>
+          </div>
+
+          <div class="callout">
+            <b>クリッククールダウン：</b>ステージコマンドは同じプレイヤーで <b>1.5秒</b> の間隔が必要で、サーバーが再検証します。コマンドはサーバー管理者が設定します。出所不明のステージコマンドをクリックしないでください。
+          </div>
+          <h3>ゲーム内 <code>/hdui stage</code>：ステージ／コマンド／説明</h3>
+          <p>OP4 が必要です。左側には有効な栄養グループだけが表示されます。以下の3つの図はそれぞれ1つの Tab 構造を示します。図内のタブリンクは対応する図へ移動できます。図内のボタンと入力欄は読み取り専用の例で、ゲーム設定を保存することはできません。</p>
+          <figure class="guide-ui" id="stage-editor"><figcaption><strong>ステージ Tab</strong> · ソースに基づく読み取り専用 HTML イメージです。ゲームのスクリーンショットやサーバーのリアルタイム値ではありません。区間はすべて例です。</figcaption>
+            <div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">ステージ管理 · /hdui stage (OP4)</div><div class="guide-ui-columns"><div class="guide-ui-list"><span>有効グループリスト</span><span class="selected">例グループ（実値ではありません）</span></div><div class="guide-ui-content">
+              <div class="guide-ui-tabs"><a href="#stage-editor" aria-current="location">ステージ</a><a href="#stage-command">コマンド</a><a href="#stage-description">説明</a><a href="#effect-editor" class="guide-ui-button green">効果 ↗</a></div>
+              <div class="guide-ui-group">ステージ区間 · バーをクリックして区間を選択</div><div class="guide-ui-bar"><span>0–29</span><span>30–69</span><span>70–100</span></div><div class="guide-ui-row"><span>現在の選択</span><span class="guide-ui-field">例：30–69（サーバー未読込）</span></div><span class="guide-ui-hint">隣接境界は連続している必要があります。追加、削除、分割はこのグループの保存待ち草稿に書き込まれます。</span>
+            </div></div><div class="guide-ui-actions"><span class="guide-ui-button">+ ステージ追加</span><span class="guide-ui-button">− ステージ削除</span><span class="guide-ui-button">ステージ分割</span><span class="guide-ui-button">保存</span></div></div></div>
+            <div class="guide-ui-note">設定済み色ブロックを選択してから削除/分割できます。右上の緑色「効果」は独立したゲームページへ移動し、4番目の Tab ではありません。</div></figure>
+          <figure class="guide-ui" id="stage-command"><figcaption><strong>コマンド Tab</strong> · ソースに基づく読み取り専用 HTML イメージです。ゲームのスクリーンショットやサーバーのリアルタイム値ではありません。</figcaption>
+            <div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">ステージ管理 · クリックコマンド</div><div class="guide-ui-columns"><div class="guide-ui-list"><span>有効グループリスト</span><span class="selected">例グループ（実値ではありません）</span></div><div class="guide-ui-content"><div class="guide-ui-tabs"><a href="#stage-editor">ステージ</a><a href="#stage-command" aria-current="location">コマンド</a><a href="#stage-description">説明</a><a href="#effect-editor" class="guide-ui-button green">効果 ↗</a></div><div class="guide-ui-group">先にバーで設定済みステージを選択</div><div class="guide-ui-bar"><span>0–29</span><span>30–69</span><span>70–100</span></div><div class="guide-ui-row"><span>クリック発動コマンド</span><span class="guide-ui-field">例：ここにコマンドを入力</span></div><span class="guide-ui-hint">プレイヤーが /headiet でステージを手動クリックしたときだけ発動し、値が区間に入っただけでは自動実行されません。</span></div></div><div class="guide-ui-actions"><span class="guide-ui-button">+ コマンド追加</span><span class="guide-ui-button">保存</span></div></div></div>
+            <div class="guide-ui-note">コマンド、ステージ分割、説明はこのグループの保存を共有します。ここでは栄養連動効果は編集しません。</div></figure>
+          <figure class="guide-ui" id="stage-description"><figcaption><strong>説明 Tab</strong> · ソースに基づく読み取り専用 HTML イメージです。ゲームのスクリーンショットやサーバーのリアルタイム値ではありません。</figcaption>
+            <div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">ステージ管理 · ホバー説明</div><div class="guide-ui-columns"><div class="guide-ui-list"><span>有効グループリスト</span><span class="selected">例グループ（実値ではありません）</span></div><div class="guide-ui-content"><div class="guide-ui-tabs"><a href="#stage-editor">ステージ</a><a href="#stage-command">コマンド</a><a href="#stage-description" aria-current="location">説明</a><a href="#effect-editor" class="guide-ui-button green">効果 ↗</a></div><div class="guide-ui-group">先にバーで設定済みステージを選択</div><div class="guide-ui-bar"><span>0–29</span><span>30–69</span><span>70–100</span></div><div class="guide-ui-row"><span>ステージタイトル</span><span class="guide-ui-field">例：任意のタイトル</span></div><div class="guide-ui-row"><span>説明テキスト</span><span class="guide-ui-field">例：ホバー説明文（行ごとに追加可能）</span></div></div></div><div class="guide-ui-actions"><span class="guide-ui-button">+ 説明追加</span><span class="guide-ui-button">自動ツールチップ情報 現在：表示</span><span class="guide-ui-button">保存</span></div></div></div>
+            <div class="guide-ui-note">ステージ、コマンド、説明の3つの Tab は1回で保存されます。グループ切替、離脱、効果ページへの移動時に未保存変更があれば、保存/破棄/閉じるを確認します。「自動ツールチップ情報」は即時に個別送信されるグループレベルのスイッチで、この草稿には含まれません。</div></figure>
+          <div class="source-note">画面根拠：<code>StageManageScreen.buildContentTabs/buildEffectButton/buildStageBottomButtons</code>、<code>buildCommandRows/buildDescriptionRows</code>、現在の <code>zh_cn</code> ラベル。</div>
+        </section>
+
+        <section class="page-section" id="bonuses" aria-labelledby="bonuses-title">
+          <h2 id="bonuses-title"><span class="num">04</span>ボーナスと連動</h2>
+          <p class="lead">独立した効果ページでは、1つまたは複数の栄養グループの区間組み合わせに、継続的な属性修飾子とポーション効果を設定できます。すべての条件を満たすと連動ボーナスが発動します。食べた後の単発ポーション効果を編集するページではありません。</p>
+          <div class="grid-3">
+            <div class="mini-card">
+              <b>属性ボーナス</b>
+              <span>たとえば最大体力、移動速度。既定では約5秒ごとに評価され、サーバーが調整できます。</span>
+            </div>
+            <div class="mini-card">
+              <b>ポーション効果</b>
+              <span>たとえば体力再生、ダメージ耐性。既定では約10秒ごとに更新されます。既定の周期では、効果時間を10秒より長くしないと途切れます。</span>
+            </div>
+            <div class="mini-card">
+              <b>連動ボーナス</b>
+              <span>複数グループの区間条件を同じ設定に書き、すべて満たすと有効になります。</span>
+            </div>
+          </div>
+
+          <div class="figure">
+            <div class="flow" aria-label="連動ボーナスの例">
+              <div class="flow-node"><b>果物</b>30–69</div>
+              <div class="flow-arrow" aria-hidden="true">+</div>
+              <div class="flow-node"><b>野菜</b>30–69</div>
+              <div class="flow-arrow" aria-hidden="true">+</div>
+              <div class="flow-node"><b>穀物</b>30–69</div>
+              <div class="flow-arrow" aria-hidden="true">+</div>
+              <div class="flow-node"><b>タンパク質</b>30–69</div>
+              <div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node accent"><b>すべて満たす</b>追加効果を付与</div>
+            </div>
+            <div class="figure-caption">連動条件は AND 関係です。いずれかのグループが区間を外れると成立しません。</div>
+          </div>
+
+          <div class="callout">
+            <b>ステージを離れた後：</b>ボーナスは維持されず、更新周期で更新されます。属性修飾子は回収され、ポーション効果は残り時間に応じて終了するため、効果時間は更新周期に合わせる必要があります。
+          </div>
+          <h3>独立効果と属性ボーナスページ</h3><p><a href="#stage-editor">ステージページの緑色「効果」入口</a>から入ります。有効なグループだけが表示されます。グループのバーでステージをクリックすると開始/終了を埋められ、手入力後は「カスタム」を押して範囲を送信します。Shift クリックでステージの選択を追加/解除できます。複数グループを選択した場合、選択した各区間組み合わせを <code>nutrition_bonuses</code> に個別保存します。これらの条件を単一グループのステージ表と解釈しないでください。</p>
+          <figure class="guide-ui" id="effect-editor"><figcaption><strong>栄養効果ページ（独立ページ）</strong> · ソースに基づく読み取り専用 HTML イメージです。ゲームのスクリーンショットやサーバーのリアルタイム値ではありません。区間とグループ名は例です。</figcaption>
+            <div class="guide-ui-stage"><div class="guide-ui-window effect"><div class="guide-ui-title">栄養効果と属性ボーナス · /hdui stage → 効果</div><div class="guide-ui-content"><div class="guide-ui-group">有効な栄養グループと範囲を選択（グループ横断で組み合わせ可能）</div>
+              <div class="guide-ui-row"><span>例グループ A</span><span class="guide-ui-field">バー [0–29 | 30–69 | 70–100]　開始 [30]　終了 [69]　カスタム</span></div>
+              <div class="guide-ui-row"><span>例グループ B</span><span class="guide-ui-field">バー [0–29 | 30–69 | 70–100]　開始 [70]　終了 [100]　カスタム</span></div>
+              <span class="guide-ui-hint">Shift クリックでバーを複数選択できます。「カスタム」を押すと手入力区間を送信でき、既存ステージと一致しなくても構いません。</span><div class="guide-ui-group">選択した組み合わせの内容</div>
+              <div class="guide-ui-row"><span>ポーション効果</span><span class="guide-ui-field">組み合わせ選択後に追加。単回摂取効果とは異なります</span></div><div class="guide-ui-row"><span>属性ボーナス</span><span class="guide-ui-field">組み合わせ選択後に追加</span></div>
+              <div class="guide-ui-row"><span>現在のファイル</span><span class="guide-ui-field">なし（新しい組み合わせは未保存）</span></div></div>
+              <div class="guide-ui-actions"><span class="guide-ui-button">+ ポーション効果追加</span><span class="guide-ui-button">+ 属性ボーナス追加</span><span class="guide-ui-button">効果をエクスポート</span><span class="guide-ui-button">属性をエクスポート</span><span class="guide-ui-button">ファイル検索</span><span class="guide-ui-button">保存</span><span class="guide-ui-button red">キャンセル</span><span class="guide-ui-button disabled">ファイル削除</span></div></div></div>
+            <div class="guide-ui-note">保存時は сначала メモ入力欄が表示され、メモをキャンセルすると今回の保存を中止します。「キャンセル」は未保存の効果/属性編集を元に戻します。既存ファイルを編集中の場合のみ「ファイル削除」が使えます。エクスポートはポーション/属性リストをそれぞれ更新し、ファイル検索は参照/検索ウィンドウを開きます。図内のボタンはこれらの操作を実行しません。</div></figure>
+          <div class="source-note">画面根拠：<code>EffectManageScreen.buildGroupRangeControls/buildBottomButtons/saveEffectRows</code> と現在の <code>zh_cn</code> ラベル。アイテムの単回摂取効果は <a href="titlepro.html#effects">摂取ポーション効果</a> を参照してください。</div>
+        </section>
+
+        <section class="page-section" id="conditions" aria-labelledby="conditions-title">
+          <h2 id="conditions-title"><span class="num">05</span>条件ルール</h2>
+          <p class="lead">通常の栄養計算は摂取時に直接実行されます。条件ルールは通常計算の後、栄養区間に基づいて追加変化やコマンドを決めます。</p>
+          <p>条件ルールは複数の栄養グループを同時に確認でき、すべて満たした場合に任意のグループへ加減算、コマンド実行、またはその両方を行います。条件グループと対象グループは異なっていても構いません。</p>
+
+          <div class="figure">
+            <div class="flow" aria-label="条件ルールの実行順序">
+              <div class="flow-node"><b>食べ物を食べる</b>先に通常栄養値を計算</div>
+              <div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node"><b>条件を確認</b>複数区間をすべて満たす必要あり</div>
+              <div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node accent"><b>結果を実行</b>栄養変化 / コマンド</div>
+              <div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="flow-node"><b>0–100にクランプ</b>境界でクランプ</div>
+            </div>
+            <div class="figure-caption">条件ルールは通常栄養計算の後に実行されます。同じ食べ物が同じグループに通常値と条件変化の両方を設定している場合、2つの処理が順に計算されます。</div>
+          </div>
+
+          <div class="rule-mock" aria-label="条件ルールの例">
+            <h4>条件ルール1件 · 例</h4>
+            <div class="rule-line">
+              <span class="rule-and">発動条件</span>
+              <span class="rule-chip cond">肉類 0–86</span>
+              <span class="rule-and">AND</span>
+              <span class="rule-chip cond">果物 30–100</span>
+            </div>
+            <div class="rule-line">
+              <span class="rule-and">栄養変化</span>
+              <span class="rule-chip target">肉類 +20</span>
+              <span class="rule-chip target">糖分 -5</span>
+            </div>
+            <div class="rule-line">
+              <span class="rule-and">任意</span>
+              <span class="rule-chip cmd">コマンド実行</span>
+              <span class="rule-chip">通知表示</span>
+              <span class="rule-chip">取得倍率</span>
+            </div>
+          </div>
+
+          <h3>よくある2つの設定</h3>
+          <div class="example">
+            <span class="label">上限を制限</span>
+            <p><b>条件：</b>肉類が <code>0–86</code>。<b>対象：</b>肉類 <code>+20</code>。</p>
+            <p>現在80で食べると最大86まで。現在90では条件が成立せず増加しません。</p>
+          </div>
+          <div class="example">
+            <span class="label">減少補正</span>
+            <p><b>条件：</b>肉類が <code>86–100</code>。<b>対象：</b>肉類 <code>-30</code>。</p>
+            <p>現在95で食べると86付近まで下がって止まり、低値区間へ入り続けることはありません。</p>
+          </div>
+
+          <div class="callout warn">
+            <b>同じグループの重複計算：</b>同じ食べ物が同じグループに通常栄養値と条件変化の両方を設定している場合、2つの処理が順に実行されます。通常はどちらか一方の表現だけを残し、重複計算を避けてください。
+          </div>
+        </section>
+
+        <section class="page-section" id="items" aria-labelledby="items-title">
+          <h2 id="items-title"><span class="num">06</span>エディターとバリアント</h2>
+          <p class="lead">アイテムを持って <code>/hdui</code> を入力すると、そのアイテムの設定入口が開きます。</p>
+          <p>エディターは栄養、食べ飽き、渇き、満腹度、スタック、品質、保存期間、効果、コマンド、条件、効果解除を統合しています。以下の図はレイアウト例で、実際のスクリーンショットではありません。</p>
+
+          <div class="editor-mock" aria-label="アイテムエディターの例">
+            <div class="editor-head"><b>アイテムエディター · 例</b><span>アイテムを持って /hdui</span></div>
+            <div class="editor-tabs" role="tablist" aria-label="アイテムエディターのタブ">
+              <button type="button" class="editor-tab active" role="tab" aria-selected="true" aria-controls="editor-panel" data-tab="nutrition">栄養値</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="fatigue">食べ飽き</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="thirst">渇き値</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="hunger">満腹度</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="stack">スタック上限</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="quality">品質バインディング</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="shelf">保存期間</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="effects">ポーション効果</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="commands">コマンド</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="conditions">条件</button>
+              <button type="button" class="editor-tab" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="suppress">効果解除</button>
+            </div>
+            <div class="editor-body" id="editor-panel" role="tabpanel" aria-live="polite"></div>
+          </div>
+
+          <h3>もう1つの入口：<code>/hdui create</code> の栄養値 Tab</h3>
+          <p><code>/hdui create</code> は OP4 が必要で、作成/変更するのは栄養グループ<strong>定義</strong>であり、特定プレイヤーの現在値を変更するものではありません。品質とレアリティは同じエディターの別の2つの Tab にあります。<a href="quality.html#quality-editor">品質図</a>、<a href="quality.html#rarity-editor">レアリティ図</a>へ直接移動できます。</p>
+          <figure class="guide-ui" id="group-editor"><figcaption><strong>作成ページ · 栄養値 Tab</strong> · ソースに基づく読み取り専用 HTML イメージです。ゲームのスクリーンショットやサーバーのリアルタイム値ではありません。新規状態ではサーバーの既存項目を表示しません。</figcaption>
+            <div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">HD 作成　　[作成] [削除] [追加] [☼]</div><div class="guide-ui-columns"><div class="guide-ui-list"><span class="selected">+ 新規項目</span><span>サーバーの既存栄養グループ（実値はここに表示しません）</span></div><div class="guide-ui-content"><div class="guide-ui-tabs"><a href="#group-editor" aria-current="location">栄養値</a><a href="quality.html#quality-editor">品質</a><a href="quality.html#rarity-editor">レアリティ</a></div>
+              <div class="guide-ui-row"><span>ID</span><span class="guide-ui-field">新規作成時に入力。既存項目の ID は読み取り専用</span></div><div class="guide-ui-row"><span>名前</span><span class="guide-ui-field">名前入力　[色 → 単色/グラデーション]</span></div>
+              <div class="guide-ui-row"><span>アイコン</span><span class="guide-ui-field">アイテム ID　[アイコンプレビュー] [手持ち]</span></div><div class="guide-ui-row"><span>減少率</span><span class="guide-ui-field">正の数</span></div><div class="guide-ui-row"><span>初期値</span><span class="guide-ui-field">0–100。新規グループ作成時、オンラインプレイヤーが初期値を取得</span></div>
+              <div class="guide-ui-row"><span>取得倍率</span><span class="guide-ui-field">0以上</span></div><div class="guide-ui-row"><span>Tag判定</span><span class="guide-ui-field">任意：プレイヤータグ</span></div><div class="guide-ui-row"><span>Mod判定</span><span class="guide-ui-field">任意：ロード済み modid</span></div>
+              <div class="guide-ui-row"><span>並び順</span><span class="guide-ui-field">整数</span></div><div class="guide-ui-row"><span>スイッチ</span><span class="guide-ui-field">有効 / 無効</span></div><div class="guide-ui-row"><span>ツールチップ色</span><span class="guide-ui-field">4色を設定 → 独立色画面</span></div><span class="guide-ui-hint">無効な ID、アイコン、数値があると検証メッセージを表示し、作成/保存を無効化します。</span>
+            </div></div></div></div><div class="guide-ui-note">タイトルバーの「追加」は新規作成のためクリアします。「作成/保存」は定義を書き込み、「削除」は既存項目のみ使えます。☼ は既定栄養グループ名のローカライズ確認操作で、サーバー表示名を変更します。クライアント専用翻訳ではありません。栄養グループの作成は独立した新規アイテム登録ではありません。</div></figure>
+          <div class="source-note">画面根拠：<code>HdCreateScreen.buildGroupForm/buildHeaderButtons/groupErrors</code>。新規アイテム登録は <a href="quality.html#registry">登録マネージャー</a> を参照してください。</div>
+
+          <h3>NBT バリアント：同名アイテムの独立設定</h3>
+          <p>同じアイテムを NBT で複数のバリアントに分け、各バリアントが独立した設定を保存できます。摂取時は一致したバリアントの設定を使います。たとえば同じポーションの異なる NBT に異なる栄養を設定できます。</p>
+
+          <div class="variant-grid">
+            <div class="variant-card">
+              <span class="tag">バリアント A</span>
+              <b>回復ポーション</b>
+              <div class="mini-bar" style="--c:#fab387">
+                <span class="name">果物</span>
+                <span class="track"><span class="fill" style="width:20%"></span></span>
+                <span class="num">+8</span>
+              </div>
+              <div class="mini-bar" style="--c:#f38ba8">
+                <span class="name">糖分</span>
+                <span class="track"><span class="fill" style="width:12%"></span></span>
+                <span class="num">+4</span>
+              </div>
+            </div>
+            <div class="variant-card">
+              <span class="tag">バリアント B</span>
+              <b>俊敏ポーション</b>
+              <div class="mini-bar" style="--c:#cba6f7">
+                <span class="name">タンパク質</span>
+                <span class="track"><span class="fill" style="width:16%"></span></span>
+                <span class="num">+6</span>
+              </div>
+              <div class="mini-bar" style="--c:#a6e3a1">
+                <span class="name">野菜</span>
+                <span class="track"><span class="fill" style="width:10%"></span></span>
+                <span class="num">+3</span>
+              </div>
+            </div>
+          </div>
+          <div class="figure-caption">バリアント値は例です。各バリアントは独立した設定を保存し、共通エントリを自動継承しません。</div>
+
+          <div class="callout">
+            <b>スタック上限はアイテムレベル属性：</b>同じアイテムの異なるバリアントに異なるスタック数を設定することはできません。渇き値などのアイテムレベル設定も同様です。
+          </div>
+
+          <h3>よく使う入口</h3>
+          <ul>
+            <li><code>/hdui create</code> (OP4)：栄養グループ、品質、レアリティ定義を作成/変更。グループ ID は作成後に自由に変更できず、独立アイテムも登録しません。</li>
+            <li><code>/hdui stage</code> (OP4)：<a href="#stage-editor">ステージ/コマンド/説明</a>編集を開き、緑色「効果」から<a href="#effect-editor">独立ボーナスページ</a>へ移動します。</li>
+            <li><code>/hdui groups [プレイヤー]</code> (OP4)：実行者が自分または指定プレイヤーの<strong>数値管理画面</strong>を開きます。通常の栄養パネルではなく、グループ定義も作成しません。</li>
+            <li><code>/hdui registry</code> (OP4)：登録マネージャーを開き、登録項目の表示、更新、削除を行います。新規アイテム ID は起動手順で有効になります。</li>
+            <li><code>/hdui tooltip</code> (OP4)：手持ちアイテムのツールチップ編集入口です。詳細は<a href="tooltip.html#edit">ツールチップ編集</a>を参照してください。</li>
+          </ul>
+          <p>栄養グループ定義はデータパックが担当し、エディターでの作成や変更は設定オーバーレイに書き込まれます。旧 <code>/hdgroups</code> は削除されました。</p>
+        </section>
+
+        <section class="page-section" id="admin" aria-labelledby="admin-title">
+          <h2 id="admin-title"><span class="num">07</span>管理とコマンド</h2>
+          <p class="lead">一般プレイヤーは自分のパネルを表示できます。他のプレイヤーの値を変更したり、栄養グループを一時停止したりするには権限が必要です。</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>コマンド</th><th>権限 / 用途と対象</th></tr></thead>
+              <tbody>
+                <tr><td><code>/headiet</code> または <code>/headiet open</code></td><td>プレイヤー本人、OP 不要：栄養パネルを自分に送ります。</td></tr>
+                <tr><td><code>/headiet open &lt;プレイヤー&gt;</code></td><td>OP2：栄養パネルを<strong>指定プレイヤー</strong>に送ります。実行者がそのプレイヤーのパネルを見るのではありません。</td></tr>
+                <tr><td><code>/headiet add &lt;プレイヤー&gt; &lt;グループ&gt; &lt;数値&gt;</code></td><td>OP4：対象プレイヤーの対応グループ値を増やします。入力は0–100、小数可。</td></tr>
+                <tr><td><code>/headiet subtract &lt;プレイヤー&gt; &lt;グループ&gt; &lt;数値&gt;</code></td><td>OP4：対象プレイヤーの対応グループ値を減らします。入力は0–100、小数可。</td></tr>
+                <tr><td><code>/headiet set &lt;プレイヤー&gt; &lt;グループ&gt; &lt;数値&gt;</code></td><td>OP4：対象プレイヤーの対応グループ値を指定値に設定します。入力は0–100、小数可。</td></tr>
+                <tr><td><code>/hdui groups [プレイヤー]</code></td><td>OP4：実行者が自分または指定プレイヤーの栄養<strong>管理画面</strong>を開き、値を調整したりグループを一時停止できます。グループ定義編集ではありません。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout good">
+            <b>グループの一時停止：</b>一時停止中、そのグループは摂取で増えず、自然減少もしません。ストーリー、初心者保護、期間限定イベントなどに使えます。再開後は通常ルールで続きます。
+          </div>
+        </section>
+
+        <section class="page-section" id="summary" aria-labelledby="summary-title">
+          <h2 id="summary-title"><span class="num">08</span>要点の振り返り</h2>
+          <ol class="summary-list">
+            <li><b>数値範囲は0–100。</b>小数は保持され、ステージ判定時に四捨五入されます。</li>
+            <li><b>栄養値は満腹度消費に応じて減少率で下がります。</b>隠し満腹度は関与せず、死亡しても消えません。</li>
+            <li><b>ステージは継続状態を、条件ルールは単回摂取の計算を制御します。</b>実際のグループ、しきい値、効果はサーバー設定に準拠します。</li>
+          </ol>
+        </section>
+
+        <footer class="page-footer">
+          <span>Healthy Diet · 栄養値</span>
+          <span>現在のソースに基づく · 具体的なルールはサーバー設定に準拠</span>
+        </footer>
+      </article>
+    </div>
+  </main>
+
+  <script src="assets/guide.js"></script>
+  <script>
+(() => {
+      // 内置配置快照：nutrition_groups.json、nutrition_stages/*.json、nutrition_bonuses/*.json 与 color_schemes.json。
+      const groups = [
+        { key: "vegetables", name: "野菜", value: 55, initial: 42, decay: 6, colors: ["#FDFC47", "#3DF750"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]] },
+        { key: "fruits", name: "果物", value: 55, initial: 42, decay: 6, colors: ["#f4c4f3", "#fc67fa"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]], command: "81-100" },
+        { key: "meat", name: "タンパク質", value: 65, initial: 42, decay: 6, colors: ["#ff6a6e", "#ffc371"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]] },
+        { key: "grains", name: "穀物", value: 65, initial: 42, decay: 6, colors: ["#78350F", "#B45309", "#D97706", "#FDE68A"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]] },
+        { key: "sugar", name: "砂糖", value: 88, initial: 48, decay: 5, colors: ["#b3ffab", "#12fff7"], stages: [[0, 10], [11, 50], [51, 85], [86, 92], [93, 100]], command: "93-100" },
+        { key: "dairy", name: "乳製品", value: 88, initial: 48, decay: 5, colors: ["#8e9eab", "#eef2f3"], stages: [[0, 10], [11, 50], [51, 85], [86, 92], [93, 100]] }
+      ];
+      const rules = [
+        [{ vegetables: [0, 10] }, [["forge:block_reach", -1]], []],
+        [{ vegetables: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ vegetables: [61, 70] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor_toughness", 2]], []],
+        [{ vegetables: [71, 80] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor_toughness", 4]], []],
+        [{ vegetables: [81, 100] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor_toughness", 4]], []],
+        [{ fruits: [0, 10] }, [], [["minecraft:slowness", 0]]],
+        [{ fruits: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ fruits: [61, 70] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.attack_speed", 0.05]], []],
+        [{ fruits: [71, 80] }, [["minecraft:generic.max_health", 4], ["minecraft:generic.attack_speed", 0.1]], []],
+        [{ fruits: [81, 100] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.attack_speed", 0.2]], []],
+        [{ meat: [0, 10] }, [], [["minecraft:weakness", 0]]],
+        [{ meat: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ meat: [61, 70] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor", 1]], []],
+        [{ meat: [71, 80] }, [["minecraft:generic.max_health", 4], ["minecraft:generic.armor", 2]], []],
+        [{ meat: [81, 100] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.armor", 4]], []],
+        [{ grains: [0, 10] }, [], [["minecraft:slowness", 0]]],
+        [{ grains: [46, 60] }, [["minecraft:generic.attack_knockback", 0.5]], []],
+        [{ grains: [61, 70] }, [["minecraft:generic.max_health", 4]], []],
+        [{ grains: [71, 80] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.attack_damage", 0.5]], []],
+        [{ grains: [81, 100] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.attack_damage", 1]], []],
+        [{ sugar: [0, 10] }, [["minecraft:generic.attack_knockback", -0.2]], []],
+        [{ sugar: [51, 85] }, [], [["minecraft:speed", 0]]],
+        [{ sugar: [86, 92] }, [], [["minecraft:speed", 1]]],
+        [{ sugar: [93, 100] }, [], [["minecraft:speed", 1]]],
+        [{ dairy: [0, 10] }, [["forge:entity_reach", -0.3]], []],
+        [{ dairy: [51, 85] }, [["forge:step_height_addition", 0.2], ["forge:swim_speed", 0.2]], []],
+        [{ dairy: [86, 92] }, [["forge:swim_speed", 0.3], ["forge:step_height_addition", 0.52]], []],
+        [{ dairy: [93, 100] }, [["forge:swim_speed", 0.4], ["forge:step_height_addition", 0.6]], []],
+        [{ vegetables: [46, 60], fruits: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ vegetables: [81, 100], fruits: [81, 100] }, [["forge:block_reach", 1.5]], []],
+        [{ grains: [81, 100], meat: [81, 100] }, [["minecraft:generic.attack_speed", 0.5]], [["minecraft:resistance", 0]]],
+        [{ grains: [46, 60], meat: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ dairy: [93, 100], sugar: [93, 100] }, [["minecraft:generic.luck", -3]], [["minecraft:hunger", 0], ["minecraft:haste", 2], ["minecraft:slowness", 0]]],
+        [{ dairy: [86, 92], sugar: [86, 92] }, [], [["minecraft:haste", 1]]]
+      ];
+      const names = {
+        "forge:block_reach": "ブロック到達距離", "forge:entity_reach": "エンティティ到達距離",
+        "forge:step_height_addition": "段差", "forge:swim_speed": "泳ぐ速度",
+        "minecraft:generic.max_health": "最大体力", "minecraft:generic.armor_toughness": "防具強度",
+        "minecraft:generic.armor": "防具", "minecraft:generic.attack_speed": "攻撃速度",
+        "minecraft:generic.attack_damage": "攻撃ダメージ", "minecraft:generic.attack_knockback": "攻撃ノックバック",
+        "minecraft:generic.luck": "幸運", "minecraft:slowness": "移動速度低下", "minecraft:weakness": "弱体化",
+        "minecraft:speed": "移動速度上昇", "minecraft:resistance": "ダメージ耐性", "minecraft:hunger": "空腹", "minecraft:haste": "採掘速度上昇"
+      };
+      const appendLine = (parent, text, style) => {
+        const line = document.createElement("span");
+        line.className = style;
+        line.textContent = text;
+        parent.append(line);
+      };
+      const rows = document.getElementById("mock-rows");
+      if (rows) {
+        for (const group of groups) {
+          const row = document.createElement("div");
+          row.className = "mock-row";
+          row.style.setProperty("--c", group.colors[0]);
+          row.style.setProperty("--text-color", group.colors[group.colors.length - 1]);
+          row.style.setProperty("--gradient", `linear-gradient(90deg, ${group.colors.join(", ")})`);
+          const icon = document.createElement("span");
+          icon.className = "mock-icon";
+          icon.setAttribute("aria-hidden", "true");
+          const name = document.createElement("span");
+          name.className = "mock-name";
+          name.textContent = group.name;
+          const track = document.createElement("div");
+          track.className = "mock-track";
+          const fill = document.createElement("span");
+          fill.className = "mock-fill";
+          fill.style.width = group.value + "%";
+          track.append(fill);
+          const tip = document.createElement("div");
+          tip.className = "mock-tip";
+          tip.setAttribute("role", "tooltip");
+          for (let i = 0; i < group.stages.length; i++) {
+            const [min, max] = group.stages[i];
+            const nextMin = group.stages[i + 1]?.[0] ?? 100;
+            const segment = document.createElement("button");
+            segment.type = "button";
+            segment.className = "mock-seg";
+            segment.style.left = min + "%";
+            segment.style.width = (nextMin - min) + "%";
+            const matches = rules.filter(([conditions]) => {
+              const bound = conditions[group.key];
+              return bound && bound[0] === min && bound[1] === max;
+            });
+            const other = conditions => Object.entries(conditions)
+              .filter(([key]) => key !== group.key)
+              .map(([key, bounds]) => `${groups.find(g => g.key === key).name} ${bounds[0]}~${bounds[1]}`)
+              .join(", ");
+            const details = [`${min}~${max}`];
+            for (const [conditions, attributes, effects] of matches) {
+              const suffix = other(conditions);
+              for (const [id, value] of attributes) details.push(`${value >= 0 ? "+" : ""}${value} ${names[id]}${suffix ? ` (${suffix})` : ""}`);
+              for (const [id, level] of effects) details.push(`${names[id]} Lv.${level + 1}${suffix ? ` (${suffix})` : ""}`);
+            }
+            if (group.command === `${min}-${max}`) details.push("クリックで説明コマンドを実行");
+            segment.setAttribute("aria-label", `${group.name} ステージ ${details.join("；")}`);
+            const showTip = () => {
+              tip.replaceChildren();
+              appendLine(tip, `${min}~${max}`, "tip-range");
+              for (const [conditions, attributes, effects] of matches) {
+                const suffix = other(conditions);
+                for (const [id, value] of attributes) appendLine(tip, `  ${value >= 0 ? "+" : ""}${value} ${names[id]}${suffix ? ` (${suffix})` : ""}`, value >= 0 ? "tip-attribute" : "tip-negative");
+                for (const [id, level] of effects) appendLine(tip, `  ${names[id]} Lv.${level + 1}${suffix ? ` (${suffix})` : ""}`, "tip-effect");
+              }
+              if (group.command === `${min}-${max}`) appendLine(tip, "クリックで説明コマンドを実行", "tip-command");
+            };
+            segment.addEventListener("mouseenter", showTip);
+            segment.addEventListener("focus", showTip);
+            track.append(segment);
+            if (group.value >= min && group.value <= max) showTip();
+          }
+          track.append(tip);
+          const pct = document.createElement("span");
+          pct.className = "mock-pct";
+          pct.textContent = group.value.toFixed(1) + "%";
+          row.append(icon, name, track, pct);
+          rows.append(row);
+        }
+        const active = document.getElementById("mock-bonus-tip");
+        const attrTotals = new Map();
+        const effectLevels = new Map();
+        for (const [conditions, attributes, effects] of rules) {
+          if (!Object.entries(conditions).every(([key, [min, max]]) => {
+            const current = Math.round(groups.find(g => g.key === key).value);
+            return current >= min && current <= max;
+          })) continue;
+          for (const [id, value] of attributes) attrTotals.set(id, (attrTotals.get(id) ?? 0) + value);
+          for (const [id, level] of effects) effectLevels.set(id, Math.max(effectLevels.get(id) ?? 0, level));
+        }
+        appendLine(active, "現在有効なボーナス:", "tip-title");
+        for (const [id, value] of attrTotals) appendLine(active, `  ${value >= 0 ? "+" : ""}${value} ${names[id]}`, value >= 0 ? "tip-attribute" : "tip-negative");
+        for (const [id, level] of effectLevels) appendLine(active, `  ${names[id]} Lv.${level + 1}`, "tip-effect");
+      }
+
+      const stageRange = document.getElementById("stage-range");
+      const stageMarker = document.getElementById("stage-marker");
+      const stageValue = document.getElementById("stage-value");
+      const stageRounded = document.getElementById("stage-rounded");
+      const stageName = document.getElementById("stage-name");
+
+      const updateStage = () => {
+        const value = Number(stageRange.value);
+        const rounded = Math.round(value);
+        const name = rounded < 30 ? "低" : rounded < 70 ? "中" : "高";
+        stageMarker.style.left = value + "%";
+        stageValue.textContent = value.toFixed(1);
+        stageRounded.textContent = String(rounded);
+        stageName.textContent = name;
+      };
+      stageRange.addEventListener("input", updateStage);
+      updateStage();
+
+      const rate = document.getElementById("decay-rate");
+      const hunger = document.getElementById("hunger-used");
+      const rateOut = document.getElementById("decay-rate-out");
+      const hungerOut = document.getElementById("hunger-used-out");
+      const lossOut = document.getElementById("decay-loss");
+      const remainOut = document.getElementById("decay-remain");
+      const remainFill = document.getElementById("decay-fill");
+
+      const updateDecay = () => {
+        const r = Number(rate.value);
+        const h = Number(hunger.value);
+        const loss = h / r;
+        const remain = Math.max(0, 100 - loss);
+        rateOut.textContent = String(r);
+        hungerOut.textContent = String(h);
+        lossOut.textContent = loss.toFixed(1);
+        remainOut.textContent = remain.toFixed(1);
+        remainFill.style.width = remain + "%";
+      };
+      rate.addEventListener("input", updateDecay);
+      hunger.addEventListener("input", updateDecay);
+      updateDecay();
+
+      const editorData = {
+        nutrition: {
+          fields: [["果物", "+26"], ["糖分", "+12"], ["条件ルール", "1件 · クリックで編集"]],
+          note: "例のフィールド。実際のタブと保存動作はゲーム内画面に準拠します。"
+        },
+        fatigue: {
+          fields: [["最大連続摂取回数", "3"], ["クールダウンに必要な他の食べ物数", "2"], ["自然クールダウン時間", "10 分钟"], ["食べ飽き時の満腹度回復", "0"]],
+          note: "例のフィールド。実際の値はアイテム設定で決まります。"
+        },
+        thirst: {
+          fields: [["飲水値", "+6"], ["連動", "Legendary Survival Overhaul (LSO)"]],
+          note: "口渴值走 LSO 連動；未安装对应模组时不生效。"
+        },
+        hunger: {
+          fields: [["満腹度", "+5"], ["隠し満腹度", "+6.0"]],
+          note: "例のフィールド。バニラの食べ物属性とは別に計算されます。"
+        },
+        stack: {
+          fields: [["スタック上限", "16"], ["適用範囲", "アイテムレベル、バリアント共用"]],
+          note: "スタック上限は Item レベル属性で、NBT バリアントごとに変化しません。"
+        },
+        quality: {
+          fields: [["品質バインディング", "good"], ["適用範囲", "NBT バリアントごとにバインド可能"]],
+          note: "品質は表示とバインディングを担当し、栄養や属性を直接増やしません。"
+        },
+        shelf: {
+          fields: [["保存期間", "60分"], ["基本腐敗倍率", "1.0"], ["期限切れ産物", "minecraft:rotten_flesh"]],
+          note: "例のフィールド。完全な保存期間パラメータは保存期間章を参照してください。"
+        },
+        effects: {
+          fields: [["体力再生", "I · 5秒 · 100%"], ["ダメージ耐性", "I · 10秒 · 50%"]],
+          note: "例の効果。レベル、時間、確率、粒子は個別に設定できます。"
+        },
+        commands: {
+          fields: [["摂取コマンド", "say 例"], ["実行権限", "管理者 (4)"], ["出力", "抑制"]],
+          note: "例のコマンド。実際のコマンドはアイテム設定で決まります。"
+        },
+        conditions: {
+          fields: [["ルール数", "1件"], ["発動条件", "肉類 0–86"], ["栄養変化", "肉類 +20"]],
+          note: "条件ルールは複数の条件、対象、コマンドを同時に設定できます。"
+        },
+        suppress: {
+          fields: [["効果解除", "体力再生"], ["説明", "摂取時に指定効果を削除"]],
+          note: "例のフィールド。効果解除は摂取時に実行されます。"
+        }
+      };
+
+      const editorTabs = [...document.querySelectorAll(".editor-tab")];
+      const editorPanel = document.getElementById("editor-panel");
+
+      const renderEditor = key => {
+        const data = editorData[key];
+        if (!data || !editorPanel) return;
+        editorPanel.replaceChildren();
+        for (const [label, value] of data.fields) {
+          const row = document.createElement("div");
+          row.className = "editor-field";
+          const name = document.createElement("span");
+          name.textContent = label;
+          const field = document.createElement("span");
+          field.className = "editor-input";
+          field.textContent = value;
+          row.append(name, field);
+          editorPanel.append(row);
+        }
+        const note = document.createElement("div");
+        note.className = "editor-note";
+        note.textContent = data.note;
+        editorPanel.append(note);
+      };
+
+      const selectEditorTab = key => {
+        editorTabs.forEach(tab => {
+          const active = tab.dataset.tab === key;
+          tab.classList.toggle("active", active);
+          tab.setAttribute("aria-selected", String(active));
+          tab.tabIndex = active ? 0 : -1;
+        });
+        renderEditor(key);
+      };
+
+      editorTabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => selectEditorTab(tab.dataset.tab));
+        tab.addEventListener("keydown", event => {
+          if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+          event.preventDefault();
+          const offset = event.key === "ArrowRight" ? 1 : -1;
+          const next = editorTabs[(index + offset + editorTabs.length) % editorTabs.length];
+          next.focus();
+          next.click();
+        });
+      });
+      selectEditorTab("nutrition");
+    })();
+  </script>
+</body>
+</html>

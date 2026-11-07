@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>保存期間 · Healthy Diet 機能ガイド</title>
+  <link rel="stylesheet" href="assets/guide.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へスキップ</a>
+  <header class="topbar"><div class="wrap topbar-inner">
+    <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✦</span><span>Healthy Diet<small>FEATURE GUIDE</small></span></a>
+    <nav class="topnav" data-nav aria-label="章ナビゲーション"><a href="index.html">概要</a><a href="shelf-life.html" aria-current="page">保存期間</a></nav>
+    <span class="lang-badge">日本語</span><button class="menu-btn" type="button" data-menu aria-expanded="false" aria-label="章ナビゲーションを開く">☰</button>
+  </div></header>
+  <main class="wrap" id="main">
+    <section class="hero">
+      <span class="eyebrow">04 / SHELF LIFE</span>
+      <h1>設定から計算まで、食べ物の保存期間を理解する。</h1>
+      <p>エディターの8つのサブページを順に確認し、基本時間、温度、劣化倍率、冷鮮、期限切れ処理を理解します。さらに、アイテムがインベントリを離れた後の計時、信頼、オフライン保護について説明します。</p>
+      <div class="tags"><span class="tag">8つの独立サブページ</span><span class="tag">サーバー計算</span><span class="tag">コンテナとマルチ</span><span class="tag">オフライン台帳</span></div>
+    </section>
+    <div class="notice" role="note"><strong>まず3つの数値を区別する：</strong>基本保存時間は設定であり、アイテムの現在温度と残り時間は実行状態です。サーバーのデータパックとプレイヤーが持つアイテムの実際の状態は異なる場合があります。</div>
+    <div class="layout">
+      <aside class="toc" data-toc aria-label="このページの目次"><h2>このページの目次</h2><ol>
+        <li><a href="#overview">計算経路</a></li><li><a href="#editor">8つの設定サブページ</a></li><li><a href="#world">コンテナとマルチ</a></li>
+      </ol><div class="toc-note">ゲーム内でアイテムを持って /hdui を入力すると保存期間エディターに入ります。この Web ページは閲覧とローカルプレビューのみで、サーバー設定は変更しません。</div></aside>
+      <article>
+        <section class="page-section" id="overview">
+          <h2><span class="num">01</span>1回の計算で何が行われるか</h2>
+          <p class="lead">まずアイテムレベルの基本時間があり、次にアイテムの環境に応じて温度と劣化速度が変わり、サーバーが残り時間を計算します。</p>
+          <div class="flow" aria-label="保存期間の計算関係">
+            <div class="flow-node"><b>基本時間を設定</b>整数分で保存</div><div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node"><b>環境が温度を変える</b>自然 / 冷蔵庫 / 冷凍庫</div><div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node"><b>倍率と冷鮮保護</b>温度曲線 / ディメンション / 保存率</div><div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node accent"><b>期限切れ処理</b>消滅または産物に置換</div>
+          </div>
+          <p>温度曲線は<strong>劣化速度</strong>を調整し、「効果」サブページは<strong>食べたとき</strong>の温度効果を調整します。両者は独立したリストで、ある効果を設定しても保存期間が自動的に変わることはありません。</p>
+          <div class="callout"><b>ゲーム日と現実の日は異なる：</b>エディターの1ゲーム日 = 20分、1日 = 1440分です。<code>durationMinutes</code> に保存するときは整数分にします。内蔵アイテムは設定クラスの10℃初期温度を上書きすることがあるため、クラスの既定値をすべての食べ物の初期温度と見なさないでください。</div>
+          <div class="source-note">ソース根拠：<code>ShelfDurationUnit</code>、<code>S2ShelfConfig</code>、<code>ShelfTemperatureCurve.effectiveRate</code>。</div>
+        </section>
+
+        <section class="page-section" id="editor">
+          <h2><span class="num">02</span>エディターの8つのサブ Tab</h2>
+          <p class="lead">以下の8つのタブはゲーム内「保存期間」エディターの並びと同じです。項目を選ぶとフィールド、用途、紛らわしい境界を確認できます。Web ページから設定は保存できません。</p>
+          <div class="shelf-tabbar" role="tablist" aria-label="保存期間エディターのサブページ" data-shelf-tabs>
+            <button type="button" role="tab" id="shelf-tab-duration" aria-controls="shelf-panel-duration" aria-selected="true" tabindex="0">保存期間</button>
+            <button type="button" role="tab" id="shelf-tab-basic" aria-controls="shelf-panel-basic" aria-selected="false" tabindex="-1">基本</button>
+            <button type="button" role="tab" id="shelf-tab-curves" aria-controls="shelf-panel-curves" aria-selected="false" tabindex="-1">温度曲線</button>
+            <button type="button" role="tab" id="shelf-tab-effects" aria-controls="shelf-panel-effects" aria-selected="false" tabindex="-1">効果</button>
+            <button type="button" role="tab" id="shelf-tab-natural" aria-controls="shelf-panel-natural" aria-selected="false" tabindex="-1">自然環境</button>
+            <button type="button" role="tab" id="shelf-tab-fridge" aria-controls="shelf-panel-fridge" aria-selected="false" tabindex="-1">冷蔵庫</button>
+            <button type="button" role="tab" id="shelf-tab-fresh" aria-controls="shelf-panel-fresh" aria-selected="false" tabindex="-1">冷鮮</button>
+            <button type="button" role="tab" id="shelf-tab-retention" aria-controls="shelf-panel-retention" aria-selected="false" tabindex="-1">保冷度</button>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-duration" aria-labelledby="shelf-tab-duration" tabindex="0">
+            <span class="shelf-kicker">01 / 時間と期限切れ動作</span><h3>保存期間</h3>
+            <p>新しいアイテムの基本保存時間と基本劣化倍率を設定します。単位ボタンは分、時間、日、ゲーム日で切り替わります。入力には小数を含められ、保存時に整数分へ換算されます。あるディメンションに倍率を設定しない場合、そのディメンションは1倍のままです。</p>
+            <div class="table-wrap"><table><thead><tr><th>編集可能項目</th><th>作用</th></tr></thead><tbody>
+              <tr><td>保存期間 / 基本劣化倍率</td><td>開始時間と劣化速度の基準をそれぞれ決めます。倍率0は基本減少がゼロであることを意味します。</td></tr>
+              <tr><td>期限切れ産物 / 温度継承</td><td>期限切れ時に指定アイテムへ置換します。<code>minecraft:air</code> は消滅を意味します。継承を有効にすると期限切れ瞬間の温度だけを産物に渡し、産物の保存期間は新しく計時されます。</td></tr>
+              <tr><td>期限切れコマンド</td><td>所持者の手元でアイテムが期限切れになったとき、所持者をコンテキストとして実行します。空欄なら実行しません。コンテナ内やドロップアイテムの期限切れでは発動しません。</td></tr>
+              <tr><td>ディメンション劣化倍率</td><td>ディメンションごとに ID で劣化倍率を設定します。たとえばネザーをメインワールドと変えられます。<strong>温度オフセットではありません</strong>。</td></tr>
+            </tbody></table></div>
+            <div class="source-note">ソース根拠：<code>ItemConfigEditScreenV2.buildShelfEditor</code>、<code>S2ShelfConfig.durationMinutes</code>、<code>ShelfDimensionMultiplier</code>。</div>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-basic" aria-labelledby="shelf-tab-basic" tabindex="0" hidden>
+            <span class="shelf-kicker">02 / アイテム温度の物理境界</span><h3>基本</h3>
+            <p>ここではアイテム温度が到達できる上下限、初回計時開始時の温度、摂取可能な温度範囲を定義します。劣化倍率を直接変更することはありません。既存アイテムの現在温度は、初期温度を変更してもすぐにはリセットされません。</p>
+            <div class="shelf-field-grid"><div><b>最低温度 / 最高温度</b><span>温度計算の絶対境界です。最高値は最低値より少なくとも4℃高くする必要があります。</span></div><div><b>初期温度</b><span>新しいアイテムが保存期間システムに入るときの温度です。設定クラスの初期値は10℃で、内蔵アイテムが上書きできます。</span></div><div><b>摂取最低温 / 摂取最高温</b><span>下限より低い、または上限より高いと摂取できません。両端はアイテムの総温度範囲内にある必要があります。</span></div></div>
+            <div class="callout warn"><b>注意：</b>「摂取可能温度」は食べられるかどうかの制約であり、摂取可能範囲内なら劣化しないという意味ではありません。</div>
+            <div class="source-note">ソース根拠：<code>ItemConfigEditScreenV2.SHELF_COMMON_LABELS</code>、<code>S2ShelfConfig.Common</code>。</div>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-curves" aria-labelledby="shelf-tab-curves" tabindex="0" hidden>
+            <span class="shelf-kicker">03 / 温度から減少倍率へ</span><h3>温度曲線</h3>
+            <p>各曲線は開始/終了温度と両端の劣化倍率を設定し、区間内では温度に応じて線形に変化します。開始前と終了後のバッファを任意で設定し、区間外で倍率を滑らかに1倍へ戻せます。バッファがなく区間外の場合、1本の曲線の寄与は1倍です。</p>
+            <div class="shelf-field-grid"><div><b>開始/終了温度</b><span>開始は終了より低くする必要があります。リストは追加、編集、削除でき、最大16本です。</span></div><div><b>開始/終了倍率</b><span>1より大きいと劣化が速まり、1より小さいと遅くなります。複数が一致する場合は倍率を掛け合わせます。</span></div><div><b>外側バッファ</b><span>バッファの絶対境界温度を入力します。追加時間ではありません。バッファ遷移は主区間の線形遷移とは異なります。</span></div></div>
+            <div class="callout"><b>「効果」と混同しない：</b><code>temperatureCurves</code> は残り保存時間の消費を調整し、摂取時のポーション効果は設定しません。</div>
+            <div class="source-note">ソース根拠：<code>ShelfTemperatureCurve.multiplierAt</code>、<code>multiplier</code>、<code>ItemConfigEditScreenV2.buildShelfCurveRows</code>。</div>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-effects" aria-labelledby="shelf-tab-effects" tabindex="0" hidden>
+            <span class="shelf-kicker">04 / 摂取時の温度追加効果</span><h3>効果</h3>
+            <p>必要に応じてカスタム温度帯を追加します。各記録には効果 ID、作用温度区間、端点を含むかどうか、開始/終了レベルと時間、粒子スイッチがあります。食べたときに現在温度がその区間に一致した場合のみ、端点間の線形補間でレベルと持続時間を決めます。</p>
+            <div class="shelf-field-grid"><div><b>区間と端点</b><span>新規区は開始が終了より低い必要があります。境界を含める/除外を選択できます。区間外では適用されません。</span></div><div><b>レベル / 時間 / 粒子</b><span>画面のレベルは I から表示されます。時間は秒で入力し、0.05秒の整数倍である必要があり、tick として保存されます。</span></div><div><b>リスト数</b><span>未設定なら0件、最大20件です。削除後は残りの区が連番になります。歴史的な固定4区は旧データ移行入力としてのみ扱います。</span></div></div>
+            <div class="callout warn"><b>これは固定4行の効果表ではありません：</b>ページも実際のクエリも <code>temperatureEffectCurves</code> の統一リストに準拠します。冷鮮/常温などの区域名からポーション効果が自動生成されることはありません。</div>
+            <div class="source-note">ソース根拠：<code>ShelfTemperatureEffectCurve</code>、<code>ShelfTemperatureEffectMigration</code>、<code>ItemConfigEditScreenV2.buildShelfZoneEffectRows</code>。</div>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-natural" aria-labelledby="shelf-tab-natural" tabindex="0" hidden>
+            <span class="shelf-kicker">05 / 自然環境の温度変化</span><h3>自然環境</h3>
+            <p>アイテムは自然環境で目標環境温度へ向かって変化します。基本温度変化量と間隔が基本速度を与えます。環境とアイテムの温度差が大きいほど、降温または昇温のステップ幅、1ステップあたりの増分、倍率上限で加速でき、さらに温度帯ごとの速度補正も追加できます。</p>
+            <div class="shelf-field-grid"><div><b>基本温度変化量 / 間隔</b><span>たとえば1℃ / 2分は基本温度変化速度に対応し、保存期間が1分減るという意味ではありません。</span></div><div><b>降温3項目 / 昇温3項目</b><span>1ステップの増分、1ステップの温度差しきい値、温度差ステップ倍率上限をそれぞれ制御します。</span></div><div><b>4種類の温度帯速度補正</b><span>冷凍、低温、常温、高温ごとに追加の<strong>温度変化速度</strong>補正を設定します。ポーションレベルではありません。</span></div></div>
+            <p>自然目標温度はワールドとサーバーの環境ルールにも影響されます。このサブページはその食べ物の自然温度変化パラメータだけを管理し、現在のアイテムのリアルタイム温度を直接指定することはできません。</p>
+            <div class="source-note">ソース根拠：<code>S2ShelfConfig.NaturalEnvironment</code>、<code>S2Environment</code>、<code>ItemConfigEditScreenV2.SHELF_NATURAL_DISPLAY_FIELDS</code>。</div>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-fridge" aria-labelledby="shelf-tab-fridge" tabindex="0" hidden>
+            <span class="shelf-kicker">06 / 通常冷蔵庫と冷凍庫</span><h3>冷蔵庫</h3>
+            <p>通常冷蔵庫と冷凍庫にはそれぞれ温度変化量と間隔があり、アイテムが対応設備に入った後、目標環境温度へ近づく基本速度を決めます。このページでは冷凍、低温、常温、高温の各温度帯に冷蔵庫の温度変化速度補正を設定できます。</p>
+            <div class="shelf-field-grid"><div><b>通常冷蔵庫</b><span><code>fridgeTemperatureChangeC</code> と <code>fridgeTemperatureChangeMinutes</code>。</span></div><div><b>冷凍庫</b><span><code>freezerTemperatureChangeC</code> と <code>freezerTemperatureChangeMinutes</code>。</span></div><div><b>4温度帯補正</b><span>冷蔵庫環境の温度変化速度に作用し、「自然環境」サブページの温度差加速設定は変更しません。</span></div></div>
+            <div class="callout warn"><b>冷蔵庫内 = 完全凍結ではない：</b>凍結点に達したかどうかは<strong>現在温度</strong>で判断し、コンテナ名では判断しません。これは「保冷度」が回充できるかにも影響します。</div>
+            <div class="source-note">ソース根拠：<code>S2ShelfConfig.FridgeTemperature</code>、<code>ItemConfigEditScreenV2.SHELF_FRIDGE_DISPLAY_FIELDS</code>。</div>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-fresh" aria-labelledby="shelf-tab-fresh" tabindex="0" hidden>
+            <span class="shelf-kicker">07 / 冷鮮保護と温度帯境界</span><h3>冷鮮</h3>
+            <p>凍結点、冷凍点、冷鮮点、高温点、および冷鮮度が50%のときの保存率を設定します。温度が冷鮮点を下回ると冷鮮度を獲得し始め、冷凍点で50%、凍結点以下で100%になります。保護割合は進行度に応じて変化します。</p>
+            <div class="shelf-field-grid"><div><b>凍結点 → 冷凍点 → 冷鮮点</b><span>3つは順に高くなり、隣接点は少なくとも1℃差が必要です。凍結点はアイテム温度の下限内にある必要があります。</span></div><div><b>高温点</b><span>常温帯と高温帯の境界で、アイテム温度の上限を超えません。</span></div><div><b>保存率</b><span>値は0–1です。冷鮮度50%で対応する割合の劣化保護を提供し、完全凍結で保護は100%になります。</span></div></div>
+            <div class="callout"><b>保護と温度変化は別：</b>冷鮮点は劣化保護の温度マッピングに影響し、自然環境と冷蔵庫ページは温度が環境へどう変化するかを決めます。</div>
+            <div class="source-note">ソース根拠：<code>S2ShelfConfig.Common</code>、<code>protectionFraction</code>、<code>S2Environment.mapNaturalColdFreshProgress</code>。</div>
+          </div>
+          <div class="shelf-panel" role="tabpanel" id="shelf-panel-retention" aria-labelledby="shelf-tab-retention" tabindex="0" hidden>
+            <span class="shelf-kicker">08 / 凍結回充と永久消耗</span><h3>保冷度</h3>
+            <p><code>coldRetention</code> を有効にすると、アイテム温度が完全凍結区間にある間は消費を停止し、設定速度で保冷時間を回充します。完全凍結区間を離れると通常どおり消費します。累計損失が段階に達すると、回充上限が永久に低下し、再凍結しても上限は自動回復しません。</p>
+            <div class="shelf-field-grid"><div><b>保冷タイプスイッチ</b><span>すべての食べ物で有効になるわけではありません。無効時は回充要素を表示しません。</span></div><div><b>回充速度</b><span>完全凍結時に1分あたり何分回充できるか。0は凍結中に消費だけ停止する意味です。</span></div><div><b>消耗段階</b><span>基本保存時間の一定割合を失うごとに回充上限が1段階下がります。段階とリアルタイム残り時間は同じ数値ではありません。</span></div></div>
+            <div class="callout warn"><b>冷蔵庫名だけでは回充を判断できない：</b>アイテムが実際に設定された完全凍結温度に達し、保冷タイプが有効である必要があります。</div>
+            <div class="source-note">ソース根拠：<code>S2ShelfConfig.coldRetention</code>、<code>coldRecoveryRate</code>、<code>coldDegradationRate</code>、<code>S2Engine</code>。</div>
+          </div>
+        </section>
+
+        <section class="page-section" id="world">
+          <h2><span class="num">03</span>インベントリを離れた後の時間とマルチ保護</h2>
+          <p class="lead">食べ物はプレイヤー、コンテナ、地面で異なる時計を使います。サーバーが計算を担当し、クライアントはサーバーが送った速度で表示するだけです。</p>
+
+          <h3>2つの時計とサーバー権威</h3>
+          <p>プレイヤーのインベントリ、装備スロット、オフハンド、カーソル上の食べ物は<strong>プレイヤーのオンラインプレイ時間</strong>で計算され、オフライン中は進みません。チェスト、冷蔵庫、その他のコンテナ、地面のドロップアイテム、設置されたブロック食品は<strong>ワールド時間</strong>で計算され、サーバーが動いている限り進みます。クリエイティブインベントリと JEI 内の食べ物は計時されません。</p>
+          <p>腐敗、温度、冷鮮度はすべてサーバーが計算し、クライアントが見るのはサーバーが送ったスナップショットだけです。ツールチップの数値はサーバーが送った現在速度で毎秒進むためリアルタイムに見えますが、真の値は常にサーバーが基準です。クライアントを変更しても新鮮な食べ物を作ることはできません。ツールチップの文字と色もサーバーのスキームファイルが基準です。</p>
+
+          <h3>受け渡し、ログイン、ディメンション変更で再同期</h3>
+          <p>食べ物が受け渡されると、新しい持ち主が受け取った瞬間から計算を続けます。前の持ち主のオンライン時間が長かったからといって、受け取った瞬間に突然腐ることはありません。プレイヤーのログインやディメンション変更でも再同期され、オフライン期間の時間がインベントリ内アイテムに加算されることはありません。</p>
+          <p>インベントリと地面のドロップアイテムは約20秒ごとに更新されます。<strong>S</strong> を押すと即座に計算して最新値を確認できます。コンテナを開く、食べ始める、Tom ストレージ端末にアクセスするときも、次の周期を待たずにインベントリが更新されます。</p>
+
+          <h3>誰がアイテムの持ち主か</h3>
+          <p>保存期間が設定された食べ物は<strong>コンテナに入れた瞬間</strong>、入れたプレイヤーの持ち主マークが付きます。他のプレイヤーがチェストを開くと赤い枠が表示され、持ち出せません。地面に落ちた保護食品も拾えません。冷蔵庫や Tom ストレージ端末などのコンテナも同じルールです。</p>
+          <p>「コンテナに入れた」場合だけが対象です。野外の宝箱から半分持ち出しても、触っただけで残りが自分のものになるわけではなく、他のプレイヤーも公平に取得できます。逆に、<strong>一度もコンテナに入っていない食べ物には持ち主がいません</strong>。作ったばかり、拾ったばかりでずっと持ち歩いている食べ物は自由に渡せます。マークが付くとアイテムに追随し、自分のチェストからインベントリに戻しても自分のままです。</p>
+          <p><strong>S</strong> を押して詳細を表示し、持ち主が自分でない場合、最下部に「アイテムの持ち主」行が追加されます。持ち主が異なる同じ種類の食べ物は<strong>スタックできず</strong>、2つの山に分かれ、マークが上書きされるのを防ぎます。</p>
+
+          <h3>信頼リストと所有権の移転</h3>
+          <p><code>/hdtrust</code> で自分の保護アイテムの信頼リストを管理できます。OP は不要です：</p>
+          <div class="table-wrap"><table><thead><tr><th>コマンド</th><th>作用</th></tr></thead><tbody>
+            <tr><td><code>/hdtrust add &lt;プレイヤー名&gt;</code></td><td>オンラインプレイヤーを現在のホワイトリストに追加し、相手はあなたの保護食品を正常に取得できます。</td></tr>
+            <tr><td><code>/hdtrust remove &lt;プレイヤー名&gt;</code></td><td>現在のホワイトリストから外しますが「以前信頼した」履歴は保持します。相手が既に持ち出して未返却のアイテムは相手へ移転します。</td></tr>
+            <tr><td><code>/hdtrust forget &lt;プレイヤー名&gt;</code></td><td>現在のホワイトリストと以前の信頼履歴を同時に消去し、以後は未信頼として扱います。</td></tr>
+            <tr><td><code>/hdtrust list</code></td><td>現在のホワイトリストと以前の信頼リストを表示します。リスト内の名前をクリックすると削除または再信頼できます。</td></tr>
+          </tbody></table></div>
+          <p>信頼は常に<strong>最初の持ち主</strong>を参照します。友人があなたの食べ物を持ち出して自分のチェストに入れても、持ち主はあなたのままで、転売のように洗浄されることはありません。自分から食べ物を捨てた場合は譲渡とみなされ、マークが消えます。友人があなたの食べ物を持ち出してから捨てた場合も同様に譲渡です。</p>
+          <p>死亡時のドロップは譲渡ではありません。元々持ち主のいない食べ物には死亡した瞬間にあなたのマークが付き、既にマークがあるものは元の持ち主を維持します。他人は拾えず、あなた自身と信頼した友人は拾え、リスポーン後に回収できます。サーバーで <code>removeOwnerOnDeathDrop</code>（PvP サーバー向け）が有効な場合、死亡ドロップは保護マークを強制消去し、誰でも拾えます。</p>
+          <div class="callout warn"><b>凍結されたアイテム：</b>一度も信頼されていないプレイヤーがパイプやコマンドなどで他人の保護食品を取得した場合、そのアイテムは凍結されます。保存期間は進まず、食べることも飲むこともできず、チェスト、かまど、クラフトグリッドにも入れられず、移転もできません。インベントリの場所を占めるだけで、所持者に通知します。サーバー管理者は <code>ejectIllegalProtectedItems</code> を有効にすると、そのようなアイテムを所持者の足元に直接ドロップできます。既定では無効で、信頼ファイルの異常時にまとめて誤処理するのを避けます。</div>
+
+          <h3>全員オフラインの間、コンテナ内の食べ物は腐敗しない</h3>
+          <p>保護食品の持ち主と現在のすべての信頼プレイヤーが<strong>全員オフライン</strong>の間、チェストや冷蔵庫などのコンテナ内の時間は腐敗に算入されません。リスト内に権限を持つプレイヤーが1人でもオンラインなら、通常どおり計算されます。</p>
+          <div class="callout"><b>例：</b>A が B を信頼しています。A が20:00にオフライン、B が22:00にオフライン、翌日08:00に A がログインしてチェストを開きます。20:00–22:00は B がまだオンラインなので通常どおり2時間計算されます。22:00–翌日08:00は2人ともオフラインなので、この10時間は1分も計算されません。</div>
+          <p>サーバーはオフライン台帳で「全員オフライン」の期間を記録します。チェストは元々開かれたときだけ計算されるため、誰かが戻って確認したときにまとめて差し引かれます。オフライン台帳は有効化後の期間だけを記録し、それ以前のオフライン時間は補填できません。<strong>地面に落ちた保護食品はこの保護を受けず</strong>、通常どおり腐敗します。</p>
+
+          <h3>コンテナ、戦利品、ドロップアイテム</h3>
+          <p>閉じたチェストは継続的にスキャンされません。食べ物は前回の計算時刻を記録しており、チェストを開いたときに前回の温度で中間期間を一括計算します。途中の天候変化は区間ごとに再計算されないため、継続シミュレーションと多少異なりますが、かなり近く、性能への負荷もほとんどありません。</p>
+          <p>チェストを開く、チェスト内のアイテムをクリックする、S を押すと即座に計算されます。まだ計時が始まっていないチェスト内の食べ物（コマンドや他 MOD が直接入れたもの、古いセーブで保存期間設定前に投入されたものなど）は、チェストを開いた瞬間または S を押した瞬間にマークが付き、計時が始まります。チェストが破壊されると、先に時間を合わせ、冷蔵庫状態を消去してからドロップするため、「地面に落ちたのにまだ冷蔵庫にいると思う」ことはありません。ホッパーやパイプがチェストに投入する場合も統合ルールに従い、重なったときは悪い方の割合で計算されます。</p>
+          <p>宝箱に生成された食べ物、モブがドロップした食べ物は<strong>生成された瞬間</strong>に保存期間マークが付き、ゼロから計時する新鮮な食べ物になります。メイドや Create などが収穫物を直接自分のインベントリに入れる場合も同様です。自分でクラフト、焼成、機械加工した食べ物は対象外で、初めてプレイヤーやコンテナに見られたときから計時が始まります。</p>
+          <p>地面のドロップアイテムは20秒単位の時間帯に整列され、同じ時間帯に落ちた同種の食べ物は保存期間データが完全に同じため、地面でもスタックできます。着地後の最初の短い期間は計算されず、誤差はプレイヤーに有利です。チャンクがアンロードされると計算されず、再読み込み時に中間時間が一括補填されます。</p>
+          <p>地面に置かれたケーキなどのブロック食品はワールド時間で計算されます。チャンク読み込み時に1回計算され、同じチャンクは3分間に1回だけ計算されます。FTB Chunks などの強制読み込みチャンクでは1分ごとに計算されます。腐ったケーキは消滅するか期限切れ産物をドロップします。既に腐ったケーキを置くとその場で期限切れ産物になります。未摂取のケーキは掘り起こすと元の保存期間を保持しますが、食べたケーキは回収できません。</p>
+          <p>Jade をインストールすると、クロスヘアを地面の食べ物に向けたとき HUD に保存期間行が追加され、時間は秒単位、割合は小数1桁まで表示されます。データは同じくサーバーから来ます。チェスト内と手持ちの食べ物は引き続きアイテムツールチップを参照します。</p>
+
+          <h3>スタックと統合しきい値</h3>
+          <div class="table-wrap"><table><thead><tr><th>条件</th><th>既定しきい値</th></tr></thead><tbody>
+            <tr><td>残り保存期間の差</td><td>5分以内</td></tr>
+            <tr><td>アイテム温度差</td><td>10℃以内</td></tr>
+            <tr><td>冷鮮度差</td><td>20以内（0–100スケール）</td></tr>
+          </tbody></table></div>
+          <p>3つの条件をすべて満たす場合のみ統合でき、統合後は<strong>悪い方</strong>で計算されます。新鮮な食べ物で傷んだものを「洗白」することはできません。しきい値は <code>config/healthy_diet/server.json</code> の <code>shelfMerge</code> セクションで調整できます。地面のドロップアイテムは保存期間データが完全に同じ場合のみスタックでき、保冷上限が異なる2つもスタックできません。</p>
+
+          <h3>期限切れコマンドと産物</h3>
+          <p>期限切れコマンドは、食べ物がプレイヤーの手元で腐ったとき、または既に腐ったケーキを一口食べたときだけ実行されます。コンテナ内や地面で自然に腐った場合は実行されません。期限切れ産物は完全に新しいアイテムで、元の NBT を引き継がず、数量は保持されます。収まらない場合はインベントリに戻り、インベントリも満杯なら地面にドロップします。</p>
+
+          <div class="source-note">ソース根拠：<code>S2Engine</code>、<code>S2Handler</code>、<code>S2OfflineLedger</code>、<code>S2StackMerge</code>、<code>TrustManager</code>、<code>HDTrustCommand</code>、<code>PlacedFoodRefresh</code>。</div>
+          <div class="demo-card"><div><b>次に表示を理解する</b><span>通常のアイテムツールチップと S 詳細の保存期間行は、ツールチップのレイアウトと表示ルールで制御されます。</span></div><a href="tooltip.html">ツールチップを見る →</a></div>
+        </section>
+        <footer class="page-footer"><span>Healthy Diet · 保存期間</span><a href="index.html">章マップに戻る</a></footer>
+      </article>
+    </div>
+  </main>
+  <script src="assets/guide.js"></script>
+</body>
+</html>
