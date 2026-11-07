@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><title>Nutrition: values, stages and conditional rules · Healthy Diet Feature Guide</title><link rel="stylesheet" href="assets/guide.css"></head>
+<body data-nutrition-bonus="true"><a class="skip-link" href="#main">Skip to content</a><header class="topbar"><div class="wrap topbar-inner"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✦</span><span>Healthy Diet<small>FEATURE GUIDE</small></span></a><nav class="topnav" data-nav aria-label="Chapter navigation"><a href="index.html">Overview</a><a href="introduction.html">Introduction</a><a href="quick-start.html">Quick start</a><a href="nutrition.html" aria-current="page">Nutrition</a><a href="fatigue.html">Food fatigue</a><a href="quality.html">Quality &amp; rarity</a><a href="shelf-life.html">Shelf life</a><a href="tooltip.html">Tooltips</a><a href="appearance.html">Appearance</a><a href="titlepro.html">TitlePro</a><a href="misc.html">Utilities</a><a href="admin.html">Server administration</a><a href="configuration.html">Configuration reference</a><a href="food-query.html">Food query viewer</a></nav><span class="lang-badge">English</span><button class="menu-btn" type="button" data-menu aria-expanded="false" aria-label="Open chapter navigation">☰</button></div></header>
+<main class="wrap" id="main"><section class="hero"><span class="eyebrow">01 / NUTRITION</span><h1>Nutrition: values, stages and conditional rules</h1><p>Follow a meal through group gains, hunger-driven decay, stage evaluation, ongoing bonuses and optional conditional rules. Figures show examples, never a live server.</p><div class="tags"><span class="tag">0–100 with decimals</span><span class="tag">Integer stage checks</span><span class="tag">Server-configurable</span></div></section><div class="callout"><b>Illustration boundary:</b> The panel uses bundled Forge-branch definitions and chosen example player values; NeoForge defaults and actual servers may differ.</div><div class="layout"><aside class="toc" data-toc aria-label="On this page"><h2>On this page</h2><ol><li><a href="#overview">Nutrition groups and panel</a></li><li><a href="#values">Gains and hunger-based decay</a></li><li><a href="#stages">Stages and their editor</a></li><li><a href="#bonuses">Ongoing bonuses and cross-group conditions</a></li><li><a href="#conditions">Per-meal conditional rules</a></li><li><a href="#items">Item editor, groups and variants</a></li><li><a href="#admin">Administrative commands</a></li><li><a href="#summary">Takeaways</a></li></ol></aside><article><section class="page-section" id="overview"><h2><span class="num">01</span>Nutrition groups and panel</h2><p>Each group is an independent 0–100 value. A food can affect multiple groups (for example, an apple can supply fruit and sugar). Consumption affects group values; hunger-point consumption causes configurable decay. The common bundled groups are dairy, fruit, grains, protein, sugar and vegetables, but servers can add, remove, rename and reorder groups.</p><div class="figure"><div class="food-demo"><div class="food-card"><b>Apple</b><span>Illustrative food</span></div><div class="food-arrow">→</div><div class="mini-bars"><div class="mini-bar" style="--c:#fab387"><span class="name">Fruit</span><span class="track"><span class="fill" style="width:54%"></span></span><span class="num">+26</span></div><div class="mini-bar" style="--c:#f38ba8"><span class="name">Sugar</span><span class="track"><span class="fill" style="width:21%"></span></span><span class="num">+12</span></div></div></div><div class="figure-caption">Illustrative settled values, not the bundled item’s actual default values.</div></div><p>Press H to open the nutrition screen, or use <code>/headiet</code>. The six sample bars below show illustrative player values and Forge-branch bundled stage boundaries and schemes; hover or focus a stage segment for configured example bonuses. NeoForge’s bundled stages may differ.</p><div class="figure"><div class="mock-panel" aria-label="Illustrative nutrition panel"><div class="mock-head"><b>Nutrition status · example</b><span>Press H in game</span></div><div class="mock-rows" id="mock-rows"></div><div class="mock-actions"><button id="mock-check" type="button" aria-describedby="mock-bonus-tip">Check bonuses</button><div class="mock-bonus-tip" id="mock-bonus-tip" role="tooltip">Configured stage bonuses are previewed per group. This page never runs in-game commands.</div></div></div><div class="figure-caption">Read-only HTML approximation, not a game screenshot or initial player values. Hover/focus for configured example ranges.</div></div><div class="callout">Nutrition and hunger are distinct values: hunger governs eating; nutrition represents long-term dietary balance.</div></section><section class="page-section" id="values"><h2><span class="num">02</span>Gains and hunger-based decay</h2><p>Approximate eating gain: <b>food base value × group gainMultiplier × lifetime fatigue factor (if applicable)</b>, clamped to 0–100. Admin changes, natural decay and initial values do not use the eating gain multiplier. For decay, every consumed hunger point removes <code>1 / decayRate</code> nutrition from each applicable group; saturation is not included.</p><div class="calc"><div class="calc-row"><label for="decay-rate">Decay rate</label><input id="decay-rate" type="range" min="1" max="10" step="0.5" value="4"><output id="decay-rate-out">4</output></div><div class="calc-row"><label for="hunger-used">Hunger points spent</label><input id="hunger-used" type="range" min="0" max="20" step="1" value="20"><output id="hunger-used-out">20</output></div><div class="calc-result">Nutrition lost: <strong id="decay-loss">5.0</strong> · Remaining from 100: <strong id="decay-remain">95.0</strong></div></div><p>This slider illustrates the formula, not the player’s initial value. Decimals are retained, while stage checks round to an integer (59.6 checks as 60). Death does not clear nutrition; player capability data is copied on respawn.</p></section><section class="page-section" id="stages"><h2><span class="num">03</span>Stages and their editor</h2><p>A stage is an integer nutrition interval with optional title, hover description and click commands. Adjacent intervals must not overlap or leave gaps; the server rounds the current value before matching. <code>/hdui stage</code> (OP4) offers separate Stage, Command and Description tabs for enabled groups. A green Effects button opens a <b>separate</b> bonus page, not a fourth tab.</p><div class="stage-demo"><div class="stage-ladder"><div class="stage-seg low">Low 0–29</div><div class="stage-seg mid">Mid 30–69</div><div class="stage-seg high">High 70–100</div><span class="stage-marker" id="stage-marker" style="left:59.6%"></span></div><label class="slider-label" for="stage-range">Example value <b id="stage-value">59.6</b></label><input id="stage-range" type="range" min="0" max="100" step="0.1" value="59.6" aria-label="Example nutrition value"><div class="stage-readout"><span>Rounded: <b id="stage-rounded">60</b></span><span>Stage: <b id="stage-name">Mid</b></span></div></div><p>Those three named ranges are illustrative, not fixed defaults. Clicking a configured stage command runs it with administrator permission and suppressed output; a player may click at most once every 1.5 seconds and the server rechecks. Do not click untrusted stage commands.</p><figure class="guide-ui"><figcaption><strong>Stage tab · /hdui stage (OP4)</strong> · Read-only HTML diagram derived from the in-game layout; not a screenshot or live server data.</figcaption><div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">Stage tab · /hdui stage (OP4)</div><div class="guide-ui-content"><div class="guide-ui-row"><span>Enabled group</span><span class="guide-ui-field">Select a group; pick a stage on the interval bar</span></div><div class="guide-ui-row"><span>Range</span><span class="guide-ui-field">Add / delete / split contiguous integer intervals</span></div><div class="guide-ui-row"><span>Command tab</span><span class="guide-ui-field">Add click-triggered commands; they do not execute merely on entering a stage</span></div><div class="guide-ui-row"><span>Description tab</span><span class="guide-ui-field">Optional title, hover text and automatic bonus preview</span></div></div><div class="guide-ui-actions"><span class="guide-ui-button">Save</span><span class="guide-ui-button">Back</span></div></div></div><div class="guide-ui-note">The three tabs share one draft and save. An unsaved draft prompts before changing groups or opening Effects; automatic tooltip preview has its own immediate group-level toggle.</div></figure><div id="stage-editor"></div><div id="stage-command"></div><div id="stage-description"></div></section><section class="page-section" id="bonuses"><h2><span class="num">04</span>Ongoing bonuses and cross-group conditions</h2><p>The separate Effects page can attach attribute modifiers and recurring potions to one or more nutrient intervals. All group conditions in a combined bonus must match. Attributes are recalculated about every five seconds by default; effects are refreshed about every ten seconds, so effect durations should exceed that cadence to avoid gaps. Exiting an interval removes attribute modifiers at the next refresh; potion effects expire over their remaining duration. This differs from one-shot <a href="titlepro.html#effects">food effects</a>.</p><div class="flow"><div class="flow-node"><b>Fruit 30–69</b></div><div class="flow-arrow">+</div><div class="flow-node"><b>Vegetables 30–69</b></div><div class="flow-arrow">+</div><div class="flow-node"><b>Grains 30–69</b></div><div class="flow-arrow">+</div><div class="flow-node"><b>Protein 30–69</b></div><div class="flow-arrow">→</div><div class="flow-node accent"><b>All conditions match</b>Apply bonus</div></div><p>On the Effects screen, clicking a stage fills its bounds; manually typed bounds require selecting Custom before they take effect. Shift-click selects or deselects additional stages. A selection of multiple groups saves separate range combinations in <code>nutrition_bonuses</code>; it is not a single-group stage table.</p><figure class="guide-ui"><figcaption><strong>Nutrition Effects page · /hdui stage → Effects</strong> · Read-only HTML diagram derived from the in-game layout; not a screenshot or live server data.</figcaption><div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">Nutrition Effects page · /hdui stage → Effects</div><div class="guide-ui-content"><div class="guide-ui-row"><span>Groups and intervals</span><span class="guide-ui-field">Select one or more enabled groups / range combinations</span></div><div class="guide-ui-row"><span>Potions and attributes</span><span class="guide-ui-field">Add, edit, export or inspect the currently selected combination</span></div><div class="guide-ui-row"><span>Save</span><span class="guide-ui-field">Enter a remark before saving; canceling the remark cancels the save</span></div><div class="guide-ui-row"><span>Delete file</span><span class="guide-ui-field">Available only when editing an existing definition</span></div></div><div class="guide-ui-actions"><span class="guide-ui-button">Save</span><span class="guide-ui-button">Back</span></div></div></div><div class="guide-ui-note">Cancel discards unsaved effect/attribute edits. Export and file search are separate actions; these web buttons cannot execute them.</div></figure><div id="effect-editor"></div></section><section class="page-section" id="conditions"><h2><span class="num">05</span>Per-meal conditional rules</h2><p>After ordinary nutrition from eating is settled, each conditional rule checks its required group ranges. If <b>all</b> match, it can modify any target group, run commands, show a result tip, or combine those actions. Condition groups and target groups need not be the same. Changes are clamped to 0–100. If the same food has both a normal value and a conditional change for a group, both paths run in sequence, so avoid unintentional double counting.</p><div class="flow"><div class="flow-node">Eat food</div><div class="flow-arrow">→</div><div class="flow-node">Apply normal nutrients</div><div class="flow-arrow">→</div><div class="flow-node">Check all conditions</div><div class="flow-arrow">→</div><div class="flow-node accent">Changes / commands</div></div><p>Example cap: condition protein 0–86, target protein +20. At 80 it rises at most to 86; at 90 the rule does not match. A correction rule can target protein −30 when current protein is 86–100; it stops around the lower condition boundary rather than decreasing indefinitely.</p></section><section class="page-section" id="items"><h2><span class="num">06</span>Item editor, groups and variants</h2><p>Hold an item and use <code>/hdui</code> (OP4) for nutrition, food fatigue, thirst, hunger, stack limit, quality binding, shelf life, potion effects, commands, conditional rules and effect removal. <code>/hdui create</code> (OP4) manages <b>group definitions</b>, quality and rarity; it does not edit a player’s current value or register a new item. Group definitions can include ID, localized display name, icon, decay rate, initial value, gain multiplier, player tag, required mod ID, order, enable switch and four nutrient tip colors.</p><figure class="guide-ui"><figcaption><strong>Nutrition group tab · /hdui create (OP4)</strong> · Read-only HTML diagram derived from the in-game layout; not a screenshot or live server data.</figcaption><div class="guide-ui-stage"><div class="guide-ui-window"><div class="guide-ui-title">Nutrition group tab · /hdui create (OP4)</div><div class="guide-ui-content"><div class="guide-ui-row"><span>ID / name</span><span class="guide-ui-field">Choose a new ID and display name; an existing ID is read-only</span></div><div class="guide-ui-row"><span>Icon and colors</span><span class="guide-ui-field">Choose item icon, solid color or scheme and optional tip colors</span></div><div class="guide-ui-row"><span>Rates</span><span class="guide-ui-field">Set positive decay rate, initial value (0–100) and nonnegative gain multiplier</span></div><div class="guide-ui-row"><span>Availability</span><span class="guide-ui-field">Optional player tag or loaded mod, sort order and enabled switch</span></div></div><div class="guide-ui-actions"><span class="guide-ui-button">Save</span><span class="guide-ui-button">Back</span></div></div></div><div class="guide-ui-note">Create or Save writes a group definition; it does not register an item. The localization action for bundled names changes the server display name, not only a local translation.</div></figure><div id="group-editor"></div><p>One item can define distinct NBT variants, such as two potion types with different nutrition; matching variants do <b>not</b> automatically inherit the generic entry. Stack size and some thirst fields are item-level, not per-variant. <code>/hdui groups [player]</code> opens a value-management screen; <code>/hdui registry</code> manages startup item registration; <code>/hdui tooltip</code> opens item tooltip editing. The old <code>/hdgroups</code> command has been removed.</p></section><section class="page-section" id="admin"><h2><span class="num">07</span>Administrative commands</h2><div class="table-wrap"><table><thead><tr><th>Command</th><th>Permission and target</th></tr></thead><tbody><tr><td><code>/headiet</code> / <code>/headiet open</code></td><td>Self, no OP: open your own panel.</td></tr><tr><td><code>/headiet open &lt;player&gt;</code></td><td>OP2: send the panel to the specified player, not view that player’s panel on the executor’s screen.</td></tr><tr><td><code>/headiet add|subtract|set &lt;player&gt; &lt;group&gt; &lt;value&gt;</code></td><td>OP4: modify the named group; input accepts decimals in 0–100.</td></tr><tr><td><code>/hdui groups [player]</code></td><td>OP4: manage the player’s values and pause groups, not definitions.</td></tr></tbody></table></div><p>A paused group neither gains from eating nor decays until resumed. Group definitions come from datapacks and editor writes use an override layer.</p></section><section class="page-section" id="summary"><h2><span class="num">08</span>Takeaways</h2><ol class="summary-list"><li>Values stay within 0–100, retain decimals and round for stage checks.</li><li>Hunger consumption drives natural decay; saturation does not. Death does not erase nutrition.</li><li>Stages and recurring bonuses track ongoing state; per-food conditional rules settle during eating. Server files decide the real groups, thresholds and effects.</li></ol></section><footer class="page-footer"><span>Healthy Diet · Nutrition: values, stages and conditional rules</span><a href="index.html">Back to the chapter map</a></footer></article></div></main><script src="assets/guide.js"></script><script id="nutrition-bonus-script">(() => {
+const groups = [
+        { key: "vegetables", name: "Vegetables", value: 55, initial: 42, decay: 6, colors: ["#FDFC47", "#3DF750"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]] },
+        { key: "fruits", name: "Fruits", value: 55, initial: 42, decay: 6, colors: ["#f4c4f3", "#fc67fa"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]], command: "81-100" },
+        { key: "meat", name: "Protein", value: 65, initial: 42, decay: 6, colors: ["#ff6a6e", "#ffc371"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]] },
+        { key: "grains", name: "Grains", value: 65, initial: 42, decay: 6, colors: ["#78350F", "#B45309", "#D97706", "#FDE68A"], stages: [[0, 10], [11, 45], [46, 60], [61, 70], [71, 80], [81, 100]] },
+        { key: "sugar", name: "Sugar", value: 88, initial: 48, decay: 5, colors: ["#b3ffab", "#12fff7"], stages: [[0, 10], [11, 50], [51, 85], [86, 92], [93, 100]], command: "93-100" },
+        { key: "dairy", name: "Dairy", value: 88, initial: 48, decay: 5, colors: ["#8e9eab", "#eef2f3"], stages: [[0, 10], [11, 50], [51, 85], [86, 92], [93, 100]] }
+      ];
+      const rules = [
+        [{ vegetables: [0, 10] }, [["forge:block_reach", -1]], []],
+        [{ vegetables: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ vegetables: [61, 70] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor_toughness", 2]], []],
+        [{ vegetables: [71, 80] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor_toughness", 4]], []],
+        [{ vegetables: [81, 100] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor_toughness", 4]], []],
+        [{ fruits: [0, 10] }, [], [["minecraft:slowness", 0]]],
+        [{ fruits: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ fruits: [61, 70] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.attack_speed", 0.05]], []],
+        [{ fruits: [71, 80] }, [["minecraft:generic.max_health", 4], ["minecraft:generic.attack_speed", 0.1]], []],
+        [{ fruits: [81, 100] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.attack_speed", 0.2]], []],
+        [{ meat: [0, 10] }, [], [["minecraft:weakness", 0]]],
+        [{ meat: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ meat: [61, 70] }, [["minecraft:generic.max_health", 2], ["minecraft:generic.armor", 1]], []],
+        [{ meat: [71, 80] }, [["minecraft:generic.max_health", 4], ["minecraft:generic.armor", 2]], []],
+        [{ meat: [81, 100] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.armor", 4]], []],
+        [{ grains: [0, 10] }, [], [["minecraft:slowness", 0]]],
+        [{ grains: [46, 60] }, [["minecraft:generic.attack_knockback", 0.5]], []],
+        [{ grains: [61, 70] }, [["minecraft:generic.max_health", 4]], []],
+        [{ grains: [71, 80] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.attack_damage", 0.5]], []],
+        [{ grains: [81, 100] }, [["minecraft:generic.max_health", 6], ["minecraft:generic.attack_damage", 1]], []],
+        [{ sugar: [0, 10] }, [["minecraft:generic.attack_knockback", -0.2]], []],
+        [{ sugar: [51, 85] }, [], [["minecraft:speed", 0]]],
+        [{ sugar: [86, 92] }, [], [["minecraft:speed", 1]]],
+        [{ sugar: [93, 100] }, [], [["minecraft:speed", 1]]],
+        [{ dairy: [0, 10] }, [["forge:entity_reach", -0.3]], []],
+        [{ dairy: [51, 85] }, [["forge:step_height_addition", 0.2], ["forge:swim_speed", 0.2]], []],
+        [{ dairy: [86, 92] }, [["forge:swim_speed", 0.3], ["forge:step_height_addition", 0.52]], []],
+        [{ dairy: [93, 100] }, [["forge:swim_speed", 0.4], ["forge:step_height_addition", 0.6]], []],
+        [{ vegetables: [46, 60], fruits: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ vegetables: [81, 100], fruits: [81, 100] }, [["forge:block_reach", 1.5]], []],
+        [{ grains: [81, 100], meat: [81, 100] }, [["minecraft:generic.attack_speed", 0.5]], [["minecraft:resistance", 0]]],
+        [{ grains: [46, 60], meat: [46, 60] }, [["minecraft:generic.max_health", 1]], []],
+        [{ dairy: [93, 100], sugar: [93, 100] }, [["minecraft:generic.luck", -3]], [["minecraft:hunger", 0], ["minecraft:haste", 2], ["minecraft:slowness", 0]]],
+        [{ dairy: [86, 92], sugar: [86, 92] }, [], [["minecraft:haste", 1]]]
+      ];
+      const names = {
+        "forge:block_reach": "Block reach", "forge:entity_reach": "Entity reach",
+        "forge:step_height_addition": "Step height", "forge:swim_speed": "Swim speed",
+        "minecraft:generic.max_health": "Maximum health", "minecraft:generic.armor_toughness": "Armor toughness",
+        "minecraft:generic.armor": "Armor", "minecraft:generic.attack_speed": "Attack speed",
+        "minecraft:generic.attack_damage": "Attack damage", "minecraft:generic.attack_knockback": "Attack knockback",
+        "minecraft:generic.luck": "Luck", "minecraft:slowness": "Slowness", "minecraft:weakness": "Weakness",
+        "minecraft:speed": "Speed", "minecraft:resistance": "Resistance", "minecraft:hunger": "Hunger", "minecraft:haste": "Haste"
+      };
+      const appendLine = (parent, text, style) => {
+        const line = document.createElement("span");
+        line.className = style;
+        line.textContent = text;
+        parent.append(line);
+      };
+      const rows = document.getElementById("mock-rows");
+      if (rows) {
+        for (const group of groups) {
+          const row = document.createElement("div");
+          row.className = "mock-row";
+          row.style.setProperty("--c", group.colors[0]);
+          row.style.setProperty("--text-color", group.colors[group.colors.length - 1]);
+          row.style.setProperty("--gradient", `linear-gradient(90deg, ${group.colors.join(", ")})`);
+          const icon = document.createElement("span");
+          icon.className = "mock-icon";
+          icon.setAttribute("aria-hidden", "true");
+          const name = document.createElement("span");
+          name.className = "mock-name";
+          name.textContent = group.name;
+          const track = document.createElement("div");
+          track.className = "mock-track";
+          const fill = document.createElement("span");
+          fill.className = "mock-fill";
+          fill.style.width = group.value + "%";
+          track.append(fill);
+          const tip = document.createElement("div");
+          tip.className = "mock-tip";
+          tip.setAttribute("role", "tooltip");
+          for (let i = 0; i < group.stages.length; i++) {
+            const [min, max] = group.stages[i];
+            const nextMin = group.stages[i + 1]?.[0] ?? 100;
+            const segment = document.createElement("button");
+            segment.type = "button";
+            segment.className = "mock-seg";
+            segment.style.left = min + "%";
+            segment.style.width = (nextMin - min) + "%";
+            const matches = rules.filter(([conditions]) => {
+              const bound = conditions[group.key];
+              return bound && bound[0] === min && bound[1] === max;
+            });
+            const other = conditions => Object.entries(conditions)
+              .filter(([key]) => key !== group.key)
+              .map(([key, bounds]) => `${groups.find(g => g.key === key).name} ${bounds[0]}~${bounds[1]}`)
+              .join(", ");
+            const details = [`${min}~${max}`];
+            for (const [conditions, attributes, effects] of matches) {
+              const suffix = other(conditions);
+              for (const [id, value] of attributes) details.push(`${value >= 0 ? "+" : ""}${value} ${names[id]}${suffix ? ` (${suffix})` : ""}`);
+              for (const [id, level] of effects) details.push(`${names[id]} Lv.${level + 1}${suffix ? ` (${suffix})` : ""}`);
+            }
+            if (group.command === `${min}-${max}`) details.push("Click to run the configured information command");
+            segment.setAttribute("aria-label", `${group.name} stage ${details.join("；")}`);
+            const showTip = () => {
+              tip.replaceChildren();
+              appendLine(tip, `${min}~${max}`, "tip-range");
+              for (const [conditions, attributes, effects] of matches) {
+                const suffix = other(conditions);
+                for (const [id, value] of attributes) appendLine(tip, `  ${value >= 0 ? "+" : ""}${value} ${names[id]}${suffix ? ` (${suffix})` : ""}`, value >= 0 ? "tip-attribute" : "tip-negative");
+                for (const [id, level] of effects) appendLine(tip, `  ${names[id]} Lv.${level + 1}${suffix ? ` (${suffix})` : ""}`, "tip-effect");
+              }
+              if (group.command === `${min}-${max}`) appendLine(tip, "Click to run the configured information command", "tip-command");
+            };
+            segment.addEventListener("mouseenter", showTip);
+            segment.addEventListener("focus", showTip);
+            track.append(segment);
+            if (group.value >= min && group.value <= max) showTip();
+          }
+          track.append(tip);
+          const pct = document.createElement("span");
+          pct.className = "mock-pct";
+          pct.textContent = group.value.toFixed(1) + "%";
+          row.append(icon, name, track, pct);
+          rows.append(row);
+        }
+        const active = document.getElementById("mock-bonus-tip");
+        const attrTotals = new Map();
+        const effectLevels = new Map();
+        for (const [conditions, attributes, effects] of rules) {
+          if (!Object.entries(conditions).every(([key, [min, max]]) => {
+            const current = Math.round(groups.find(g => g.key === key).value);
+            return current >= min && current <= max;
+          })) continue;
+          for (const [id, value] of attributes) attrTotals.set(id, (attrTotals.get(id) ?? 0) + value);
+          for (const [id, level] of effects) effectLevels.set(id, Math.max(effectLevels.get(id) ?? 0, level));
+        }
+        appendLine(active, "Currently active bonuses:", "tip-title");
+        for (const [id, value] of attrTotals) appendLine(active, `  ${value >= 0 ? "+" : ""}${value} ${names[id]}`, value >= 0 ? "tip-attribute" : "tip-negative");
+        for (const [id, level] of effectLevels) appendLine(active, `  ${names[id]} Lv.${level + 1}`, "tip-effect");
+      }
+
+      const stageRange = document.getElementById("stage-range");
+      const stageMarker = document.getElementById("stage-marker");
+      const stageValue = document.getElementById("stage-value");
+      const stageRounded = document.getElementById("stage-rounded");
+      const stageName = document.getElementById("stage-name");
+
+      const updateStage = () => {
+        const value = Number(stageRange.value);
+        const rounded = Math.round(value);
+        const name = rounded < 30 ? "Low" : rounded < 70 ? "Mid" : "High";
+        stageMarker.style.left = value + "%";
+        stageValue.textContent = value.toFixed(1);
+        stageRounded.textContent = String(rounded);
+        stageName.textContent = name;
+      };
+      stageRange.addEventListener("input", updateStage);
+      updateStage();
+
+      const rate = document.getElementById("decay-rate");
+      const hunger = document.getElementById("hunger-used");
+      const rateOut = document.getElementById("decay-rate-out");
+      const hungerOut = document.getElementById("hunger-used-out");
+      const lossOut = document.getElementById("decay-loss");
+      const remainOut = document.getElementById("decay-remain");
+      const remainFill = document.getElementById("decay-fill");
+
+      const updateDecay = () => {
+        const r = Number(rate.value);
+        const h = Number(hunger.value);
+        const loss = h / r;
+        const remain = Math.max(0, 100 - loss);
+        rateOut.textContent = String(r);
+        hungerOut.textContent = String(h);
+        lossOut.textContent = loss.toFixed(1);
+        remainOut.textContent = remain.toFixed(1);
+        if (remainFill) remainFill.style.width = remain + "%";
+      };
+      rate.addEventListener("input", updateDecay);
+      hunger.addEventListener("input", updateDecay);
+      updateDecay();
+
+      
+})();</script></body></html>
